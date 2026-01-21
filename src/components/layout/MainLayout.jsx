@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
-    UserPlus,
     FileText,
     CreditCard,
     LogOut,
@@ -15,7 +14,14 @@ import {
     ClipboardList,
     Database,
     Landmark,
-    CheckCircle2
+    CheckCircle2,
+    Home,
+    ListChecks,
+    ListChevronsDownUp,
+    ListCollapse,
+    Users,
+    Settings,
+    ShieldAlert
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, path, active, collapsed }) => (
@@ -42,7 +48,7 @@ const MainLayout = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const hideSidebarPaths = ['/login', '/daftar', '/staff/login', '/upt/daftar-baru'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/upt/daftar-user'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuCofig = {
@@ -51,16 +57,19 @@ const MainLayout = ({ children }) => {
             { icon: FileText, label: 'Tagihan SKRD', path: '/skrd' },
             { icon: CreditCard, label: 'Pembayaran SSRD', path: '/pembayaran' },
             { icon: UserCircle, label: 'Layanan', path: '/layanan' },
+            { icon: Home, label: 'Daftar Objek Baru', path: '/daftar' },
         ],
         upt: [
             { icon: LayoutDashboard, label: 'Dashboard UPT', path: '/upt/dashboard' },
-            { icon: UserCheck, label: 'Verifikasi Pendaftaran', path: '/upt/verifikasi' },
+            { icon: UserCheck, label: 'Verifikasi NPWRD', path: '/upt/verifikasi' },
+            { icon: ListChecks, label: 'List NPWRD', path: '/upt/list' },
             { icon: ClipboardList, label: 'Layanan Perubahan', path: '/upt/layanan' },
             { icon: Database, label: 'Data Wajib Retribusi', path: '/upt/database' },
         ],
         dlh: [
             { icon: LayoutDashboard, label: 'Dashboard DLH', path: '/dlh/dashboard' },
-            { icon: FileText, label: 'SKRD Monitoring', path: '/dlh/skrd' },
+            { icon: ListChevronsDownUp, label: 'List Objek', path: '/dlh/skrd' },
+            { icon: ListCollapse, label: 'List SKRD', path: '/dlh/skrd-list' },
             { icon: ClipboardList, label: 'SSRD Monitoring', path: '/dlh/pembayaran' },
             { icon: UserCircle, label: 'Layanan', path: '/dlh/layanan' },
         ],
@@ -69,12 +78,19 @@ const MainLayout = ({ children }) => {
             { icon: Landmark, label: 'Penerbitan SKRD', path: '/bendahara/skrd' },
             { icon: CheckCircle2, label: 'Rekonsiliasi Bank', path: '/bendahara/ssrd' },
         ],
+        admin: [
+            { icon: LayoutDashboard, label: 'Dashboard Admin', path: '/admin/dashboard' },
+            { icon: Users, label: 'Manajemen Staff', path: '/admin/staff' },
+            { icon: Settings, label: 'Pengaturan Sistem', path: '/admin/settings' },
+            { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
+        ]
     };
 
     const getActiveRole = () => {
         if (location.pathname.startsWith('/upt')) return 'upt';
         if (location.pathname.startsWith('/dlh')) return 'dlh';
         if (location.pathname.startsWith('/bendahara')) return 'bendahara';
+        if (location.pathname.startsWith('/admin')) return 'admin';
         return 'user';
     };
 

@@ -63,7 +63,7 @@ const UptVerifikasi = () => {
             {/* Header section tetap sama */}
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-800 tracking-tight">Verifikasi Pendaftaran</h1>
+                    <h1 className="text-2xl font-black text-gray-800 tracking-tight">Verifikasi NPWRD</h1>
                     <p className="text-sm text-gray-500 font-medium">Periksa berkas pendaftaran mandiri dan tetapkan NPWRD.</p>
                 </div>
                 <div className="flex gap-4">
@@ -71,7 +71,7 @@ const UptVerifikasi = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <input type="text" placeholder="Cari pemohon..." className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-700 w-64 text-sm" />
                     </div>
-                    <button onClick={() => navigate('/upt/daftar-baru')} className="flex items-center gap-2 bg-green-700 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-green-900/20 transition-all text-sm">
+                    <button onClick={() => navigate('/upt/daftar-user')} className="flex items-center gap-2 bg-green-700 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-green-900/20 transition-all text-sm">
                         <UserPlus size={18} /> Daftar Baru
                     </button>
                 </div>

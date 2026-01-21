@@ -26,8 +26,12 @@ const DlhPaymentMonitoring = () => {
             skrd_no: '00045/SKRD/2026',
             tgl_bayar: '2026-01-09',
             jumlah: 75000,
-            status: 'Perlu Validasi DLH', // Tahap 1
-            ssrd_no: '-',
+            //status: 'Perlu Validasi DLH', // Tahap 1
+            status: 'Menunggu Rekonsiliasi',
+            metode_bayar: 'Transfer Bank',
+            atas_nama_pengirim: 'Ahmad Subarjo',
+            nama_bank: 'BCA',
+            no_rekening: '0123456789',
             bukti_bayar_url: 'https://i.pinimg.com/736x/8a/0d/1b/8a0d1b6440263f64c668600021c1729c.jpg'
         },
         {
@@ -165,60 +169,74 @@ const DlhPaymentMonitoring = () => {
 const PaymentProofModal = ({ data, onClose }) => {
     if (!data) return null;
 
+    const InfoRow = ({ label, value }) => (
+        <div className="flex flex-col gap-1">
+            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{label}</p>
+            <p className="text-xs font-bold text-gray-700">{value || '-'}</p>
+        </div>
+    );
+
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-                {/* Header Modal */}
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <div>
-                        <h3 className="text-lg font-black text-gray-800 tracking-tight">Bukti Pembayaran</h3>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{data.nama} | {data.npwrd}</p>
-                    </div>
-                    <button onClick={onClose} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-100 transition-colors">
-                        <X size={20} className="text-gray-400" />
-                    </button>
-                </div>
+            <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col md:flex-row">
 
-                {/* Container Gambar */}
-                <div className="p-8 bg-gray-100 flex justify-center">
+                {/* SISI KIRI: Gambar Struk (40%) */}
+                <div className="md:w-1/2 bg-gray-100 p-6 flex flex-col justify-center items-center border-r border-gray-100">
+                    <p className="text-[10px] font-black text-gray-400 uppercase mb-4 tracking-tighter italic">Lampiran Foto Struk User</p>
                     <div className="relative group">
                         <img
                             src={data.bukti_bayar_url}
                             alt="Bukti Transfer"
-                            className="max-h-[500px] w-auto rounded-2xl shadow-lg border-4 border-white object-contain"
+                            className="max-h-[400px] w-full rounded-2xl shadow-md border-2 border-white object-contain"
                         />
-                        {/* Overlay Detail Singkat */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-6 py-2 rounded-full text-white text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                            Klik gambar untuk memperbesar
+                    </div>
+                    <p className="text-[9px] text-gray-400 mt-4">Pastikan nominal di gambar sesuai input</p>
+                </div>
+
+                {/* SISI KANAN: Detail Data Input (60%) */}
+                <div className="md:w-1/2 flex flex-col bg-white">
+                    {/* Header Modal */}
+                    <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                        <div>
+                            <h3 className="text-lg font-black text-gray-800 tracking-tight leading-none">Verifikasi Input</h3>
+                            <p className="text-[10px] text-green-700 font-bold mt-1 uppercase font-mono">{data.npwrd}</p>
+                        </div>
+                        <button onClick={onClose} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
+                            <X size={18} />
+                        </button>
+                    </div>
+
+                    {/* Data Detail Section */}
+                    <div className="p-6 flex-grow space-y-6 overflow-y-auto">
+                        <div className="bg-green-50 p-4 rounded-2xl border border-green-100">
+                            <p className="text-[10px] font-black text-green-600 uppercase mb-1">Nominal Yang Diinput</p>
+                            <p className="text-2xl font-black text-green-800 tracking-tighter">Rp {data.jumlah.toLocaleString()}</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                            <InfoRow label="Metode Bayar" value={data.metode_bayar} />
+                            <InfoRow label="Tanggal Bayar" value={data.tgl_bayar} />
+
+                            <div className="col-span-2 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <InfoRow label="Atas Nama Pengirim" value={data.atas_nama_pengirim} />
+                                {data.metode_bayar === 'Transfer Bank' && (
+                                    <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200/50">
+                                        <InfoRow label="Bank Asal" value={data.nama_bank} />
+                                        <InfoRow label="No. Rekening" value={data.no_rekening} />
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Info Ringkas di Bawah Gambar */}
-                <div className="p-6 grid grid-cols-2 gap-4 bg-white">
-                    <div className="bg-gray-50 p-4 rounded-2xl">
-                        <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Nominal Terbayar</p>
-                        <p className="text-xl font-black text-green-700">Rp {data.jumlah.toLocaleString()}</p>
+                    {/* Footer Action */}
+                    <div className="p-6 border-t border-gray-100 flex gap-3">
+                        <button
+                            className="flex-1 py-3 px-8 bg-green-700 text-white rounded-2xl font-black text-xs hover:bg-black shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transition-all"
+                        >
+                            <CheckCircle2 size={16} /> Teruskan ke Bendahara
+                        </button>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-2xl">
-                        <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Tanggal Bayar</p>
-                        <p className="text-sm font-bold text-gray-700">{data.tgl_bayar}</p>
-                    </div>
-                </div>
-
-                {/* Footer Action */}
-                <div className="p-6 border-t border-gray-100 flex gap-3">
-                    <button
-                        onClick={onClose}
-                        className="flex-1 py-3 px-6 bg-gray-100 text-gray-600 rounded-2xl font-bold text-sm hover:bg-gray-200 transition-all"
-                    >
-                        Tutup
-                    </button>
-                    <button
-                        className="flex-2 py-3 px-8 bg-green-700 text-white rounded-2xl font-black text-sm hover:bg-black shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transition-all"
-                    >
-                        <CheckCircle2 size={18} /> Validasi Sekarang
-                    </button>
                 </div>
             </div>
         </div>
