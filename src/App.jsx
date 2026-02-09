@@ -101,7 +101,7 @@ function App() {
           <Route path="/penagih/peraturan" element={<DocumentsPage />} />
 
           {/* Redirect otomatis ke login jika rute tidak dikenal */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/staff/login" replace />} />
         </Routes>
       </MainLayout>
     </Router>
