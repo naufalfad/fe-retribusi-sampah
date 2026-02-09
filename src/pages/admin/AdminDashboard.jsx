@@ -44,7 +44,7 @@ const AdminDashboard = () => {
                         <Server size={24} className={systemOnline ? 'animate-pulse' : ''} />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-gray-800 tracking-tighter uppercase">Status Sistem SIRESIK</h2>
+                        <h2 className="text-xl font-black text-gray-800 tracking-tighter uppercase">Status Sistem REKAS</h2>
                         <div className="flex items-center gap-2">
                             <span className={`h-2 w-2 rounded-full ${systemOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
                                     required
                                     value={broadcastMsg}
                                     onChange={(e) => setBroadcastMsg(e.target.value)}
-                                    placeholder="Contoh: Server SIRESIK akan maintenance malam ini pukul 21:00 WIB..."
+                                    placeholder="Contoh: Server REKAS akan maintenance malam ini pukul 21:00 WIB..."
                                     className="w-full p-6 bg-gray-50 border-2 border-gray-100 rounded-3xl outline-none focus:ring-4 focus:ring-green-700/5 focus:border-green-700 font-bold text-sm min-h-[150px] transition-all"
                                 />
                             </div>

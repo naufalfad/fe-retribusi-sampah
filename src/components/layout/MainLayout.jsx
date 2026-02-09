@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import {
-    LayoutDashboard,
+    LayoutDashboard, Landmark, MapPin, History,
     FileText,
     CreditCard,
     LogOut,
@@ -10,18 +10,18 @@ import {
     ChevronLeft,
     ChevronRight,
     UserCircle,
-    UserCheck,
     ClipboardList,
     Database,
-    Landmark,
     CheckCircle2,
     Home,
     ListChecks,
-    ListChevronsDownUp,
+    ListIcon,
     ListCollapse,
     Users,
     Settings,
-    ShieldAlert
+    ShieldAlert,
+    ListOrdered,
+    BookOpen
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, path, active, collapsed }) => (
@@ -48,7 +48,7 @@ const MainLayout = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/upt/daftar-user'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/penagih/login'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuCofig = {
@@ -61,28 +61,36 @@ const MainLayout = ({ children }) => {
         ],
         upt: [
             { icon: LayoutDashboard, label: 'Dashboard UPT', path: '/upt/dashboard' },
-            { icon: UserCheck, label: 'Verifikasi NPWRD', path: '/upt/verifikasi' },
+            //{ icon: UserCheck, label: 'Verifikasi NPWRD', path: '/upt/verifikasi' },
             { icon: ListChecks, label: 'List NPWRD', path: '/upt/list' },
             { icon: ClipboardList, label: 'Layanan Perubahan', path: '/upt/layanan' },
             { icon: Database, label: 'Data Wajib Retribusi', path: '/upt/database' },
         ],
         dlh: [
             { icon: LayoutDashboard, label: 'Dashboard DLH', path: '/dlh/dashboard' },
-            { icon: ListChevronsDownUp, label: 'List Objek', path: '/dlh/skrd' },
-            { icon: ListCollapse, label: 'List SKRD', path: '/dlh/skrd-list' },
+            { icon: ListOrdered, label: 'List Subjek', path: '/dlh/list-subjek' },
+            { icon: ListIcon, label: 'List Objek', path: '/dlh/list-objek' },
+            { icon: ListCollapse, label: 'List SKRD', path: '/dlh/list-skrd' },
             { icon: ClipboardList, label: 'SSRD Monitoring', path: '/dlh/pembayaran' },
             { icon: UserCircle, label: 'Layanan', path: '/dlh/layanan' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
-            { icon: Landmark, label: 'Penerbitan SKRD', path: '/bendahara/skrd' },
-            { icon: CheckCircle2, label: 'Rekonsiliasi Bank', path: '/bendahara/ssrd' },
+            //{ icon: Landmark, label: 'Penerbitan SKRD', path: '/bendahara/skrd' },
+            { icon: CheckCircle2, label: 'Validasi Pembayaran', path: '/bendahara/ssrd' },
+            { icon: Landmark, label: 'Manual Payment', path: '/bendahara/pembayaran-manual' },
         ],
         admin: [
             { icon: LayoutDashboard, label: 'Dashboard Admin', path: '/admin/dashboard' },
             { icon: Users, label: 'Manajemen Staff', path: '/admin/staff' },
             { icon: Settings, label: 'Pengaturan Sistem', path: '/admin/settings' },
             { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
+        ],
+        penagih: [
+            { icon: LayoutDashboard, label: 'Tugas Lapangan', path: '/penagih/dashboard' },
+            { icon: MapPin, label: 'Wilayah Kerja', path: '/penagih/wilayah' },
+            { icon: ListIcon, label: 'List SKRD', path: '/penagih/list-skrd' },
+            { icon: History, label: 'Riwayat Setoran', path: '/penagih/riwayat' },
         ]
     };
 
@@ -91,6 +99,7 @@ const MainLayout = ({ children }) => {
         if (location.pathname.startsWith('/dlh')) return 'dlh';
         if (location.pathname.startsWith('/bendahara')) return 'bendahara';
         if (location.pathname.startsWith('/admin')) return 'admin';
+        if (location.pathname.startsWith('/penagih')) return 'penagih';
         return 'user';
     };
 
@@ -104,6 +113,10 @@ const MainLayout = ({ children }) => {
             navigate('/login');
         }
     };
+
+    const handleDocument = () => {
+        navigate(`/${activeRole}/peraturan`);
+    }
 
     if (isAuthPage) {
         return <div className="min-h-screen bg-gray-50">{children}</div>;
@@ -130,8 +143,8 @@ const MainLayout = ({ children }) => {
                     <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} mb-10 px-2`}>
                         {!isCollapsed && (
                             <div className="flex flex-col">
-                                <span className="font-black text-green-800 text-xl tracking-tight leading-none">E-RETRIBUSI</span>
-                                <span className="text-[10px] font-bold text-yellow-600 tracking-[0.2em] uppercase">Kab. Bogor</span>
+                                <span className="font-black text-green-800 text-xl tracking-tight leading-none">REKAS</span>
+                                <span className="text-[9px] font-medium text-gray-400 tracking-[0.2em] ">GenX 3.1</span>
                             </div>
                         )}
                         <button
@@ -171,6 +184,13 @@ const MainLayout = ({ children }) => {
                             </div>
                         )} */}
                         <button
+                            onClick={handleDocument}
+                            className={`w-full flex items-center gap-4 px-4 py-3 text-gray-500 hover:bg-green-50 rounded-xl transition-all group`}
+                        >
+                            <BookOpen size={22} />
+                            {!isCollapsed && <span className="font-semibold">Dasar Hukum</span>}
+                        </button>
+                        <button
                             onClick={handleLogout}
                             className={`w-full flex items-center gap-4 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all group`}
                         >
@@ -185,7 +205,7 @@ const MainLayout = ({ children }) => {
             <div className="flex-1 flex flex-col min-w-0">
                 {/* HEADER UNTUK MOBILE */}
                 <header className="md:hidden bg-white border-b border-gray-100 p-4 flex justify-between items-center sticky top-0 z-30">
-                    <div className="font-bold text-green-800 tracking-tight">E-RETRIBUSI</div>
+                    <div className="font-bold text-green-800 tracking-tight">REKAS</div>
                     <button
                         onClick={() => setIsMobileOpen(true)}
                         className="p-2 bg-gray-50 rounded-lg text-green-700"

@@ -20,7 +20,7 @@ const DlhDashboard = () => {
                             Laporan Real-time: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
                         <h1 className="text-4xl font-black leading-tight mb-2 italic tracking-tighter">
-                            Halo, Bidang Kebersihan!
+                            Halo, Dinas Lingkungan Hidup!
                         </h1>
                         <p className="text-green-100/70 max-w-sm text-sm">
                             Pantau seluruh aktivitas retribusi dari 40 Kecamatan di Kabupaten Bogor hari ini.

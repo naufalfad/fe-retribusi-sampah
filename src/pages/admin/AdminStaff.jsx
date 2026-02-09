@@ -46,7 +46,7 @@ const AdminStaff = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-800 tracking-tighter uppercase leading-none">Otoritas Staff</h1>
-                    <p className="text-gray-500 font-medium text-sm mt-1">Manajemen akun petugas operasional SIRESIK se-Kabupaten Bogor.</p>
+                    <p className="text-gray-500 font-medium text-sm mt-1">Manajemen akun petugas operasional REKAS.</p>
                 </div>
                 <button
                     onClick={() => setShowAddModal(true)}
@@ -155,7 +155,7 @@ const AdminStaff = () => {
                                 <div className="p-3 bg-green-600 rounded-2xl shadow-lg shadow-green-900/20"><UserPlus size={24} /></div>
                                 <div>
                                     <h3 className="font-black uppercase tracking-widest text-sm leading-none">Registrasi Staff Baru</h3>
-                                    <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-[0.2em]">Otorisasi SIRESIK</p>
+                                    <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-[0.2em]">Otorisasi REKAS</p>
                                 </div>
                             </div>
                             <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white/10 rounded-full transition-all text-gray-400"><X size={24} /></button>

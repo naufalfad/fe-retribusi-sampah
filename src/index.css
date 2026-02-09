@@ -23,3 +23,37 @@ body,
 .custom-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-gray-400 rounded-full hover:bg-gray-500;
 }
+
+.custom-target-icon {
+  background: transparent;
+  border: none;
+}
+
+.target-wrapper {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.target-outer {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #ffffff;
+  /* green-700 */
+  border-radius: 50%;
+}
+
+
+.target-inner {
+  position: absolute;
+  inset: 7px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.target-center {
+  position: absolute;
+  inset: 13px;
+  background: #ffffff;
+  border-radius: 50%;
+}

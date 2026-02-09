@@ -81,7 +81,7 @@ const AdminLogs = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">Audit Trail Sistem</h1>
-                    <p className="text-slate-500 font-medium text-sm mt-1">Rekam jejak seluruh aktivitas operasional Staff SIRESIK.</p>
+                    <p className="text-slate-500 font-medium text-sm mt-1">Rekam jejak seluruh aktivitas operasional Staff.</p>
                 </div>
                 <button className="bg-white border-2 border-slate-100 text-slate-700 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-900 hover:text-white transition-all">
                     <Download size={16} /> Export Log (.xlsx)

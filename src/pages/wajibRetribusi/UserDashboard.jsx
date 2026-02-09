@@ -44,7 +44,7 @@ const UserDashboard = () => {
             {/* HEADER: Welcome User */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
                 <div className="relative z-10">
-                    <p className="text-sm text-green-700 font-bold mb-1 uppercase tracking-widest">Selamat Datang di SIRESIK,</p>
+                    <p className="text-sm text-green-700 font-bold mb-1 uppercase tracking-widest">Selamat Datang di REKAS,</p>
                     <h2 className="text-3xl font-black text-gray-800 tracking-tighter italic">Kinan Kari</h2>
                     <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm font-sans">
                         <span className="font-medium uppercase">NIK: 3201XXXXXXXXXXXX</span>
@@ -179,7 +179,7 @@ const UserDashboard = () => {
 
                                 {/* Footer Kartu (Signature) */}
                                 <div className="absolute bottom-0 left-0 right-0 p-2 pt-0 flex justify-between items-end bg-gradient-to-t from-gray-50 to-transparent">
-                                    <div className="text-[5px] font-medium opacity-50 italic uppercase leading-none mb-1">SIRESIK DIGITAL CARD v.2</div>
+                                    <div className="text-[5px] font-medium opacity-50 italic uppercase leading-none mb-1">REKAS DIGITAL CARD v.2</div>
                                     <div className="text-center font-sans">
                                         <p className="text-[4.5px] font-bold leading-none mb-0.5 uppercase italic opacity-40 italic underline decoration-dotted">Tertanda Digital Oleh:</p>
                                         <p className="text-[5px] font-black uppercase leading-none">IWAN SETIAWAN</p>

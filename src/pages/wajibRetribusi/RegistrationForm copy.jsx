@@ -162,7 +162,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormInput
-                                    label="Email Akun SIRESIK"
+                                    label="Email Akun REKAS"
                                     name="email_akun"
                                     placeholder="email@user.com"
                                     register={register} errors={errors}
@@ -183,7 +183,6 @@ const RegistrationForm = ({ isStaff = false }) => {
                                 <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
                                 Identitas {type === 'pribadi' ? 'Pemohon' : ' Pengelola'}
                             </h3>
-                            {/* {!isStaff && <p className="text-[10px] text-blue-600 mt-1 font-bold italic">*Identitas otomatis disinkronkan dengan Akun SIRESIK Anda</p>} */}
                         </div>
 
                         {/* Nama Utama selalu muncul */}

@@ -37,7 +37,7 @@ const DlhLayananValidation = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-800 tracking-tight">Validasi Layanan WR</h1>
+                    <h1 className="text-2xl font-black text-gray-800 tracking-tight">Validasi Layanan Wajib Retribusi</h1>
                     <p className="text-sm text-gray-500 font-medium">Otorisasi final untuk perubahan data dan penonaktifan Wajib Retribusi.</p>
                 </div>
                 <div className="flex gap-2 bg-blue-50 border border-blue-100 px-4 py-2 rounded-2xl items-center">

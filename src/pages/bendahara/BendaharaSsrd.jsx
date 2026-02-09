@@ -107,7 +107,7 @@ const BendaharaSsrd = () => {
         <div className="space-y-6 pb-20 font-sans">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase">Audit Rekonsiliasi & SSRD</h1>
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase">List Pembayaran Retribusi</h1>
                     <p className="text-slate-500 font-medium italic text-sm">Verifikasi final mutasi Kas Daerah untuk penerbitan dokumen pelunasan sah.</p>
                 </div>
                 {/* Tab Switcher Antrean */}
