@@ -32,6 +32,7 @@ const StaffLoginPage = () => {
             else if (role === 'dlh') navigate('/dlh/dashboard');
             else if (role === 'bendahara') navigate('/bendahara/dashboard');
             else if (role === 'admin') navigate('/admin/dashboard');
+            else if (role === 'penagih') navigate('/penagih/dashboard');
 
         } catch (err) {
             const message = err.response?.data?.message || 'Terjadi kesalahan koneksi';

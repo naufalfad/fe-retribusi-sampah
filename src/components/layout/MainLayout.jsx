@@ -21,7 +21,8 @@ import {
     Settings,
     ShieldAlert,
     ListOrdered,
-    BookOpen
+    BookOpen,
+    Edit3
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, path, active, collapsed }) => (
@@ -65,6 +66,7 @@ const MainLayout = ({ children }) => {
             { icon: ListChecks, label: 'List NPWRD', path: '/upt/list' },
             { icon: ClipboardList, label: 'Layanan Perubahan', path: '/upt/layanan' },
             { icon: Database, label: 'Data Wajib Retribusi', path: '/upt/database' },
+            { icon: Edit3, label: 'Manajemen Objek', path: '/upt/manajemen-objek' },
         ],
         dlh: [
             { icon: LayoutDashboard, label: 'Dashboard DLH', path: '/dlh/dashboard' },
@@ -72,7 +74,8 @@ const MainLayout = ({ children }) => {
             { icon: ListIcon, label: 'List Objek', path: '/dlh/list-objek' },
             { icon: ListCollapse, label: 'List SKRD', path: '/dlh/list-skrd' },
             { icon: ClipboardList, label: 'SSRD Monitoring', path: '/dlh/pembayaran' },
-            { icon: UserCircle, label: 'Layanan', path: '/dlh/layanan' },
+            // { icon: UserCircle, label: 'Layanan', path: '/dlh/layanan' },
+            { icon: Edit3, label: 'Manajemen Objek', path: '/dlh/manajemen-objek' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
@@ -85,6 +88,7 @@ const MainLayout = ({ children }) => {
             { icon: Users, label: 'Manajemen Staff', path: '/admin/staff' },
             { icon: Settings, label: 'Pengaturan Sistem', path: '/admin/settings' },
             { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
+            { icon: Edit3, label: 'Manajemen Objek', path: '/admin/manajemen-objek' },
         ],
         penagih: [
             { icon: LayoutDashboard, label: 'Tugas Lapangan', path: '/penagih/dashboard' },
@@ -172,17 +176,6 @@ const MainLayout = ({ children }) => {
 
                     {/* USER & LOGOUT */}
                     <div className="pt-4 border-t border-gray-100 space-y-2">
-                        {/* {!isCollapsed && (
-                            <div className="px-4 py-3 bg-gray-50 rounded-2xl flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-green-700 rounded-xl flex items-center justify-center text-white font-bold">
-                                    JS
-                                </div>
-                                <div className="overflow-hidden">
-                                    <p className="text-sm font-bold text-gray-800 truncate">Jajang Sutisna</p>
-                                    <p className="text-[10px] text-gray-500 truncate">Wajib Retribusi</p>
-                                </div>
-                            </div>
-                        )} */}
                         <button
                             onClick={handleDocument}
                             className={`w-full flex items-center gap-4 px-4 py-3 text-gray-500 hover:bg-green-50 rounded-xl transition-all group`}
