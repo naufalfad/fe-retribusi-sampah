@@ -3,7 +3,7 @@ const SkrdPreviewModal = ({ data, onClose }) => {
     if (!data) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-md">
             <div className="bg-white w-[90vw] h-[90vh] rounded-2xl shadow-2xl flex flex-col">
 
                 {/* Header */}

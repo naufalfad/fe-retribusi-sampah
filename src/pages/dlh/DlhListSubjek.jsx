@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, UserPlus, PlusSquare, Building2,
-    User, Eye, MapPin, Layers, X, Loader2, Printer
+    User, Eye, MapPin, Layers, X, Loader2, Printer, ShieldCheck
 } from 'lucide-react';
 import api from '../../api/axios';
 import StatusBadge from '../../components/common/StatusBadge';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import {
-    Search, Eye, SendHorizontal, Printer,
+    Search, AlertCircle, Printer,
     CheckCircle2, Clock, FileCheck2, Image as ImageIcon, X
 } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
@@ -31,7 +31,7 @@ const DlhPaymentMonitoring = () => {
                     skrd_no: item.Skrd?.no_skrd ?? '-',
                     tgl_bayar: item.paid_at?.split('T')[0],
                     jumlah: Number(item.amount_paid),
-                    status: 'Selesai (SSRD Terbit)',
+                    status: item.payment_status,
                     ssrd_no: item.no_ssrd,
                     raw: item
                 }));
@@ -46,6 +46,21 @@ const DlhPaymentMonitoring = () => {
 
         fetchSsrd();
     }, []);
+
+    const getStatusInfo = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'paid':
+                return { label: 'PAID', color: 'bg-green-100 text-green-700', icon: <CheckCircle2 size={12} /> };
+            case 'unpaid':
+                return { label: 'UNPAID', color: 'bg-amber-100 text-amber-700', icon: <AlertCircle size={12} /> };
+            case 'expired':
+                return { label: 'EXPIRED', color: 'bg-red-100 text-red-700', icon: <AlertCircle size={12} /> };
+            case 'partial':
+                return { label: 'PAID PARTIAL', color: 'bg-green-100 text-amber-700', icon: <AlertCircle size={12} /> };
+            default:
+                return { label: 'PENDING', color: 'bg-gray-100 text-gray-700', icon: null };
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -122,7 +137,7 @@ const DlhPaymentMonitoring = () => {
                                         </td>
 
                                         <td className="p-6">
-                                            <StatusBadge status="Lunas" />
+                                            <StatusBadge status={getStatusInfo(p.status).label} />
                                         </td>
 
                                         <td className="p-6">

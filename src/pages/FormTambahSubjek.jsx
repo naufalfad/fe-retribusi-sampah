@@ -17,7 +17,7 @@ const signupSchema = z.object({
     whatsapp: z.string().min(10, "Nomor minimal 10 digit"),
     //email: z.string().email("Email tidak valid"),
     penanggung_jawab: z.string().optional(),
-    npwp_nib: z.string().min(1, "NPWP wajib di isi"),
+    npwp_nib: z.string().optional(),
     alamat_jalan: z.string().min(5, "Alamat diperlukan"),
     rt_rw: z.string().min(1, "RT/RW diperlukan"),
     provinsi: z.string().min(1, "Pilih Provinsi"),

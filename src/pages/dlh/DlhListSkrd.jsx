@@ -82,12 +82,14 @@ const DlhListSkrd = () => {
         switch (status?.toLowerCase()) {
             case 'paid':
                 return { label: 'Sudah Bayar', color: 'bg-green-100 text-green-700', icon: <CheckCircle2 size={12} /> };
+            case 'partial':
+                return { label: 'Kurang Bayar', color: 'bg-orange-100 text-amber-700', icon: <AlertCircle size={12} /> };
             case 'unpaid':
                 return { label: 'Belum Bayar', color: 'bg-amber-100 text-amber-700', icon: <AlertCircle size={12} /> };
             case 'overdue':
                 return { label: 'Menunggak', color: 'bg-red-100 text-red-700', icon: <AlertCircle size={12} /> };
             default:
-                return { label: 'Unknown', color: 'bg-gray-100 text-gray-700', icon: null };
+                return { label: 'Pending', color: 'bg-gray-100 text-gray-700', icon: null };
         }
     };
 
