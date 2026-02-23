@@ -6,7 +6,7 @@ import * as z from 'zod';
 import api from '../api/axios';
 import {
     MapPin, Mail, ChevronDown, User, CreditCard, Phone,
-    ArrowRight, ChevronLeft, Home, Navigation, Lock,
+    ChevronLeft, Home, Navigation, Lock,
     Building2, Send, Upload, FileText, IdCard, CheckCircle2, Info, Loader2
 } from 'lucide-react';
 
@@ -60,6 +60,14 @@ const FormTambahSubjek = ({ isStaff = false }) => {
 
     // --- LOGIKA SUBMIT API ---
     const onSubmit = async (data) => {
+        const token = localStorage.getItem('token');
+
+        // Proteksi di sisi client
+        if (!token) {
+            alert("Sesi Anda telah berakhir. Silakan login kembali sebagai staff.");
+            navigate("/login/staff");
+            return;
+        }
         setIsLoading(true);
         try {
             const formData = new FormData();
@@ -92,12 +100,12 @@ const FormTambahSubjek = ({ isStaff = false }) => {
             const response = await api.post(`/subjek/tambah-subjek`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             alert(response.data.message);
-            navigate(backPath);
+            backPath();
         } catch (error) {
             console.error(error);
             alert(error.response?.data?.message || "Terjadi kesalahan sistem");
@@ -279,9 +287,6 @@ const FormTambahSubjek = ({ isStaff = false }) => {
                                     <SelectGroup label="Kecamatan" icon={MapPin} name="kecamatan" options={["Cibinong", "Ciawi"]} placeholder="Pilih Kecamatan" />
                                     <SelectGroup label="Kelurahan" icon={MapPin} name="kelurahan" options={["Pakansari", "Cibinong"]} placeholder="Pilih Desa" />
                                     <SelectGroup label="Kode Pos" icon={Navigation} name="kodepos" options={["16911", "16915"]} placeholder="Pilih Kode Pos" />
-                                    {/* <div className="md:col-span-2">
-                                        <SelectGroup label="Kode Pos" icon={Navigation} name="kodepos" options={["16911", "16915"]} placeholder="Pilih Kode Pos" />
-                                    </div> */}
                                 </div>
                             </div>
                         )}
