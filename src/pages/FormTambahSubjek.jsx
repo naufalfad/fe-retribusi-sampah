@@ -15,7 +15,7 @@ const signupSchema = z.object({
     nama_subjek: z.string().min(3, "Nama harus diisi"),
     nik: z.string().length(16, "NIK harus 16 digit"),
     whatsapp: z.string().min(10, "Nomor minimal 10 digit"),
-    //email: z.string().email("Email tidak valid"),
+    email: z.string().email("Email tidak valid"),
     penanggung_jawab: z.string().optional(),
     npwp_nib: z.string().optional(),
     alamat_jalan: z.string().min(5, "Alamat diperlukan"),
