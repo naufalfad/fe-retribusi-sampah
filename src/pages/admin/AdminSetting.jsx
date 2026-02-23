@@ -16,10 +16,11 @@ const AdminSettings = () => {
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [showToast, setShowToast] = useState(false);
     const [logoPreview, setLogoPreview] = useState(null);
-    const [logoFile, setLogoFile] = useState(null); // Menyimpan file asli untuk upload
-    const [showSkrd, setShowSkrd] = useState(false);
-    const [showSsrd, setShowSsrd] = useState(false);
+    const [logoFile, setLogoFile] = useState(null);
+    const [ttdPreview, setTtdPreview] = useState(null);
+    const [ttdFile, setTtdFile] = useState(null);
     const [templateId, setTemplateId] = useState(null);
+    const [isCleaning, setIsCleaning] = useState(false);
 
     // State form sesuai dengan field di database Anda
     const [formData, setFormData] = useState({
@@ -57,6 +58,11 @@ const AdminSettings = () => {
                         const cleanPath = db.logo.replace(/\\/g, '/');
                         setLogoPreview(`${BASE_URL}/${cleanPath}`);
                     }
+
+                    if (db.ttd_pejabat) {
+                        const cleanPath = db.ttd_pejabat.replace(/\\/g, '/');
+                        setTtdPreview(`${BASE_URL}/${cleanPath}`);
+                    }
                 }
             } catch (error) {
                 console.error("Gagal memuat konfigurasi:", error);
@@ -73,12 +79,49 @@ const AdminSettings = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleCleanOrphans = async (isDryRun = false) => {
+        // Jika bukan dry run, beri konfirmasi tambahan
+        if (!isDryRun && !window.confirm("Apakah Anda yakin ingin menghapus file sampah secara permanen? Tindakan ini tidak dapat dibatalkan.")) {
+            return;
+        }
+
+        setIsCleaning(true);
+        try {
+            const response = await api.post('/maintenance/clean-orphan', { dryRun: isDryRun });
+
+            if (response.data.success) {
+                const { deletedCount, totalSizeMB } = response.data.data;
+
+                // Tampilkan pesan detail hasil pembersihan
+                alert(isDryRun
+                    ? `[DRY RUN] Ditemukan ${deletedCount} file sampah dengan total ukuran ~${totalSizeMB} MB.`
+                    : `BERHASIL! ${deletedCount} file sampah (${totalSizeMB} MB) telah dihapus dari server.`
+                );
+            }
+        } catch (error) {
+            console.error("Maintenance Error:", error);
+            alert("Gagal melakukan pemeliharaan file. Silakan hubungi teknisi.");
+        } finally {
+            setIsCleaning(false);
+        }
+    };
+
     const handleLogoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setLogoFile(file); // Simpan file asli untuk upload
+            setLogoFile(file);
             const reader = new FileReader();
-            reader.onloadend = () => setLogoPreview(reader.result); // Base64 untuk preview lokal
+            reader.onloadend = () => setLogoPreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleTtdChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setTtdFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setTtdPreview(reader.result);
             reader.readAsDataURL(file);
         }
     };
@@ -102,6 +145,10 @@ const AdminSettings = () => {
         // Tambahkan file logo jika ada perubahan
         if (logoFile) {
             dataSubmit.append('logo', logoFile);
+        }
+
+        if (ttdFile) {
+            dataSubmit.append('ttd_pejabat', ttdFile);
         }
 
         try {
@@ -186,27 +233,57 @@ const AdminSettings = () => {
 
                     {/* Signature */}
                     <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden border-t-4 border-t-blue-600">
-                        <div className="p-6 border-b border-gray-50 flex items-center gap-3 px-8 uppercase font-black text-[10px] tracking-widest">
-                            <BadgeCheck className="text-blue-600" size={20} /> Otoritas Pengesahan (Signature)
+                        <div className="p-6 border-b border-gray-50 flex items-center gap-3 px-8 uppercase font-black text-[10px] tracking-widest text-blue-600">
+                            <BadgeCheck size={20} /> Otoritas Pengesahan (Signature)
                         </div>
-                        <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nama Pejabat (TTD)</label>
-                                <input name="pejabat_nama" value={formData.pejabat_nama} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-black text-sm uppercase" />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">NIP Pejabat</label>
-                                <input name="pejabat_nip" value={formData.pejabat_nip} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-mono font-bold text-sm" />
-                            </div>
-                            <div className="md:col-span-2 space-y-1.5">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Jabatan Struktural</label>
-                                <input name="pejabat_jabatan" value={formData.pejabat_jabatan} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-bold text-sm uppercase" />
+                        <div className="p-10">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                                {/* INPUT TEKS */}
+                                <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nama Pejabat (TTD)</label>
+                                        <input name="pejabat_nama" value={formData.pejabat_nama} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-black text-sm uppercase" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">NIP Pejabat</label>
+                                        <input name="pejabat_nip" value={formData.pejabat_nip} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-mono font-bold text-sm" />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-1.5">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Jabatan Struktural</label>
+                                        <input name="pejabat_jabatan" value={formData.pejabat_jabatan} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-blue-600 font-bold text-sm uppercase" />
+                                    </div>
+                                </div>
+
+                                {/* UPLOAD TTD PEJABAT */}
+                                <div className="md:col-span-4 flex flex-col items-center justify-center">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Upload Tanda Tangan</label>
+                                    <div className="relative w-full h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 group overflow-hidden flex items-center justify-center p-4 hover:border-blue-300 transition-all">
+                                        {ttdPreview ? (
+                                            <img src={ttdPreview} alt="TTD" className="w-full h-full object-contain mix-blend-multiply" />
+                                        ) : (
+                                            <div className="text-center">
+                                                <Upload className="mx-auto text-gray-300 mb-2" size={24} />
+                                                <p className="text-[8px] font-bold text-gray-400 uppercase">Upload PNG Transparan</p>
+                                            </div>
+                                        )}
+
+                                        {/* Hover Overlay */}
+                                        <label className="absolute inset-0 bg-blue-600/80 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer text-white">
+                                            <Upload size={24} className="mb-2" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Ganti TTD</span>
+                                            <input type="file" className="hidden" accept="image/*" onChange={handleTtdChange} />
+                                        </label>
+                                    </div>
+                                    <p className="text-[8px] text-gray-400 mt-3 italic text-center leading-relaxed">
+                                        * Gunakan format PNG tanpa background <br /> untuk hasil cetak terbaik.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Pattern */}
-                    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden border-t-4 border-t-amber-500">
+                    {/* <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden border-t-4 border-t-amber-500">
                         <div className="p-6 border-b border-gray-50 flex items-center gap-3 px-8 uppercase font-black text-[10px] tracking-widest">
                             <RefreshCcw className="text-amber-500" size={20} /> Pola Penomoran Dokumen
                         </div>
@@ -220,21 +297,65 @@ const AdminSettings = () => {
                                 <input name="prefix_ssrd" value={formData.prefix_ssrd} onChange={handleInputChange} type="text" className="w-full p-4 bg-gray-50 border-2 border-gray-50 rounded-2xl outline-none focus:border-amber-500 font-mono font-bold text-sm" />
                             </div>
                         </div>
+                    </div> */}
+
+                    {/* PANEL PEMELIHARAAN (Maintenance) */}
+                    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden border-t-4 border-t-red-600">
+                        <div className="p-6 border-b border-gray-50 flex items-center justify-between px-8">
+                            <div className="flex items-center gap-3 uppercase font-black text-[10px] tracking-widest text-red-600">
+                                <RefreshCcw size={20} /> Pemeliharaan Ruang Penyimpanan
+                            </div>
+                            <span className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter">Sistem Optimizer</span>
+                        </div>
+
+                        <div className="p-10 flex flex-col md:flex-row items-center gap-8">
+                            <div className="flex-1 text-left">
+                                <h4 className="text-sm font-black text-gray-800 uppercase tracking-tight mb-2 text-left">Hapus File Terabaikan (Orphan Files)</h4>
+                                <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                                    Fungsi ini akan memindai folder penyimpanan dan menghapus file logo atau lampiran lama yang sudah tidak terhubung dengan database.
+                                    Gunakan <span className="text-red-600 font-bold">Dry Run</span> untuk mengecek jumlah sampah sebelum menghapus secara permanen.
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3 w-full md:w-auto">
+                                {/* Tombol Dry Run (Hanya Cek) */}
+                                <button
+                                    onClick={() => handleCleanOrphans(true)}
+                                    disabled={isCleaning}
+                                    className="flex-1 md:flex-none px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {isCleaning ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />}
+                                    Dry Run
+                                </button>
+
+                                {/* Tombol Clean Real */}
+                                <button
+                                    onClick={() => handleCleanOrphans(false)}
+                                    disabled={isCleaning}
+                                    className="flex-1 md:flex-none px-6 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all border border-red-100 flex items-center justify-center gap-2"
+                                >
+                                    {isCleaning ? <Loader2 size={14} className="animate-spin" /> : <RefreshCcw size={14} />}
+                                    {isCleaning ? "Cleaning..." : "Clean Now"}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
 
                 {/* PANEL KANAN */}
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm text-center group">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-8 leading-none">Visual Identitas Dokumen</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-8 leading-none">Upload Logo</label>
                         <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center bg-gray-50 rounded-[2.5rem] border-4 border-dashed border-gray-100 overflow-hidden p-6 group-hover:border-green-200 transition-all">
                             {logoPreview ? (
                                 <img src={logoPreview} alt="Logo" className="w-full h-full object-contain" />
                             ) : (
                                 <Building2 size={40} className="text-gray-200" />
                             )}
-                            <label className="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center cursor-pointer">
-                                <Upload className="text-white" size={32} />
+                            <label className="absolute inset-0 bg-blue-600/80 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer text-white">
+                                <Upload size={24} className="mb-2" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Ganti Logo</span>
                                 <input type="file" className="hidden" accept="image/*" onChange={handleLogoChange} />
                             </label>
                         </div>
