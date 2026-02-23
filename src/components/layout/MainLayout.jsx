@@ -87,8 +87,8 @@ const MainLayout = ({ children }) => {
             { icon: LayoutDashboard, label: 'Dashboard Admin', path: '/admin/dashboard' },
             { icon: Users, label: 'Manajemen Staff', path: '/admin/staff' },
             { icon: Settings, label: 'Pengaturan Sistem', path: '/admin/settings' },
-            { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
             { icon: Edit3, label: 'Manajemen Objek', path: '/admin/manajemen-objek' },
+            { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
         ],
         penagih: [
             { icon: LayoutDashboard, label: 'Tugas Lapangan', path: '/penagih/dashboard' },

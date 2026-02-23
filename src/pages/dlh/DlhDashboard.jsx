@@ -8,7 +8,7 @@ import api from '../../api/axios';
 const DlhReporting = () => {
     const [reportType, setReportType] = useState('bulanan');
     const [reportData, setReportData] = useState([]);
-    const [summary, setSummary] = useState({ realisasi: 0, wajib_retribusi: 0, kepatuhan: '0%' });
+    const [summary, setSummary] = useState({ realisasi: 0, kepatuhan: '0%' });
     const [loading, setLoading] = useState(false);
 
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
@@ -99,7 +99,6 @@ const DlhReporting = () => {
             {/* --- KPI CARDS (Dinamis) --- */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card label="Realisasi Tahun Ini" val={`Rp ${summary.realisasi.toLocaleString()}`} color="text-green-700" />
-                <Card label="WR Aktif" val={summary.wajib_retribusi} color="text-blue-700" />
                 <Card label="Kepatuhan" val={summary.kepatuhan} color="text-purple-700" />
                 <Card label="Target PAD" val="Rp 120.5 M" color="text-slate-700" />
             </div>
@@ -116,7 +115,6 @@ const DlhReporting = () => {
                                 { id: 'tahunan', label: 'Tahunan', icon: BarChart3 },
                                 { id: 'bulanan', label: 'Bulanan', icon: Calendar },
                                 { id: 'wilayah', label: 'Wilayah', icon: MapPin },
-                                { id: 'wr_aktif', label: 'WR Aktif', icon: Users },
                             ].map((type) => (
                                 <button
                                     key={type.id}

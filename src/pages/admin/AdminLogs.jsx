@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import {
     Activity, Search, Download, Clock, ChevronDown,
     Eye, ShieldAlert, Database, Banknote,
-    Settings, X, Loader2, Monitor
+    Settings, X, Loader2, Monitor, MapPin
 } from 'lucide-react';
 
 const AdminLogs = () => {
@@ -50,10 +50,10 @@ const AdminLogs = () => {
 
     const getModuleIcon = (module) => {
         switch (module?.toUpperCase()) {
-            case 'KEUANGAN': return <Banknote size={16} className="text-emerald-600" />;
-            case 'DATA WR': return <Database size={16} className="text-blue-600" />;
-            case 'SISTEM': return <Settings size={16} className="text-purple-600" />;
-            case 'OPERASIONAL': return <Activity size={16} className="text-orange-600" />;
+            case 'MANAJEMEN_BENDAHARA': return <Banknote size={16} className="text-emerald-600" />;
+            case 'MANAJEMEN_OBJEK': return <Database size={16} className="text-blue-600" />;
+            case 'MANAJEMEN_SUBJEK': return <Settings size={16} className="text-purple-600" />;
+            case 'MANAJEMEN_STAFF': return <Activity size={16} className="text-orange-600" />;
             default: return <Activity size={16} className="text-gray-600" />;
         }
     };
@@ -93,10 +93,10 @@ const AdminLogs = () => {
                         className="appearance-none bg-slate-50 border-none rounded-2xl pl-6 pr-12 py-4 text-xs font-black uppercase tracking-widest text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-green-700"
                     >
                         <option value="SEMUA">Semua Modul</option>
-                        <option value="KEUANGAN">Keuangan</option>
-                        <option value="DATA WR">Data WR</option>
-                        <option value="SISTEM">Sistem</option>
-                        <option value="OPERASIONAL">Operasional</option>
+                        <option value="MANAJEMEN_BENDAHARA">Bendahara</option>
+                        <option value="MANAJEMEN_OBJEK">Objek</option>
+                        <option value="MANAJEMEN_SUBJEK">Subjek</option>
+                        <option value="MANAJEMEN_STAFF">Staff</option>
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                 </div>

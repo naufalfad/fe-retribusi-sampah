@@ -58,7 +58,7 @@ const StaffLoginPage = () => {
                         Portal Internal REKAS
                     </h1>
                     <p className="text-sm text-gray-200 font-medium drop-shadow-sm">
-                        Sistem Retribusi Elektronik Persampahan
+                        Sistem Elektronik Retribusi Persampahan
                     </p>
                 </div>
 
