@@ -1,159 +1,195 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Landmark, Wallet, FilePlus2, CheckCircle,
-    TrendingUp, ArrowUpRight, ArrowDownLeft,
-    BarChart, Calendar, RefreshCcw, ShieldCheck
+    Landmark, Wallet, FileCheck, TrendingUp,
+    ArrowUpRight, Clock, Banknote, Loader2,
+    RefreshCw, ShieldCheck, CreditCard, ChevronRight,
+    BadgeAlert, Activity
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 
 const BendaharaDashboard = () => {
+    const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBendaharaData = async () => {
+            try {
+                const res = await api.get('/report/bendahara-stats');
+                if (res.data.success) setData(res.data.data);
+            } catch (err) {
+                console.error("Gagal load dashboard Bendahara:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBendaharaData();
+    }, []);
+
+    const formatCurrency = (val) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(val);
+    };
+
+    if (loading) return (
+        <div className="h-96 flex flex-col items-center justify-center gap-4 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+            <div className="relative">
+                <div className="w-16 h-16 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                <Landmark className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600 animate-pulse" size={24} />
+            </div>
+            Otorisasi Data Keuangan...
+        </div>
+    );
+
     return (
-        <div className="space-y-8 pb-10">
-            {/* HEADER & DATE */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Otoritas Bendahara</h1>
-                    <p className="text-slate-500 font-medium">Monitoring Arus Kas & Penerbitan Dokumen Keuangan</p>
+        <div className="space-y-8 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans text-left">
+
+            {/* --- 1. HEADER & REVENUE HERO --- */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-4">
+                    <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-1 italic">
+                        Otoritas Bendahara Penerima
+                    </h4>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                        Cash <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-500">Flow</span>
+                    </h1>
+                    <p className="text-slate-400 text-sm font-medium mt-2">Monitoring harian realisasi pendapatan daerah melalui retribusi persampahan.</p>
                 </div>
-                <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm font-bold text-slate-600 text-sm">
-                    <Calendar size={18} className="text-indigo-600" />
-                    {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+
+                <div className="lg:col-span-8 bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-900/20 group">
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-2">Realisasi Bulan Ini ({new Date().toLocaleString('id-ID', { month: 'long' })})</p>
+                            <h2 className="text-4xl md:text-5xl font-black tracking-tighter italic text-white drop-shadow-md">
+                                {formatCurrency(data.summary.realisasi_bulan_ini)}
+                            </h2>
+                            <div className="flex items-center gap-2 mt-4 text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+                                <TrendingUp size={14} /> Sinkronisasi Bank Terakhir: Hari Ini
+                            </div>
+                        </div>
+                        <div className="bg-white/10 p-6 rounded-[2.5rem] backdrop-blur-md border border-white/10 text-center min-w-[200px]">
+                            <p className="text-[9px] font-black text-indigo-300 uppercase mb-1">Penerimaan Hari Ini</p>
+                            <p className="text-xl font-black">{formatCurrency(data.summary.realisasi_hari_ini)}</p>
+                        </div>
+                    </div>
+                    <Landmark size={200} className="absolute -right-10 -bottom-10 opacity-10 text-white group-hover:scale-110 transition-transform duration-1000" />
                 </div>
             </div>
 
-            {/* TOP ROW: BENTO BOX SUMMARY */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                {/* HERO CARD: REVENUE (6 COLS) */}
-                <div className="lg:col-span-7 bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-900/20">
-                    <div className="relative z-10 h-full flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-2">Total Penerimaan Bulan Ini</p>
-                                <h2 className="text-5xl font-black tracking-tighter italic">Rp 4.250.880.000</h2>
-                            </div>
-                            <div className="bg-indigo-500/20 p-3 rounded-2xl backdrop-blur-md border border-white/10">
-                                <TrendingUp className="text-indigo-400" />
-                            </div>
+            {/* --- 2. KPI GRID --- */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Antrean Rekonsiliasi (Urgent Card) */}
+                <div
+                    onClick={() => navigate('/bendahara/ssrd')}
+                    className="cursor-pointer bg-white p-6 rounded-[2.5rem] border border-orange-100 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden"
+                >
+                    <div className="relative z-10 flex justify-between items-start">
+                        <div className="p-4 rounded-2xl bg-orange-500 text-white shadow-lg shadow-orange-200">
+                            <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-700" />
                         </div>
-
-                        <div className="mt-12 grid grid-cols-2 gap-8 border-t border-white/5 pt-8">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Penerimaan Hari Ini</p>
-                                <p className="text-xl font-bold flex items-center gap-2">
-                                    Rp 125.4M <ArrowUpRight className="text-emerald-400" size={16} />
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Rata-rata Transaksi</p>
-                                <p className="text-xl font-bold italic">Rp 450rb <span className="text-[10px] font-normal opacity-50">/user</span></p>
-                            </div>
-                        </div>
+                        <span className="flex items-center gap-1.5 bg-red-50 text-red-600 text-[10px] font-black px-3 py-1 rounded-full animate-pulse">
+                            <BadgeAlert size={12} /> Perlu Audit
+                        </span>
                     </div>
-                    {/* Aksen Background */}
-                    <div className="absolute top-0 right-0 p-10 opacity-10">
-                        <Landmark size={200} />
+                    <div className="mt-6">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Antrean Rekonsiliasi</p>
+                        <h3 className="text-3xl font-black text-slate-900">{data.summary.antrean_rekon} <span className="text-sm font-bold text-slate-300">Setoran</span></h3>
                     </div>
                 </div>
 
-                {/* BANK SYNC CARD (5 COLS) */}
-                <div className="lg:col-span-5 bg-indigo-700 rounded-[2.5rem] p-8 text-white flex flex-col justify-between shadow-xl shadow-indigo-900/20">
-                    <div className="flex justify-between items-start">
-                        <div className="bg-white/10 p-4 rounded-3xl backdrop-blur-sm">
-                            <RefreshCcw className="text-white" size={24} />
+                {/* Piutang Card */}
+                <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group overflow-hidden">
+                    <div className="p-4 w-fit rounded-2xl bg-slate-100 text-slate-400 mb-6 group-hover:bg-slate-900 group-hover:text-white transition-all">
+                        <Wallet size={20} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Piutang (Unpaid)</p>
+                    <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">{formatCurrency(data.summary.total_piutang)}</h3>
+                </div>
+
+                {/* Performance Method */}
+                <div className="bg-indigo-600 p-6 rounded-[2.5rem] text-white shadow-xl shadow-indigo-900/20 relative overflow-hidden group">
+                    <div className="relative z-10">
+                        <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <CreditCard size={16} /> Tren Metode Bayar
+                        </h3>
+                        <div className="space-y-3">
+                            {data.paymentMethods.map((m, i) => (
+                                <div key={i} className="flex justify-between items-center">
+                                    <span className="text-[10px] font-bold opacity-70 uppercase tracking-tight">{m.payment_method}</span>
+                                    <span className="text-xs font-black">{m.jumlah} Transaksi</span>
+                                </div>
+                            ))}
                         </div>
-                        <span className="bg-emerald-400 text-emerald-950 text-[10px] font-black px-3 py-1 rounded-full uppercase">Bank Jabar Terhubung</span>
                     </div>
+                    <Activity size={100} className="absolute -right-4 -bottom-4 opacity-10" />
+                </div>
+            </div>
 
-                    <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1 tracking-[0.2em]">Bank Jabar BJB - Kas Daerah</p>
-                        <p className="text-2xl font-mono font-black tracking-widest">00123.4455.6677</p>
+            {/* --- 3. RECENT SETTLEMENTS (LOG) --- */}
+            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+                <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                    <div className="flex items-center gap-3">
+                        <ShieldCheck className="text-indigo-600" size={20} />
+                        <h3 className="font-black text-slate-800 text-[11px] uppercase tracking-[0.2em]">Realisasi Pembayaran Terverifikasi</h3>
                     </div>
-
-                    <button className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-bold text-sm transition-all">
-                        Sinkronisasi Mutasi Terakhir
+                    <button
+                        onClick={() => navigate('/bendahara/ssrd')}
+                        className="text-[9px] font-black text-indigo-600 uppercase tracking-widest hover:underline flex items-center gap-1"
+                    >
+                        Buka Laporan Penuh <ChevronRight size={12} />
                     </button>
                 </div>
-            </div>
 
-            {/* MIDDLE ROW: PIPELINE STATUS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Antrian SKRD */}
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm group hover:border-blue-500 transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><FilePlus2 /></div>
-                        <ArrowRightIcon />
-                    </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Antrian SKRD</p>
-                    <h4 className="text-2xl font-black text-slate-800 mt-1">15 Dokumen</h4>
-                    <p className="text-[10px] text-slate-400 font-bold mt-1">Diteruskan dari DLH</p>
-                </div>
-
-                {/* Rekon SSRD */}
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm group hover:border-orange-500 transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><RefreshCcw /></div>
-                        <ArrowRightIcon />
-                    </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Antrian Rekonsiliasi</p>
-                    <h4 className="text-2xl font-black text-slate-800 mt-1">28 Pembayaran</h4>
-                    <p className="text-[10px] text-slate-400 font-bold mt-1">Perlu pengecekan mutasi bank</p>
-                </div>
-
-                {/* Target APBD */}
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><BarChart /></div>
-                    </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Capaian Target</p>
-                    <h4 className="text-2xl font-black text-slate-800 mt-1">Rp 12.5 M <span className="text-xs font-medium text-slate-400">/ 45 M</span></h4>
-                    <div className="mt-3 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 w-[35%]"></div>
-                    </div>
-                </div>
-            </div>
-
-            {/* BOTTOM ROW: RECENT LOGS */}
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-                <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2">
-                        <ShieldCheck className="text-indigo-600" size={20} /> Aktivitas Keuangan Terbaru
-                    </h3>
-                    <button className="text-[10px] font-black text-indigo-600 uppercase hover:underline">Download Laporan (.pdf)</button>
-                </div>
-                <div className="divide-y divide-slate-50">
-                    {[
-                        { ref: 'SKRD/2026/001', wr: 'PT. Maju Sejahtera', act: 'Penomoran SKRD', val: 'Rp 5.000.000', time: '5m lalu' },
-                        { ref: 'SSRD/2026/088', wr: 'Toko Kue Lezat', act: 'Rekon Berhasil & SSRD Terbit', val: 'Rp 75.000', time: '12m lalu' },
-                        { ref: 'SKRD/2026/005', wr: 'H. Dadang (Pribadi)', act: 'Penetapan Nominal', val: 'Rp 50.000', time: '1j lalu' },
-                    ].map((log, i) => (
-                        <div key={i} className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                            <div className="flex items-center gap-4">
-                                <div className="bg-slate-100 p-2.5 rounded-xl text-slate-400 group-hover:bg-white transition-all">
-                                    <ArrowDownLeft size={16} />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{log.ref}</p>
-                                    <p className="text-sm font-black text-slate-800 tracking-tight">{log.wr}</p>
-                                    <p className="text-[10px] text-slate-500 italic">{log.act}</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm font-black text-slate-800">{log.val}</p>
-                                <p className="text-[10px] font-bold text-slate-400">{log.time}</p>
-                            </div>
-                        </div>
-                    ))}
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-white text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
+                            <tr>
+                                <th className="px-8 py-4">No. SSRD</th>
+                                <th className="px-8 py-4">Objek / Wajib Retribusi</th>
+                                <th className="px-8 py-4">Metode</th>
+                                <th className="px-8 py-4">Nominal</th>
+                                <th className="px-8 py-4 text-center">Waktu Validasi</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {data.recentTransactions.map((tx) => (
+                                <tr key={tx.id_ssrd} className="hover:bg-indigo-50/30 transition-all group">
+                                    <td className="px-8 py-5">
+                                        <p className="text-xs font-black text-indigo-600 font-mono tracking-tighter italic">{tx.no_ssrd}</p>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <p className="text-xs font-black text-slate-800 uppercase tracking-tight leading-none">
+                                            {tx.Skrd?.Objek?.nama_objek || 'General User'}
+                                        </p>
+                                        <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">Ref: {tx.Skrd?.no_skrd}</p>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[9px] font-black uppercase border border-slate-200">
+                                            {tx.payment_method}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <p className="text-sm font-black text-emerald-600 italic tracking-tighter">
+                                            {formatCurrency(tx.amount_paid)}
+                                        </p>
+                                    </td>
+                                    <td className="px-8 py-5 text-center">
+                                        <p className="text-xs font-bold text-slate-500">
+                                            {new Date(tx.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} WIB
+                                        </p>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     );
 };
-
-// Helper Icon Component
-const ArrowRightIcon = () => (
-    <div className="p-2 text-slate-300 group-hover:text-slate-600 transition-colors">
-        <ArrowUpRight size={18} />
-    </div>
-);
 
 export default BendaharaDashboard;

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
 import {
     Activity, Search, Download, Clock, ChevronDown,
     Eye, ShieldAlert, Database, Banknote,
-    Settings, X, Loader2, Monitor, MapPin
+    Settings, X, Loader2, Monitor, MapPin, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 const AdminLogs = () => {
@@ -15,33 +15,68 @@ const AdminLogs = () => {
     const [selectedLog, setSelectedLog] = useState(null);
     const [showDetail, setShowDetail] = useState(false);
 
+    const [availableModules, setAvailableModules] = useState([]);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState({
+        total_pages: 1,
+        total_items: 0
+    });
+
     // --- FETCH DATA ---
-    const fetchLogs = async () => {
+    const fetchAvailableModules = async () => {
+        try {
+            const res = await api.get('/logs/modules'); // Ganti dengan rute backend baru Anda
+            if (res.data.success) {
+                setAvailableModules(res.data.data);
+            }
+        } catch (error) {
+            console.error("Gagal memuat daftar modul:", error);
+        }
+    };
+
+    const fetchLogs = useCallback(async (page = 1, search = '', filter = 'SEMUA') => {
         setLoading(true);
         try {
             const response = await api.get('/logs/list', {
                 params: {
+                    page: page,
+                    limit: 10,
                     search: searchTerm,
-                    modul: moduleFilter !== 'SEMUA' ? moduleFilter : undefined
+                    modul: filter !== 'SEMUA' ? filter : undefined
                 }
             });
             if (response.data.success) {
                 setLogs(response.data.data);
+                setPagination(response.data.pagination);
             }
         } catch (error) {
             console.error("Gagal mengambil log:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    // Debounce search agar tidak boros API
+    useEffect(() => {
+        fetchAvailableModules();
+    }, [])
+
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
-            fetchLogs();
+            fetchLogs(currentPage, searchTerm, moduleFilter);
         }, 500);
         return () => clearTimeout(delayDebounce);
+    }, [searchTerm, moduleFilter, currentPage, fetchLogs]);
+
+    useEffect(() => {
+        setCurrentPage(1);
     }, [searchTerm, moduleFilter]);
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= pagination.total_pages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     const handleOpenDetail = (log) => {
         setSelectedLog(log);
@@ -54,6 +89,7 @@ const AdminLogs = () => {
             case 'MANAJEMEN_OBJEK': return <Database size={16} className="text-blue-600" />;
             case 'MANAJEMEN_SUBJEK': return <Settings size={16} className="text-purple-600" />;
             case 'MANAJEMEN_STAFF': return <Activity size={16} className="text-orange-600" />;
+            case 'MANAJEMEN_SKRD': return <Activity size={16} className="text-orange-600" />;
             default: return <Activity size={16} className="text-gray-600" />;
         }
     };
@@ -64,7 +100,7 @@ const AdminLogs = () => {
             {/* --- HEADER --- */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none italic">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                         Audit <span className="text-green-700">Trail</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-1">Rekam jejak digital seluruh aktivitas operasional REKAS.</p>
@@ -77,7 +113,7 @@ const AdminLogs = () => {
             {/* --- FILTER BAR --- */}
             <div className="bg-white p-4 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1 group">
-                    <Search className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors ${loading ? 'text-green-600' : 'text-slate-300'}`} size={20} />
+                    <Search className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors ${loading ? 'text-green-700' : 'text-slate-300'}`} size={20} />
                     <input
                         type="text"
                         placeholder="Cari pelaku, ID, atau aksi..."
@@ -86,17 +122,20 @@ const AdminLogs = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="relative">
+
+                {/* --- DROPDOWN MODUL DINAMIS --- */}
+                <div className="relative min-w-[200px]">
                     <select
                         value={moduleFilter}
                         onChange={(e) => setModuleFilter(e.target.value)}
-                        className="appearance-none bg-slate-50 border-none rounded-2xl pl-6 pr-12 py-4 text-xs font-black uppercase tracking-widest text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-green-700"
+                        className="w-full appearance-none bg-slate-50 border-none rounded-2xl pl-6 pr-12 py-4 text-xs font-black uppercase tracking-widest text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-green-700"
                     >
                         <option value="SEMUA">Semua Modul</option>
-                        <option value="MANAJEMEN_BENDAHARA">Bendahara</option>
-                        <option value="MANAJEMEN_OBJEK">Objek</option>
-                        <option value="MANAJEMEN_SUBJEK">Subjek</option>
-                        <option value="MANAJEMEN_STAFF">Staff</option>
+                        {availableModules.map((m) => (
+                            <option key={m} value={m}>
+                                {m.replace(/_/g, ' ')}
+                            </option>
+                        ))}
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                 </div>
@@ -118,56 +157,113 @@ const AdminLogs = () => {
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
                                 <tr><td colSpan="5" className="p-20 text-center"><Loader2 size={32} className="animate-spin mx-auto text-green-700" /></td></tr>
-                            ) : logs.map((log) => (
-                                <tr key={log.id_log} className="hover:bg-slate-50/80 transition-colors group">
-                                    <td className="p-8">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2.5 bg-slate-100 rounded-xl text-slate-400 group-hover:bg-white group-hover:text-green-700 transition-all">
-                                                <Clock size={16} />
+                            ) : logs.length === 0 ? (
+                                <tr><td colSpan="5" className="p-20 text-center text-slate-400 font-bold uppercase text-[10px] tracking-widest">Tidak ada aktivitas ditemukan</td></tr>
+                            ) : (
+                                logs.map((log) => (
+                                    <tr key={log.id_log} className="hover:bg-slate-50/80 transition-colors group">
+                                        <td className="p-8">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2.5 bg-slate-100 rounded-xl text-slate-400 group-hover:bg-white group-hover:text-green-700 transition-all">
+                                                    <Clock size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-black text-slate-800">
+                                                        {new Date(log.createdAt).toLocaleTimeString('id-ID')}
+                                                    </p>
+                                                    <p className="text-[9px] font-bold text-slate-400 uppercase">
+                                                        {new Date(log.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-xs font-black text-slate-800">
-                                                    {new Date(log.createdAt).toLocaleTimeString('id-ID')}
-                                                </p>
-                                                <p className="text-[9px] font-bold text-slate-400 uppercase">
-                                                    {new Date(log.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                </p>
+                                        </td>
+                                        <td className="p-8">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-9 w-9 bg-green-700 text-white rounded-xl flex items-center justify-center text-xs font-black uppercase">
+                                                    {log.role?.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-black text-slate-800 uppercase leading-none">ID User: {log.id_user}</p>
+                                                    <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">{log.role}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-8">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-9 w-9 bg-green-700 text-white rounded-xl flex items-center justify-center text-xs font-black uppercase">
-                                                {log.role?.charAt(0)}
+                                        </td>
+                                        <td className="p-8">
+                                            <p className="text-xs font-bold text-slate-700 leading-tight">{log.aksi.replace(/_/g, ' ')}</p>
+                                            <p className="text-[9px] text-slate-400 font-mono mt-1 italic line-clamp-1">{log.deskripsi}</p>
+                                        </td>
+                                        <td className="p-8">
+                                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 w-fit shadow-sm">
+                                                {getModuleIcon(log.modul)}
+                                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{log.modul}</span>
                                             </div>
-                                            <div>
-                                                <p className="text-xs font-black text-slate-800 uppercase leading-none">ID User: {log.user_id}</p>
-                                                <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">{log.role}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-8">
-                                        <p className="text-xs font-bold text-slate-700 leading-tight">{log.aksi.replace(/_/g, ' ')}</p>
-                                        <p className="text-[9px] text-slate-400 font-mono mt-1 italic line-clamp-1">{log.deskripsi}</p>
-                                    </td>
-                                    <td className="p-8">
-                                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 w-fit shadow-sm">
-                                            {getModuleIcon(log.modul)}
-                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{log.modul}</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-8 text-center">
-                                        <button
-                                            onClick={() => handleOpenDetail(log)}
-                                            className="p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-900 hover:text-white transition-all active:scale-90"
-                                        >
-                                            <Eye size={18} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="p-8 text-center">
+                                            <button
+                                                onClick={() => handleOpenDetail(log)}
+                                                className="p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-900 hover:text-white transition-all active:scale-90"
+                                            >
+                                                <Eye size={18} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
+                </div>
+                {/* --- FOOTER PAGINASI --- */}
+                <div className="p-8 bg-slate-50/50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        Menampilkan <span className="text-slate-900">{logs.length}</span> Dari <span className="text-slate-900">{pagination.total_items}</span> Log Aktivitas
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            disabled={currentPage === 1 || loading}
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            className="p-3 bg-white border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+
+                        <div className="flex gap-1">
+                            {[...Array(pagination.total_pages)].map((_, i) => {
+                                const pageNum = i + 1;
+                                // Logika sederhana agar tombol tidak terlalu banyak jika halaman ratusan
+                                if (
+                                    pagination.total_pages <= 5 ||
+                                    pageNum === 1 ||
+                                    pageNum === pagination.total_pages ||
+                                    (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                                ) {
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => handlePageChange(pageNum)}
+                                            className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all border ${currentPage === pageNum
+                                                ? 'bg-green-700 border-green-700 text-white shadow-lg shadow-green-900/20'
+                                                : 'bg-white border-slate-200 text-slate-400 hover:bg-slate-100'
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                } else if (pageNum === currentPage - 2 || pageNum === currentPage + 2) {
+                                    return <span key={pageNum} className="px-1 text-slate-300">...</span>;
+                                }
+                                return null;
+                            })}
+                        </div>
+
+                        <button
+                            disabled={currentPage === pagination.total_pages || loading}
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            className="p-3 bg-white border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
 

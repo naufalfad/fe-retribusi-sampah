@@ -1,250 +1,183 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Search, MapPin, Users, Wallet,
-    CreditCard, Navigation, CheckCircle2, Printer, RefreshCw,
-    AlertCircle, Filter, X, ArrowRight, Banknote, QrCode, Landmark
+    Wallet, Users, AlertCircle, ArrowUpRight,
+    MapPin, History, Search, Loader2,
+    CheckCircle2, Banknote, Navigation, Zap
 } from 'lucide-react';
-import StatusBadge from '../../components/common/StatusBadge';
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 
 const PenagihDashboard = () => {
-    const [selectedKelurahan, setSelectedKelurahan] = useState('Pakansari');
-    // Tambahkan state ini di dalam komponen PenagihDashboard
-    const [showPayModal, setShowPayModal] = useState(false);
-    const [selectedWR, setSelectedWR] = useState(null);
-    const [payMethod, setPayMethod] = useState('tunai'); // 'tunai' | 'qris' | 'va'
-    const [inputAmount, setInputAmount] = useState('');
+    const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const handleOpenPayment = (wr) => {
-        setSelectedWR(wr);
-        setInputAmount(wr.tagihan); // Default nominal sesuai tagihan
-        setShowPayModal(true);
+    useEffect(() => {
+        const fetchPenagihData = async () => {
+            try {
+                const res = await api.get('/report/penagih-stats');
+                if (res.data.success) setData(res.data.data);
+            } catch (err) {
+                console.error("Gagal load dashboard penagih:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPenagihData();
+    }, []);
+
+    const formatCurrency = (val) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(val);
     };
 
-    const handleProcessPayment = () => {
-        // Logika simpan ke tabel SSRD (Status: Menunggu Validasi Bendahara)
-        alert(`Pembayaran ${payMethod.toUpperCase()} untuk ${selectedWR.nama} berhasil diproses. Menunggu verifikasi Bendahara.`);
-        setShowPayModal(false);
-    };
-
-    // Data Dummy Wilayah Kerja
-    const stats = [
-        { label: 'Total WR', val: '150', icon: <Users />, color: 'bg-blue-600' },
-        { label: 'Belum Bayar', val: '42', icon: <AlertCircle />, color: 'bg-red-500' },
-        { label: 'Sudah Bayar', val: '108', icon: <CheckCircle2 />, color: 'bg-green-600' },
-    ];
-
-    // Data Dummy List Penagihan di Kelurahan Terpilih
-    const [wrList] = useState([
-        { id: 1, nama: 'Kinan Kari', npwrd: '4.1.2.01.02.000001', alamat: 'RT 01/02', tagihan: 50000, status: 'unpaid' },
-        { id: 2, nama: 'Toko Berkah', npwrd: '4.1.2.01.02.000088', alamat: 'RT 03/05', tagihan: 150000, status: 'unpaid' },
-        { id: 3, nama: 'Sutisna', npwrd: '4.1.2.01.02.000042', alamat: 'RT 01/01', tagihan: 50000, status: 'paid' },
-    ]);
+    if (loading) return (
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50">
+            <div className="w-12 h-12 border-4 border-green-200 border-t-green-700 rounded-full animate-spin mb-4"></div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Menyiapkan Rute Tugas...</p>
+        </div>
+    );
 
     return (
-        <div className="space-y-6 pb-20 animate-in fade-in duration-500">
+        <div className="min-h-screen bg-slate-50 space-y-6 pb-28 font-sans animate-in fade-in duration-700">
 
-            {/* --- TOP SECTION: INFO PENAGIH & WILAYAH --- */}
-            <div className="bg-green-800 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-green-900/30 relative overflow-hidden">
-                <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="h-12 w-12 bg-white/20 rounded-2xl backdrop-blur-md flex items-center justify-center border border-white/30 font-black">
-                            JP
+            {/* --- 1. HEADER: GREETING & LOCATION --- */}
+            <div className="px-4 pt-6 flex justify-between items-center">
+                <div className="text-left">
+                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-1 italic">Tugas Lapangan</h4>
+                    <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                        Halo, {JSON.parse(localStorage.getItem('user'))?.username}
+                    </h1>
+                </div>
+                <div className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 relative">
+                    <Navigation size={20} className="text-green-700" />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                </div>
+            </div>
+
+            {/* --- 2. CASH IN HAND (HERO CARD) --- */}
+            <div className="px-4">
+                <div className="bg-slate-900 p-6 rounded-[2.5rem] text-white shadow-2xl shadow-green-900/20 relative overflow-hidden group active:scale-[0.98] transition-all">
+                    <div className="relative z-10 space-y-6">
+                        <div className="flex justify-between items-start">
+                            <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
+                                <Wallet className="text-green-400" size={24} />
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[9px] font-black text-green-400 uppercase tracking-widest">Wilayah Tugas</p>
+                                <p className="text-xs font-bold uppercase italic">{data.wilayah}</p>
+                            </div>
                         </div>
+
                         <div>
-                            <h2 className="text-xl font-black tracking-tight uppercase">Juru Pungut 01</h2>
-                            <p className="text-[10px] font-bold text-green-300 uppercase tracking-[0.2em]">Petugas: Budi Santoso</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1 leading-none">Tunai Terkumpul (Hari Ini)</p>
+                            <h2 className="text-4xl font-black tracking-tighter italic text-white drop-shadow-lg">
+                                {formatCurrency(data.summary.cash_today)}
+                            </h2>
                         </div>
-                    </div>
 
-                    <div className="flex items-center gap-2 bg-black/20 w-fit px-4 py-2 rounded-xl border border-white/10 mt-6">
-                        <MapPin size={14} className="text-green-400" />
-                        <span className="text-xs font-bold uppercase tracking-widest">Wilayah: {selectedKelurahan}</span>
+                        <button
+                            onClick={() => navigate('/penagih/riwayat')}
+                            className="w-full bg-green-600 hover:bg-green-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl flex items-center justify-center gap-2 transition-all active:bg-black"
+                        >
+                            Detail Setoran <ArrowUpRight size={14} />
+                        </button>
+                    </div>
+                    <Banknote size={200} className="absolute -right-12 -bottom-12 opacity-5 rotate-12" />
+                </div>
+            </div>
+
+            {/* --- 3. STATS QUICK GRID --- */}
+            <div className="px-4 grid grid-cols-2 gap-4">
+                <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between h-32">
+                    <Users className="text-blue-600" size={20} />
+                    <div className="text-left">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total WR</p>
+                        <p className="text-xl font-black text-slate-800 italic">{data.summary.total_wr} <span className="text-[10px] font-bold text-slate-300">OBJEK</span></p>
                     </div>
                 </div>
-                <Navigation className="absolute -right-6 -bottom-6 text-white/10" size={180} />
-            </div>
-
-            {/* --- STATS GRID (MOBILE RESPONSIVE) --- */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-sans">
-                {stats.map((s, i) => (
-                    <div key={i} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between">
-                        <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{s.label}</p>
-                            <p className="text-2xl font-black text-gray-800 italic">{s.val}</p>
-                        </div>
-                        <div className={`p-3 rounded-2xl text-white ${s.color} shadow-lg shadow-gray-100`}>
-                            {s.icon}
-                        </div>
+                <div
+                    onClick={() => navigate('/penagih/list-skrd')}
+                    className="bg-white p-5 rounded-[2rem] border border-red-100 shadow-sm flex flex-col justify-between h-32 active:bg-red-50 transition-colors"
+                >
+                    <AlertCircle className="text-red-500" size={20} />
+                    <div className="text-left">
+                        <p className="text-[9px] font-black text-red-400 uppercase tracking-widest leading-none mb-1">Tunggakan</p>
+                        <p className="text-xl font-black text-slate-800 italic leading-none">{data.summary.jumlah_tunggakan} <span className="text-[10px] font-bold text-slate-300 uppercase">Tagihan</span></p>
+                        <p className="text-[10px] font-black text-red-600 mt-1">{formatCurrency(data.summary.total_tunggakan_idr)}</p>
                     </div>
-                ))}
+                </div>
             </div>
 
-            {/* --- DAFTAR PENAGIHAN PER KELURAHAN --- */}
-            <div className="space-y-4">
+            {/* --- 4. RECENT ACTIVITY --- */}
+            <div className="px-4 space-y-4">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2 text-lg">
-                        <Wallet className="text-green-700" size={20} /> Antrean Tagihan
+                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm italic">
+                        <History className="text-green-700" size={18} /> Aktivitas Terakhir
                     </h3>
-                    <div className="flex gap-2">
-                        <button className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400"><Filter size={18} /></button>
-                        <button className="p-2.5 bg-green-700 text-white rounded-xl shadow-lg shadow-green-900/20"><Search size={18} /></button>
-                    </div>
+                    <button onClick={() => navigate('/penagih/riwayat')} className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline">Lihat Semua</button>
                 </div>
 
                 <div className="space-y-3">
-                    {wrList.map((wr) => (
-                        <div
-                            key={wr.id}
-                            className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group active:scale-95"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className={`h-12 w-12 rounded-2xl flex items-center justify-center font-black text-xs ${wr.status === 'paid' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                                    {wr.status === 'paid' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
+                    {data.recentCollections.length === 0 ? (
+                        <div className="text-center py-10 opacity-30 italic uppercase font-black text-[10px] tracking-widest">Belum ada penagihan hari ini</div>
+                    ) : data.recentCollections.map((col) => (
+                        <div key={col.id_ssrd} className="bg-white p-5 rounded-[2rem] border border-slate-50 shadow-sm flex items-center justify-between group active:scale-[0.98] transition-all">
+                            <div className="flex items-center gap-4 text-left">
+                                <div className="h-12 w-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                                    <CheckCircle2 size={24} />
                                 </div>
-                                <div>
-                                    <h4 className="font-black text-gray-800 text-sm uppercase tracking-tight leading-none mb-1">{wr.nama}</h4>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-green-700 font-mono italic">{wr.npwrd}</span>
-                                        <span className="h-1 w-1 bg-gray-200 rounded-full"></span>
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{wr.alamat}</span>
+                                <div className="min-w-0">
+                                    <h4 className="font-black text-slate-800 text-sm uppercase truncate w-40">
+                                        {col.Skrd?.Objek?.Subjek?.nama_subjek || 'WR Umum'}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter truncate">{col.Skrd?.Objek?.nama_objek}</span>
+                                        <span className="h-1 w-1 bg-slate-200 rounded-full"></span>
+                                        <span className="text-[9px] font-black text-indigo-600 uppercase">{col.payment_method}</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="text-right flex items-center gap-4">
-                                <div className="hidden sm:block">
-                                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Tagihan</p>
-                                    <p className="text-sm font-black text-gray-800 tracking-tighter">Rp {wr.tagihan.toLocaleString()}</p>
-                                </div>
-                                <button
-                                    onClick={() => wr.status === 'unpaid' && handleOpenPayment(wr)}
-                                    className={`p-3 rounded-2xl transition-all shadow-sm ${wr.status === 'paid' ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : "p-3 bg-gray-50 text-gray-400 rounded-2xl group-hover:bg-green-700 group-hover:text-white transition-all shadow-sm"}`}
-                                >
-                                    {wr.status === 'paid' ? <CheckCircle2 size={20} /> : <ArrowRight size={20} />}
-                                </button>
+                            <div className="text-right">
+                                <p className="text-sm font-black text-slate-800 tracking-tighter italic">{formatCurrency(col.amount_paid)}</p>
+                                <p className="text-[8px] font-bold text-slate-300 uppercase">{new Date(col.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* --- ACTION BUTTON: LAPORAN HARIAN --- */}
-            <div className="pt-4">
-                <button className="w-full bg-gray-900 text-white py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-gray-900/30 flex items-center justify-center gap-3 active:scale-95 transition-all">
-                    Tutup Setoran Hari Ini
-                </button>
-                <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-4">
-                    Data tersinkronisasi otomatis ke Bendahara Pusat
-                </p>
-            </div>
-            {/* --- MODAL PEMBAYARAN DI TEMPAT --- */}
-            {showPayModal && selectedWR && (
-                <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300">
-
-                        {/* Header Modal */}
-                        <div className="p-6 bg-green-800 text-white relative">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
-                                    <CreditCard size={24} />
-                                </div>
-                                <button onClick={() => setShowPayModal(false)} className="p-2 hover:bg-white/10 rounded-full">
-                                    <X size={24} />
-                                </button>
-                            </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70 leading-none mb-1">Konfirmasi Setoran</p>
-                            <h3 className="text-xl font-black uppercase tracking-tight leading-none">{selectedWR.nama}</h3>
-                            <p className="text-xs font-mono mt-1 opacity-80">{selectedWR.npwrd}</p>
-                        </div>
-
-                        <div className="p-8 space-y-6">
-                            {/* 1. Pilih Metode Pembayaran */}
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Metode Pembayaran</label>
-                                <div className="grid grid-cols-3 gap-3">
-                                    <button
-                                        onClick={() => setPayMethod('tunai')}
-                                        className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${payMethod === 'tunai' ? 'border-green-600 bg-green-50' : 'border-gray-100 bg-gray-50 opacity-60'}`}
-                                    >
-                                        <Banknote size={20} className={payMethod === 'tunai' ? 'text-green-700' : 'text-gray-400'} />
-                                        <span className="text-[10px] font-black uppercase">Tunai</span>
-                                    </button>
-                                    <button
-                                        onClick={() => setPayMethod('qris')}
-                                        className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${payMethod === 'qris' ? 'border-blue-600 bg-blue-50' : 'border-gray-100 bg-gray-50 opacity-60'}`}
-                                    >
-                                        <QrCode size={20} className={payMethod === 'qris' ? 'text-blue-700' : 'text-gray-400'} />
-                                        <span className="text-[10px] font-black uppercase">QRIS</span>
-                                    </button>
-                                    <button
-                                        onClick={() => setPayMethod('va')}
-                                        className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${payMethod === 'va' ? 'border-purple-600 bg-purple-50' : 'border-gray-100 bg-gray-50 opacity-60'}`}
-                                    >
-                                        <Landmark size={20} className={payMethod === 'va' ? 'text-purple-700' : 'text-gray-400'} />
-                                        <span className="text-[10px] font-black uppercase">V. Account</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* 2. Detail Pembayaran Dinamis */}
-                            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                                {payMethod === 'tunai' && (
-                                    <div className="space-y-4">
-                                        <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
-                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Input Uang Diterima (Rp)</label>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-2xl font-black text-gray-400">Rp</span>
-                                                <input
-                                                    type="number"
-                                                    value={inputAmount}
-                                                    onChange={(e) => setInputAmount(e.target.value)}
-                                                    className="w-full bg-transparent text-3xl font-black text-green-700 outline-none p-0 tracking-tighter"
-                                                    placeholder="0"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 text-amber-700 rounded-2xl border border-amber-100 italic">
-                                            <AlertCircle size={16} />
-                                            <p className="text-[10px] font-bold uppercase tracking-tight">Status SSRD otomatis terisi "PAID" untuk divalidasi Bendahara.</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {payMethod === 'qris' && (
-                                    <div className="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-3xl border border-blue-100 space-y-4">
-                                        <div className="w-40 h-40 bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center font-bold text-gray-300">
-                                            <QrCode size={100} className="text-slate-800" />
-                                        </div>
-                                        <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest text-center leading-relaxed">
-                                            Tunjukkan QRIS kepada Wajib Retribusi <br /> Nominal Otomatis: <span className="text-sm">Rp {selectedWR.tagihan.toLocaleString()}</span>
-                                        </p>
-                                    </div>
-                                )}
-
-                                {payMethod === 'va' && (
-                                    <div className="p-6 bg-purple-50 rounded-3xl border border-purple-100 space-y-4">
-                                        <p className="text-[10px] font-black text-purple-700 uppercase tracking-widest">Nomor Virtual Account (BJB)</p>
-                                        <div className="flex justify-between items-center">
-                                            <p className="text-2xl font-mono font-black text-purple-900 tracking-[0.2em]">7788{selectedWR.npwrd.slice(-8)}</p>
-                                            <button className="p-2 bg-white text-purple-600 rounded-xl shadow-sm"><RefreshCw size={16} /></button>
-                                        </div>
-                                        <p className="text-[10px] text-purple-400 font-bold italic leading-tight">* Berlaku 24 jam. Salin dan kirim ke WhatsApp pembayar.</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* 3. Button Aksi */}
-                            <button
-                                onClick={handleProcessPayment}
-                                className="w-full bg-green-700 hover:bg-black text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 uppercase text-sm tracking-[0.2em] transition-all active:scale-95"
-                            >
-                                {payMethod === 'tunai' ? <CheckCircle2 size={20} /> : <Printer size={20} />}
-                                {payMethod === 'tunai' ? 'Selesaikan Setoran' : 'Generate Kode Bayar'}
-                            </button>
-                        </div>
-                    </div>
+            {/* --- 5. FLOATING BOTTOM BUTTONS --- */}
+            {/* <div className="fixed bottom-6 left-0 right-0 px-6 z-50">
+                <div className="max-w-md mx-auto grid grid-cols-2 gap-4">
+                    <button
+                        onClick={() => navigate('/penagih/list-skrd')}
+                        className="bg-white text-slate-900 border-2 border-slate-100 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl flex items-center justify-center gap-2 active:bg-slate-900 active:text-white transition-all"
+                    >
+                        <Search size={16} /> Cari Tagihan
+                    </button>
+                    <button
+                        onClick={() => navigate('/penagih/wilayah')}
+                        className="bg-green-700 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-green-900/30 flex items-center justify-center gap-2 active:bg-black transition-all"
+                    >
+                        <MapPin size={16} /> Rute Tugas
+                    </button>
                 </div>
-            )}
+            </div> */}
+
+            {/* --- 6. SYSTEM FOOTER --- */}
+            <div className="px-4 pt-4 pb-10">
+                <div className="bg-blue-50 border border-blue-100 p-6 rounded-[2.5rem] flex items-center gap-4">
+                    <Zap size={24} className="text-blue-600 animate-pulse shrink-0" fill="currentColor" />
+                    <p className="text-[9px] font-bold text-blue-800 leading-relaxed uppercase italic">
+                        Data disinkronkan otomatis ke server pusat. Pastikan GPS aktif untuk pelaporan titik lokasi penagihan.
+                    </p>
+                </div>
+            </div>
+
         </div>
     );
 };

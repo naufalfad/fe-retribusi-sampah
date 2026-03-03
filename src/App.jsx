@@ -35,6 +35,8 @@ import PenagihWilayah from './pages/penagih/PenagihWilayah';
 import PenagihRiwayat from './pages/penagih/PenagihRiwayat';
 import DocumentsPage from './pages/DocumentsPage';
 import ObjectManagement from './pages/ObjectManagement';
+import DlhPemeriksaan from './pages/dlh/DlhPemeriksaan';
+import DlhValidasiBayar from './pages/dlh/DlhValidasiBayar';
 
 function App() {
   return (
@@ -73,12 +75,13 @@ function App() {
           <Route path="/dlh/list-objek" element={<DlhListObjek />} />
           <Route path="/dlh/daftar-user" element={<FormTambahSubjek isStaff={true} />} />
           <Route path="/dlh/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
-          {/* <Route path="/dlh/validasi-bayar" element={<DlhValidasiBayar />} /> */}
+          <Route path="/dlh/validasi-bayar" element={<DlhValidasiBayar />} />
           <Route path="/dlh/pembayaran" element={<DlhPaymentMonitoring />} />
           <Route path="/dlh/layanan" element={<DlhLayananValidation />} />
           <Route path="/dlh/list-skrd" element={<DlhListSkrd />} />
           <Route path="/dlh/manajemen-objek" element={<ObjectManagement />} />
           <Route path="/dlh/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
 
           {/* Halaman Bendahara */}
           <Route path="/bendahara/dashboard" element={<BendaharaDashboard />} />
@@ -97,7 +100,7 @@ function App() {
           <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
 
           {/* Halaman Penagih */}
-          <Route path="/penagih/login" element={<PenagihLoginPage />} />
+          <Route path="/penagih" element={<PenagihLoginPage />} />
           <Route path="/penagih/dashboard" element={<PenagihDashboard />} />
           <Route path="/penagih/list-skrd" element={<PenagihListSkrd />} />
           <Route path="/penagih/wilayah" element={<PenagihWilayah />} />

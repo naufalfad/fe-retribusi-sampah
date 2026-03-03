@@ -1,218 +1,213 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Users, ShieldCheck, Key, Settings2, Bell,
+    Users, Key, Settings2, Bell,
     Activity, ChevronRight, Server, Database,
-    Send, X, AlertTriangle, CheckCircle2
+    Zap, Clock, ShieldCheck, ArrowUpRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [greeting, setGreeting] = useState('');
 
-    // State untuk interaksi
-    const [showBroadcastModal, setShowBroadcastModal] = useState(false);
-    const [broadcastMsg, setBroadcastMsg] = useState('');
-    const [systemOnline, setSystemOnline] = useState(true);
+    useEffect(() => {
+        // Set Greeting dinamis
+        const hour = new Date().getHours();
+        if (hour < 12) setGreeting('Selamat Pagi');
+        else if (hour < 18) setGreeting('Selamat Siang');
+        else setGreeting('Selamat Malam');
 
-    const stats = [
-        { label: 'Total Staff UPT', val: '40', color: 'bg-blue-600', path: '/admin/staff' },
-        { label: 'Staff Bidang DLH', val: '12', color: 'bg-green-600', path: '/admin/staff' },
-        { label: 'Bendahara', val: '4', color: 'bg-indigo-600', path: '/admin/staff' },
-        { label: 'Antrean Reset Password', val: '3', color: 'bg-red-500', path: '/admin/staff' },
+        const fetchDashboardData = async () => {
+            try {
+                const res = await api.get('/report/admin-stats');
+                if (res.data.success) setData(res.data.data);
+            } catch (err) {
+                console.error("Gagal load dashboard:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDashboardData();
+    }, []);
+
+    if (loading) return (
+        <div className="h-96 flex flex-col items-center justify-center gap-4 text-slate-400 font-black uppercase tracking-widest text-[10px]">
+            <div className="relative">
+                <div className="w-16 h-16 border-4 border-slate-100 border-t-green-600 rounded-full animate-spin"></div>
+                <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-green-600 animate-pulse" size={24} />
+            </div>
+            Menyinkronkan Core Engine...
+        </div>
+    );
+
+    const kpi = [
+        { label: 'Staff UPT', val: data.counts.upt, color: 'from-blue-600 to-blue-400', icon: Users },
+        { label: 'Staff DLH', val: data.counts.dlh, color: 'from-emerald-600 to-teal-400', icon: ShieldCheck },
+        { label: 'Bendahara', val: data.counts.bendahara, color: 'from-indigo-600 to-violet-400', icon: BanknoteIcon },
+        { label: 'Pendaftaran Pending', val: data.counts.pending_subjek, color: 'from-orange-600 to-amber-400', icon: Clock },
     ];
-
-    const logs = [
-        { id: 1, user: 'Admin_Andi', action: 'Update NIP Pejabat', time: '2 menit lalu', type: 'settings' },
-        { id: 2, user: 'UPT_Ciawi', action: 'Login ke Sistem', time: '5 menit lalu', type: 'auth' },
-        { id: 3, user: 'Bendahara_1', action: 'Terbitkan 12 SSRD', time: '12 menit lalu', type: 'finance' },
-    ];
-
-    const handleSendBroadcast = (e) => {
-        e.preventDefault();
-        alert(`Pesan Broadcast Terkirim: ${broadcastMsg}`);
-        setShowBroadcastModal(false);
-        setBroadcastMsg('');
-    };
 
     return (
-        <div className="space-y-8 pb-20 animate-in fade-in duration-500">
+        <div className="space-y-8 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans text-left">
 
-            {/* --- TOP BAR: SYSTEM HEALTH --- */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
-                <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl ${systemOnline ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        <Server size={24} className={systemOnline ? 'animate-pulse' : ''} />
+            {/* --- 1. WELCOME & SYSTEM HEALTH --- */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+                <div>
+                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-[0.3em] mb-1 italic">{greeting}, Administrator</h4>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                        Control <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-emerald-500">Center</span>
+                    </h1>
+                </div>
+
+                <div className="flex items-center gap-4 bg-white p-2 pr-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <div className="relative">
+                        <div className="p-3 rounded-2xl bg-slate-900 text-white shadow-lg">
+                            <Server size={20} />
+                        </div>
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-ping"></span>
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-gray-800 tracking-tighter uppercase">Status Sistem REKAS</h2>
-                        <div className="flex items-center gap-2">
-                            <span className={`h-2 w-2 rounded-full ${systemOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                                {systemOnline ? 'Server Bogor Cloud Online' : 'Server Maintenance'}
-                            </p>
-                        </div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Server Status</p>
+                        <p className="text-xs font-black text-slate-800 uppercase leading-none">Cloud-Bogor Online</p>
                     </div>
-                </div>
-                <div className="flex gap-3 w-full md:w-auto">
-                    <button
-                        onClick={() => setShowBroadcastModal(true)}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all active:scale-95"
-                    >
-                        <Bell size={14} /> Kirim Notifikasi Staff
-                    </button>
                 </div>
             </div>
 
-            {/* --- STATS GRID --- */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 font-sans">
-                {stats.map((s, i) => (
-                    <div
-                        key={i}
-                        onClick={() => navigate(s.path)}
-                        className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group"
-                    >
-                        <div className="flex justify-between items-start mb-4">
-                            <div className={`p-4 rounded-2xl text-white ${s.color} shadow-lg shadow-gray-200 group-hover:scale-110 transition-transform`}>
-                                <Users size={20} />
-                            </div>
-                            <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-900 transition-colors" />
+            {/* --- 2. KPI GRID --- */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {kpi.map((s, i) => (
+                    <div key={i} className="relative bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group overflow-hidden">
+                        <div className={`absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-700 group-hover:scale-125 group-hover:-rotate-12`}>
+                            <s.icon size={120} />
                         </div>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{s.label}</p>
-                        <p className="text-3xl font-black text-gray-800 mt-1 italic tracking-tighter">{s.val}</p>
+
+                        <div className="relative z-10 flex justify-between items-start mb-4">
+                            <div className={`p-4 rounded-2xl bg-gradient-to-br ${s.color} text-white shadow-xl group-hover:rotate-12 transition-transform`}>
+                                <s.icon size={20} />
+                            </div>
+                            {/* <div className="bg-slate-50 p-2 rounded-lg text-slate-300 group-hover:text-slate-900 transition-colors">
+                                <ArrowUpRight size={14} />
+                            </div> */}
+                        </div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{s.label}</p>
+                        <div className="flex items-baseline gap-2">
+                            <p className="text-4xl font-black text-slate-900 italic tracking-tighter">{s.val}</p>
+                            <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Live Data</span>
+                        </div>
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                {/* --- LEFT: MAIN CONTROLS (8 COLS) --- */}
-                <div className="lg:col-span-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Customizing Format Card */}
-                        <div className="bg-gradient-to-br from-green-700 to-green-900 p-8 rounded-[3rem] text-white shadow-2xl shadow-green-900/20 flex flex-col justify-between min-h-[250px] relative overflow-hidden group">
-                            <div className="relative z-10">
-                                <h3 className="text-2xl font-black italic tracking-tighter leading-tight uppercase">Customizing <br />Format Surat</h3>
-                                <p className="text-xs text-green-100/60 mt-3 font-medium">Update Logo, Alamat, dan NIP Pejabat untuk dokumen NPWRD, SKRD, & SSRD.</p>
-                            </div>
-                            <button
-                                onClick={() => navigate('/admin/settings')}
-                                className="relative z-10 w-fit mt-8 bg-white text-green-900 px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-yellow-400 transition-all active:scale-95"
-                            >
-                                Buka Konfigurasi
-                            </button>
-                            <Settings2 size={180} className="absolute -right-10 -bottom-10 opacity-10 group-hover:rotate-45 transition-transform duration-1000" />
-                        </div>
+                {/* --- 3. MAIN WORKSPACE (LEFT) --- */}
+                <div className="lg:col-span-8 space-y-8">
 
-                        {/* Reset Password Summary */}
-                        <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col justify-between">
-                            <div className="flex justify-between items-start">
-                                <div className="p-4 bg-red-50 text-red-600 rounded-3xl">
-                                    <Key size={28} />
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Lupa Password</p>
-                                    <p className="text-2xl font-black text-red-600 italic">3 Request</p>
-                                </div>
+                    {/* Hero Action Card */}
+                    <div className="bg-slate-950 p-10 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden group border-4 border-slate-900">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-green-600/20 rounded-full blur-[100px] group-hover:bg-green-600/40 transition-all duration-1000"></div>
+
+                        <div className="relative z-10 max-w-md space-y-6">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-black uppercase tracking-widest">
+                                <Zap size={12} fill="currentColor" /> System Customizer
                             </div>
-                            <p className="text-xs text-gray-500 font-medium mt-4 italic leading-relaxed">
-                                Terdapat permintaan pemulihan akun dari Staff UPT. Segera verifikasi identitas staff sebelum memberikan akses.
+                            <h3 className="text-3xl font-black italic tracking-tighter leading-none uppercase">
+                                Personalisasi <br /> Atribut Dokumen
+                            </h3>
+                            <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                Kelola identitas visual SKRD, SSRD, dan TTD Digital Pejabat pengesahan dalam satu pintu.
                             </p>
                             <button
-                                onClick={() => navigate('/admin/staff')}
-                                className="mt-6 w-full py-4 bg-gray-50 text-gray-700 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] border border-gray-100 hover:bg-red-50 hover:text-red-600 transition-all shadow-sm"
+                                onClick={() => navigate('/admin/settings')}
+                                className="group bg-white text-slate-950 px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-green-500 hover:text-white transition-all active:scale-95 shadow-xl shadow-white/5 flex items-center gap-3"
                             >
-                                Kelola Permintaan
+                                Buka Pengaturan <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                             </button>
                         </div>
+
+                        <Settings2 size={300} className="absolute -right-20 -bottom-20 text-white/[0.02] group-hover:rotate-45 transition-transform duration-[3000ms]" />
                     </div>
 
-                    {/* Database Health Card */}
-                    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-                        <div className="h-24 w-24 bg-blue-50 text-blue-600 rounded-[2rem] flex items-center justify-center shrink-0">
-                            <Database size={40} />
+                    {/* Secondary Data Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:border-blue-500 transition-all">
+                            <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner">
+                                <Database size={28} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Aset (NPOR)</p>
+                                <h4 className="text-2xl font-black text-slate-900 tracking-tighter">{data.counts.total_objek.toLocaleString()} <span className="text-xs font-bold text-slate-300 font-sans tracking-normal">Terdaftar</span></h4>
+                            </div>
                         </div>
-                        <div className="flex-1 text-center md:text-left">
-                            <h4 className="text-xl font-black text-gray-800 uppercase tracking-tighter">Integritas Data Master</h4>
-                            <p className="text-sm text-gray-500 font-medium mt-1 leading-relaxed">Sinkronisasi data Wajib Retribusi antara UPT dan DLH Pusat berjalan 100% akurat. Pencadangan terjadwal aktif.</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Terakhir Backup</p>
-                            <p className="text-xs font-bold text-gray-600 uppercase">Hari ini, 03:00 AM</p>
+
+                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:border-orange-500 transition-all">
+                            <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-3xl flex items-center justify-center shrink-0 group-hover:bg-orange-600 group-hover:text-white transition-all shadow-inner">
+                                <Activity size={28} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Health Check</p>
+                                <h4 className="text-2xl font-black text-slate-900 tracking-tighter">100% <span className="text-xs font-bold text-slate-300 font-sans tracking-normal italic">Optimized</span></h4>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* --- RIGHT: RECENT LOGS (4 COLS) --- */}
-                <div className="lg:col-span-4 bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <Activity className="text-green-700 font-bold" size={20} />
-                            <h3 className="font-black text-gray-800 text-xs uppercase tracking-widest">Aktivitas Staff</h3>
-                        </div>
-                        <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                    </div>
-                    <div className="p-2 flex-grow overflow-y-auto max-h-[500px] custom-scrollbar">
-                        {logs.map((log) => (
-                            <div key={log.id} className="p-6 hover:bg-gray-50 transition-all rounded-[2rem] flex items-start justify-between group">
-                                <div className="flex items-start gap-4">
-                                    <div className="mt-1 h-8 w-8 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center group-hover:bg-white group-hover:text-green-600 transition-colors shadow-sm">
-                                        <ChevronRight size={14} />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-black text-gray-800 uppercase tracking-tighter">{log.user}</p>
-                                        <p className="text-[10px] text-gray-500 font-medium italic mt-0.5">{log.action}</p>
-                                    </div>
-                                </div>
-                                <p className="text-[9px] font-bold text-gray-300 group-hover:text-gray-500 uppercase">{log.time}</p>
+                {/* --- 4. TIMELINE LOGS (RIGHT) --- */}
+                <div className="lg:col-span-4 space-y-6">
+                    <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full border-b-4 border-b-green-600">
+                        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                            <div className="flex items-center gap-3">
+                                <Activity className="text-slate-900" size={20} />
+                                <h3 className="font-black text-slate-800 text-[11px] uppercase tracking-[0.2em]">Audit Trail</h3>
                             </div>
-                        ))}
-                    </div>
-                    <div className="p-6 bg-gray-50 text-center">
-                        <button className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Buka Detail Audit Log</button>
+                            <span className="text-[9px] font-black bg-white px-2 py-1 rounded-lg border border-slate-200 text-slate-400">Terbaru</span>
+                        </div>
+
+                        <div className="p-4 flex-grow overflow-y-auto max-h-[500px] custom-scrollbar">
+                            <div className="space-y-2">
+                                {data.recentLogs.map((log, idx) => (
+                                    <div key={log.id_log} className="p-5 hover:bg-slate-50 transition-all rounded-[1.8rem] flex items-start gap-4 group border border-transparent hover:border-slate-100">
+                                        <div className="mt-1 flex flex-col items-center">
+                                            <div className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></div>
+                                            <div className="w-[1px] h-10 bg-slate-100 mt-2"></div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">{log.role}</span>
+                                                <span className="text-[8px] font-bold text-slate-300 uppercase">{new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            </div>
+                                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight leading-tight group-hover:text-green-700 transition-colors">
+                                                {log.aksi.replace(/_/g, ' ')}
+                                            </p>
+                                            <p className="text-[10px] text-slate-400 font-medium mt-1 italic line-clamp-1">{log.deskripsi}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="p-6 bg-slate-50/50 text-center border-t border-slate-50">
+                            <button onClick={() => navigate('/admin/logs')} className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-green-700 transition-colors flex items-center justify-center gap-2 mx-auto">
+                                Lihat Seluruh Jejak Audit <ArrowUpRight size={12} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            {/* --- MODAL: BROADCAST MESSAGE --- */}
-            {showBroadcastModal && (
-                <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-gray-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-8 bg-gray-900 text-white flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-green-600 rounded-xl"><Bell size={20} /></div>
-                                <h3 className="font-black uppercase tracking-widest text-sm">System Broadcast</h3>
-                            </div>
-                            <button onClick={() => setShowBroadcastModal(false)} className="p-2 hover:bg-white/10 rounded-full transition-all text-gray-400"><X size={24} /></button>
-                        </div>
-                        <form onSubmit={handleSendBroadcast} className="p-10 space-y-6">
-                            <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 flex gap-4">
-                                <AlertTriangle className="text-amber-600 shrink-0" size={24} />
-                                <p className="text-xs text-amber-800 font-medium leading-relaxed">
-                                    Pesan ini akan muncul sebagai notifikasi di dashboard seluruh Staff (UPT, DLH, Bendahara) saat mereka login. Gunakan untuk info pemeliharaan sistem.
-                                </p>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-2">Isi Pesan Notifikasi</label>
-                                <textarea
-                                    required
-                                    value={broadcastMsg}
-                                    onChange={(e) => setBroadcastMsg(e.target.value)}
-                                    placeholder="Contoh: Server REKAS akan maintenance malam ini pukul 21:00 WIB..."
-                                    className="w-full p-6 bg-gray-50 border-2 border-gray-100 rounded-3xl outline-none focus:ring-4 focus:ring-green-700/5 focus:border-green-700 font-bold text-sm min-h-[150px] transition-all"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="w-full py-5 bg-green-700 text-white rounded-2xl font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-green-900/20 hover:bg-black transition-all flex items-center justify-center gap-3 active:scale-95"
-                            >
-                                <Send size={18} /> Kirim Pengumuman
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
+
+// Helper internal untuk Icon yang belum diimport
+const BanknoteIcon = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="20" height="12" x="2" y="6" rx="2" />
+        <circle cx="12" cy="12" r="2" />
+        <path d="M6 12h.01M18 12h.01" />
+    </svg>
+);
 
 export default AdminDashboard;

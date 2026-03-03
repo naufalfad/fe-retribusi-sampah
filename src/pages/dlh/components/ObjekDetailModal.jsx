@@ -59,6 +59,12 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
         );
     };
 
+    const getFileUrl = (path) => {
+        if (!path) return "";
+        const cleanPath = path.replace(/\\/g, '/');
+        return `${BASE_URL}/${cleanPath}`;
+    };
+
     const handleTerbitkanSKRD = async () => {
         // Validasi khusus Non-Rumah Tinggal (Wajib pilih pelayanan)
         if (!isPribadi && selectedPelayanan.length === 0) {

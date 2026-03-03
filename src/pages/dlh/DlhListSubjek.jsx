@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Search, UserPlus, PlusSquare, Building2,
-    User, Eye, MapPin, Layers, X, Loader2, Printer, ShieldCheck
+    Search, UserPlus, PlusSquare, Building2, Navigation, Home,
+    User, Phone, MapPin, Layers, X, Loader2, Printer, ShieldCheck
 } from 'lucide-react';
 import api from '../../api/axios';
 import StatusBadge from '../../components/common/StatusBadge';
@@ -153,9 +153,13 @@ const DlhListSubjek = () => {
                                             {wr.kategori_subjek}
                                         </td>
                                         <td className="p-6 text-center">
-                                            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-xl font-black text-xs">
-                                                <Layers size={14} /> {wr.Objeks?.length || 0} Aset
-                                            </div>
+                                            <button
+                                                onClick={() => handleViewDetails(wr)}
+                                                className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl font-black text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 active:scale-95"
+                                                title="Klik untuk lihat detail objek"
+                                            >
+                                                <Layers size={14} /> {wr.Objeks?.length || 0} Objek
+                                            </button>
                                         </td>
                                         <td className="p-6 text-xs font-bold text-gray-500 uppercase tracking-widest">
                                             {wr.nik_subjek}
@@ -177,12 +181,6 @@ const DlhListSubjek = () => {
                                                     title="Cetak Kartu NPWRD (Reset Password)"
                                                 >
                                                     <Printer size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleViewDetails(wr)}
-                                                    className="p-2.5 bg-gray-100 text-gray-500 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                                                >
-                                                    <Eye size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -223,62 +221,97 @@ const DlhListSubjek = () => {
 
             {/* MODAL DETAIL OBJEK */}
             {showModal && selectedWR && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                    <div className="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl overflow-hidden">
-                        <div className="p-8 border-b flex justify-between items-center bg-gray-50/50">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+
+                        {/* Header Modal */}
+                        <div className="p-8 bg-slate-950 text-white flex justify-between items-center">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-green-700 text-white rounded-2xl">
+                                <div className="p-3 bg-green-600 rounded-2xl shadow-lg shadow-green-900/20 text-white">
                                     <Layers size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black text-gray-800 uppercase leading-none">Daftar Objek Terdaftar</h3>
-                                    <p className="text-xs text-gray-500 font-bold mt-1 uppercase italic">{selectedWR.nama_subjek}</p>
+                                    <h3 className="font-black uppercase tracking-widest text-sm leading-none">Aset & Objek Retribusi</h3>
+                                    <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-[0.2em]">Pemilik: {selectedWR.nama_subjek}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setShowModal(false)} className="p-2 text-gray-400 hover:text-red-500">
-                                <X size={28} />
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="p-2 hover:bg-white/10 rounded-full transition-all text-slate-400 hover:text-white"
+                            >
+                                <X size={24} />
                             </button>
                         </div>
 
-                        <div className="p-8 max-h-[60vh] overflow-y-auto space-y-4 bg-gray-100/50">
+                        {/* Body Modal: List Card Objek */}
+                        <div className="p-8 overflow-y-auto space-y-4 bg-gray-50/50 custom-scrollbar">
                             {selectedWR.Objeks && selectedWR.Objeks.length > 0 ? (
                                 selectedWR.Objeks.map((obj, index) => (
-                                    <div key={obj.id_objek} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex justify-between items-center group hover:border-green-500 transition-all">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 font-black text-xs group-hover:bg-green-50 group-hover:text-green-700">
-                                                0{index + 1}
-                                            </div>
-                                            <div>
-                                                <h4 className="font-black text-gray-800 uppercase text-sm mb-1">{obj.nama_objek}</h4>
-                                                <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase">
-                                                    <MapPin size={12} /> {obj.alamat_objek}
+                                    <div key={obj.id_objek} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all group relative overflow-hidden">
+                                        {/* Dekorasi Background */}
+                                        <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.07] transition-all">
+                                            {obj.kategori_objek === 'Pribadi' ? <User size={120} /> : <Building2 size={120} />}
+                                        </div>
+
+                                        <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
+                                            {/* Info Utama */}
+                                            <div className="flex gap-5">
+                                                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner ${obj.kategori_objek === 'Non Rumah Tinggal' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                                                    {obj.kategori_objek === 'Non Rumah Tinggal' ? <Building2 size={28} /> : <Home size={28} />}
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[9px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded uppercase tracking-tighter">NPOR: {obj.npor_objek}</span>
+                                                        <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-tighter ${obj.status_objek === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                            {obj.status_objek}
+                                                        </span>
+                                                    </div>
+                                                    <h4 className="font-black text-slate-800 uppercase text-base tracking-tight">{obj.nama_objek}</h4>
+                                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-400 font-bold uppercase">
+                                                        <span className="flex items-center gap-1"><MapPin size={12} className="text-red-500" /> {obj.alamat_objek}, RT {obj.rt_rw_objek}</span>
+                                                        <span className="flex items-center gap-1"><Navigation size={12} /> {obj.kelurahan_objek}, {obj.kecamatan_objek}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-[9px] font-black text-gray-400 uppercase leading-none mb-1">Luas</p>
-                                            <p className="text-sm font-black text-green-700">{obj.luas_objek || 0} m²</p>
+
+                                            {/* Info Keuangan & Kontak */}
+                                            <div className="flex flex-row md:flex-col justify-between md:text-right border-t md:border-t-0 pt-4 md:pt-0 border-gray-50">
+                                                <div>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Tarif Pokok / Bln</p>
+                                                    <p className="text-lg font-black text-green-700 tracking-tighter">
+                                                        Rp {Number(obj.tarif_pokok_objek).toLocaleString('id-ID')}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center md:justify-end gap-2 text-[10px] font-bold text-slate-500 mt-2">
+                                                    <Phone size={12} className="text-blue-500" /> {obj.telepon_objek || '-'}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="py-12 text-center text-gray-400 italic font-bold uppercase text-xs">Belum ada objek terdaftar.</div>
+                                <div className="py-20 text-center flex flex-col items-center justify-center">
+                                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300 mb-4">
+                                        <Layers size={40} />
+                                    </div>
+                                    <p className="text-gray-400 italic font-black uppercase text-xs tracking-[0.2em]">Belum ada objek terdaftar pada subjek ini.</p>
+                                </div>
                             )}
                         </div>
 
-                        <div className="p-8 border-t bg-white flex justify-end">
-                            <button onClick={() => setShowModal(false)} className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-xs uppercase">Tutup</button>
-                        </div>
                         {/* Footer Modal */}
-                        <div className="p-8 border-t bg-white flex justify-between items-center px-10">
-                            <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-xl border border-amber-100">
-                                <ShieldCheck size={16} />
-                                <p className="text-[10px] font-bold uppercase italic tracking-tighter">Cetak kartu otomatis memperbarui password akses WR.</p>
+                        <div className="p-8 border-t bg-white flex flex-col md:flex-row justify-between items-center gap-4 px-10">
+                            <div className="flex items-center gap-3 text-amber-600 bg-amber-50 px-5 py-3 rounded-2xl border border-amber-100">
+                                <ShieldCheck size={20} />
+                                <div>
+                                    <p className="text-[10px] font-black uppercase leading-none">Security Protocol</p>
+                                    <p className="text-[9px] font-bold opacity-80 mt-0.5">Cetak kartu otomatis memperbarui password akses WR.</p>
+                                </div>
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 w-full md:w-auto">
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="px-8 py-4 text-gray-400 font-bold text-xs uppercase"
+                                    className="flex-1 md:flex-none px-8 py-4 text-slate-400 hover:text-slate-600 font-black text-xs uppercase tracking-widest transition-colors"
                                 >
                                     Tutup
                                 </button>
@@ -287,9 +320,9 @@ const DlhListSubjek = () => {
                                         setShowModal(false);
                                         handlePrintCard(selectedWR.id_subjek);
                                     }}
-                                    className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl hover:bg-amber-600 transition-all active:scale-95"
+                                    className="flex-1 md:flex-none bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl hover:bg-green-700 transition-all active:scale-95 shadow-slate-900/20"
                                 >
-                                    <Printer size={18} /> Cetak Kartu NPWRD
+                                    <Printer size={18} /> Cetak Kartu
                                 </button>
                             </div>
                         </div>

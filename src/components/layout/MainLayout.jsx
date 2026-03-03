@@ -49,7 +49,7 @@ const MainLayout = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/penagih/login'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/penagih'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuCofig = {
@@ -76,6 +76,8 @@ const MainLayout = ({ children }) => {
             { icon: ClipboardList, label: 'SSRD Monitoring', path: '/dlh/pembayaran' },
             // { icon: UserCircle, label: 'Layanan', path: '/dlh/layanan' },
             { icon: Edit3, label: 'Manajemen Objek', path: '/dlh/manajemen-objek' },
+            { icon: UserCircle, label: 'Pemeriksaan', path: '/dlh/pemeriksaan' },
+            { icon: CreditCard, label: 'Validasi Bayar', path: '/dlh/validasi-bayar' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
@@ -111,10 +113,15 @@ const MainLayout = ({ children }) => {
     const menuItems = menuCofig[activeRole];
 
     const handleLogout = () => {
-        if (activeRole !== 'user') {
-            navigate('/staff/login');
-        } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        if (activeRole === 'penagih') {
+            navigate('/penagih');
+        } else if (activeRole === 'user') {
             navigate('/login');
+        } else {
+            navigate('/staff/login');
         }
     };
 

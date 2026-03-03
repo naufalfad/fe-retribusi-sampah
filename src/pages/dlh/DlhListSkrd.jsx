@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     Search, Printer, FileText,
     AlertCircle, CheckCircle2,
-    Download, Calendar, Pen, Loader2, ChevronLeft, ChevronRight, Building2, User
+    Download, Calendar, Pen, Loader2, ChevronLeft, ChevronRight, Paperclip, User
 } from 'lucide-react';
 import api, { BASE_URL } from '../../api/axios';
 import ObjekDetailModal from './components/ObjekDetailModal';
@@ -181,7 +181,7 @@ const DlhListSkrd = () => {
                                             <td className="p-8">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2.5 bg-gray-100 rounded-xl text-gray-400">
-                                                        <Building2 size={18} />
+                                                        <Paperclip size={18} />
                                                     </div>
                                                     <div>
                                                         <p className="text-[10px] font-mono font-black text-green-700 mb-0.5 uppercase tracking-tighter">Pemilik: {skrd.Objek.Subjek?.nama_subjek}</p>

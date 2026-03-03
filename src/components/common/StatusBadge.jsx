@@ -11,6 +11,7 @@ const StatusBadge = ({ status }) => {
         'PAID': 'bg-green-100 text-green-700 border-green-200',
         'UNPAID': 'bg-red-100 text-red-700 border-red-200',
         'PAID PARTIAL': 'bg-green-100 text-amber-700 border-green-200',
+        'Aktif': 'bg-green-100 text-green-700 border-green-200',
     };
 
     return (

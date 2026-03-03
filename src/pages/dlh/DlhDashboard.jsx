@@ -79,10 +79,10 @@ const DlhReporting = () => {
             {/* --- 1. HEADER & GLOBAL ACTIONS --- */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-2">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none italic">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none ">
                         Reporting <span className="text-green-700">Dinas</span>
                     </h1>
-                    <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest italic leading-none">
+                    <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest leading-none">
                         Pusat Data & Analisis Retribusi REKAS
                     </p>
                 </div>

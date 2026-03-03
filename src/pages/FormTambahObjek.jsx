@@ -28,11 +28,11 @@ const schema = z.object({
     nama_objek: z.string().min(3, "Nama obyek harus diisi"),
     alamat_jalan: z.string().min(5, "Alamat jalan diperlukan"),
     rt_rw: z.string().min(1, "RT/RW diperlukan"),
-    provinsi_id: z.string().min(1, "Pilih Provinsi"),
-    kabupaten_id: z.string().min(1, "Pilih Kabupaten"),
-    kecamatan_id: z.string().min(1, "Pilih Kecamatan"),
-    kelurahan: z.string().min(1, "Pilih Kelurahan/Desa"),
-    kodepos: z.string().min(1, "Pilih Kode Pos"),
+    id_provinsi: z.string().min(1, "Pilih Provinsi"),
+    id_kabupaten: z.string().min(1, "Pilih Kabupaten"),
+    id_kecamatan: z.string().min(1, "Pilih Kecamatan"),
+    id_kelurahan: z.string().min(1, "Pilih Kelurahan/Desa"),
+    kodepos: z.string().min(1, "Kode Pos otomatis terisi"),
     telepon: z.string().min(10, "Nomor telepon minimal 10 digit"),
     kelas_retribusi: z.string().min(1, "Pilih kelas retribusi"),
     latitude: z.string().min(1, "Latitude diperlukan"),
@@ -75,9 +75,32 @@ const FormTambahObjek = ({ isStaff = false }) => {
     const [kabupatenOptions, setKabupatenOptions] = useState([]);
     const [kecamatanOptions, setKecamatanOptions] = useState([]);
     const [kelurahanOptions, setKelurahanOptions] = useState([]);
-    const selectedProvinsi = watch('provinsi_id');
-    const selectedKabupaten = watch('kabupaten_id');
-    const selectedKecamatan = watch('kecamatan_id');
+    const [kodeposOptions, setKodeposOptions] = useState([]);
+    const selectedProvinsi = watch('id_provinsi');
+    const selectedKabupaten = watch('id_kabupaten');
+    const selectedKecamatan = watch('id_kecamatan');
+    const selectedKelurahanId = watch('id_kelurahan');
+
+    useEffect(() => {
+        if (!selectedKelurahanId || kelurahanOptions.length === 0) return;
+
+        // Cari objek kelurahan yang dipilih dari list opsi
+        const selectedObj = kelurahanOptions.find(k => k.id === selectedKelurahanId);
+
+        if (selectedObj) {
+            // 1. Set Kode Pos otomatis
+            setValue('kodepos', selectedObj.kode_pos);
+
+            // 2. Set Koordinat Peta otomatis (Titik awal desa tersebut)
+            if (selectedObj.lokasi && selectedObj.lokasi.coordinates) {
+                const [lng, lat] = selectedObj.lokasi.coordinates;
+                setMapPosition([lat, lng]);
+                setValue('latitude', lat.toString());
+                setValue('longitude', lng.toString());
+            }
+        }
+    }, [selectedKelurahanId, kelurahanOptions, setValue]);
+
     //Provinsi
     useEffect(() => {
         const fetchProvinsi = async () => {
@@ -94,13 +117,14 @@ const FormTambahObjek = ({ isStaff = false }) => {
         setKabupatenOptions([]);
         setKecamatanOptions([]);
         setKelurahanOptions([]);
+        setKodeposOptions([]);
 
-        setValue('kabupaten_id', '');
-        setValue('kecamatan_id', '');
-        setValue('kelurahan', '');
-        setValue('kodepos', '');
+        setValue('id_kabupaten', '');
+        setValue('id_kecamatan', '');
+        setValue('id_kelurahan', '');
+        setValue('kode_pos', '');
 
-        api.get(`/wilayah/kabupaten?provinsi_id=${selectedProvinsi}`)
+        api.get(`/wilayah/kabupaten/${selectedProvinsi}`)
             .then(res => setKabupatenOptions(res.data.data || []));
     }, [selectedProvinsi]);
 
@@ -110,12 +134,13 @@ const FormTambahObjek = ({ isStaff = false }) => {
 
         setKecamatanOptions([]);
         setKelurahanOptions([]);
+        setKodeposOptions([]);
 
-        setValue('kecamatan_id', '');
-        setValue('kelurahan', '');
-        setValue('kodepos', '');
+        setValue('id_kecamatan', '');
+        setValue('id_kelurahan', '');
+        setValue('kode_pos', '');
 
-        api.get(`/wilayah/kecamatan?kabupaten_id=${selectedKabupaten}`)
+        api.get(`/wilayah/kecamatan/${selectedKabupaten}`)
             .then(res => setKecamatanOptions(res.data.data || []));
     }, [selectedKabupaten]);
 
@@ -124,10 +149,12 @@ const FormTambahObjek = ({ isStaff = false }) => {
         if (!selectedKecamatan) return;
 
         setKelurahanOptions([]);
-        setValue('kelurahan', '');
-        setValue('kodepos', '');
+        setKodeposOptions([]);
 
-        api.get(`/wilayah/kelurahan?kecamatan_id=${selectedKecamatan}`)
+        setValue('id_kelurahan', '');
+        setValue('kode_pos', '');
+
+        api.get(`/wilayah/kelurahan/${selectedKecamatan}`)
             .then(res => setKelurahanOptions(res.data.data || []));
     }, [selectedKecamatan]);
 
@@ -204,19 +231,16 @@ const FormTambahObjek = ({ isStaff = false }) => {
         formData.append('rt_rw_objek', data.rt_rw);
         formData.append('telepon_objek', data.telepon);
         formData.append('koordinat_objek', `${data.latitude},${data.longitude}`);
-        const findLabelById = (list, id) =>
-            list.find(item => item.id === id)?.name || '';
-        const provinsiName = findLabelById(provinsiOptions, data.provinsi_id);
-        const kabupatenName = findLabelById(kabupatenOptions, data.kabupaten_id);
-        const kecamatanName = findLabelById(kecamatanOptions, data.kecamatan_id);
-        const kelurahanName = data.kelurahan;
-        const kodeposName = data.kodepos;
+        const provName = provinsiOptions.find(p => p.id === data.id_provinsi)?.name || '';
+        const kabName = kabupatenOptions.find(k => k.id === data.id_kabupaten)?.name || '';
+        const kecName = kecamatanOptions.find(k => k.id === data.id_kecamatan)?.name || '';
+        const kelObj = kelurahanOptions.find(k => k.id === data.id_kelurahan);
 
-        formData.append('provinsi_objek', provinsiName);
-        formData.append('kabupaten_objek', kabupatenName);
-        formData.append('kecamatan_objek', kecamatanName);
-        formData.append('kelurahan_objek', kelurahanName);
-        formData.append('kode_pos_objek', kodeposName);
+        formData.append('provinsi_objek', provName);
+        formData.append('kabupaten_objek', kabName);
+        formData.append('kecamatan_objek', kecName);
+        formData.append('kelurahan_objek', kelObj?.name || '');
+        formData.append('kode_pos_objek', data.kodepos);
 
         selectedFiles.forEach(file => {
             formData.append('dokumen_objek', file);
@@ -275,7 +299,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                         <FormInput label="RT / RW" name="rt_rw" register={register} errors={errors} />
                         <FormSelect
                             label="Provinsi"
-                            name="provinsi_id"
+                            name="id_provinsi"
                             register={register}
                             errors={errors}
                             options={provinsiOptions.map(p => ({
@@ -285,7 +309,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                         />
                         <FormSelect
                             label="Kabupaten / Kota"
-                            name="kabupaten_id"
+                            name="id_kabupaten"
                             register={register}
                             errors={errors}
                             options={kabupatenOptions.map(k => ({
@@ -295,7 +319,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                         />
                         <FormSelect
                             label="Kecamatan"
-                            name="kecamatan_id"
+                            name="id_kecamatan"
                             register={register}
                             errors={errors}
                             options={kecamatanOptions.map(k => ({
@@ -305,15 +329,22 @@ const FormTambahObjek = ({ isStaff = false }) => {
                         />
                         <FormSelect
                             label="Kelurahan / Desa"
-                            name="kelurahan"
+                            name="id_kelurahan"
                             register={register}
                             errors={errors}
                             options={kelurahanOptions.map(k => ({
-                                id: k.name,
+                                id: k.id,
                                 label: k.name
                             }))}
                         />
-                        <FormSelect label="Kode Pos" name="kodepos" register={register} errors={errors} options={[{ id: '16911', label: '16911' }]} />
+                        <FormInput
+                            label="Kode Pos"
+                            name="kodepos"
+                            register={register}
+                            errors={errors}
+                            readOnly
+                            placeholder="Pilih Kelurahan dahulu"
+                        />
 
                         {/* Section 2: Klasifikasi */}
                         <div className="md:col-span-2 border-b pb-2 pt-4"><h3 className="font-bold text-gray-800 flex items-center gap-2"><Info size={18} className="text-green-700" /> 2. Klasifikasi Retribusi</h3></div>

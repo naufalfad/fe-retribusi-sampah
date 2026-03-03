@@ -90,12 +90,12 @@ const AdminSettings = () => {
             const response = await api.post('/maintenance/clean-orphan', { dryRun: isDryRun });
 
             if (response.data.success) {
-                const { deletedCount, totalSizeMB } = response.data.data;
+                const { deleted, orphan_count } = response.data.data;
 
                 // Tampilkan pesan detail hasil pembersihan
                 alert(isDryRun
-                    ? `[DRY RUN] Ditemukan ${deletedCount} file sampah dengan total ukuran ~${totalSizeMB} MB.`
-                    : `BERHASIL! ${deletedCount} file sampah (${totalSizeMB} MB) telah dihapus dari server.`
+                    ? `[DRY RUN] Ditemukan ${orphan_count} file sampah dengan total ukuran ~${orphan_count} MB.`
+                    : `BERHASIL! ${deleted} file sampah (${orphan_count} MB) telah dihapus dari server.`
                 );
             }
         } catch (error) {

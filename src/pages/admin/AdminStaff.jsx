@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    UserPlus, Search, Key, Trash2, ShieldCheck,
+    UserPlus, Search, Key, Trash2, ShieldCheck, MapPin,
     X, Mail, User, AlertTriangle, MoreHorizontal,
     CheckCircle2, Info, Loader2, ChevronLeft, ChevronRight
 } from 'lucide-react';
@@ -10,6 +10,7 @@ import StatusBadge from '../../components/common/StatusBadge';
 
 const AdminStaff = () => {
     // --- STATES ---
+    const [activeTab, setActiveTab] = useState('staff');
     const [staffList, setStaffList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
@@ -29,7 +30,8 @@ const AdminStaff = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        role: 'UPT' // Default role
+        role: 'UPT',
+        kelurahan: 'Pakansari'
     });
 
     const handleInputChange = (e) => {
@@ -41,7 +43,12 @@ const AdminStaff = () => {
         e.preventDefault();
         setIsProcessing(true);
         try {
-            const res = await api.post('/auth/register-staff', formData);
+            const endpoint = activeTab === 'staff' ? '/auth/register-staff' : '/auth/register-penagih';
+            const payload = activeTab === 'staff'
+                ? { username: formData.username, password: formData.password, role: formData.role }
+                : { username: formData.username, password: formData.password, kelurahan: formData.kelurahan };
+
+            const res = await api.post(endpoint, payload);
 
             if (res.status === 201) {
                 alert("Staff berhasil didaftarkan!");
@@ -61,32 +68,36 @@ const AdminStaff = () => {
     const fetchStaff = async (page = 1, search = '') => {
         setLoading(true);
         try {
-            const res = await api.get('/auth/list-staff', {
-                params: {
-                    page: page,
-                    limit: 10,
-                    search: search
-                }
+            // Ganti endpoint secara dinamis
+            const endpoint = activeTab === 'staff' ? '/auth/list-staff' : '/auth/list-penagih';
+            const res = await api.get(endpoint, {
+                params: { page, limit: 10, search }
             });
+
             if (res.data.status === 'success') {
                 setStaffList(res.data.data);
-                setPagination(res.data.pagination);
+                setPagination(res.data.pagination || {
+                    current_page: 1,
+                    total_pages: 1,
+                    total_items: res.data.data.length
+                });
             }
         } catch (err) {
-            console.error("Gagal mengambil data staff:", err);
+            console.error("Gagal mengambil data:", err);
         } finally {
             setLoading(false);
         }
     };
 
     const debouncedSearch = useCallback(
-        debounce((val) => fetchStaff(1, val), 500),
-        []
+        debounce((val) => fetchStaff(1, val, activeTab), 500),
+        [activeTab]
     );
 
     useEffect(() => {
-        fetchStaff(pagination.current_page, searchTerm);
-    }, [pagination.current_page]);
+        const page = pagination?.current_page || 1;
+        fetchStaff(page, searchTerm);
+    }, [pagination?.current_page, activeTab]);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
@@ -112,13 +123,16 @@ const AdminStaff = () => {
 
         setIsProcessing(true);
         try {
-            const response = await api.put(`/auth/reset-password/${selectedStaff.id_staff}`, {
-                newPassword: customPassword // Mengirim password kustom
+            const endpoint = activeTab === 'staff'
+                ? `/auth/reset-password-staff/${selectedStaff.id_staff}`
+                : `/auth/reset-password-penagih/${selectedStaff.id_penagih}`;
+
+            const response = await api.put(endpoint, {
+                newPassword: customPassword
             });
 
             if (response.data.success) {
-                alert(`Sukses! Password untuk @${selectedStaff.username} telah diperbarui.`);
-                // Reset states
+                alert(response.data.message);
                 setShowResetModal(false);
                 setCustomPassword('');
                 setSelectedStaff(null);
@@ -136,13 +150,16 @@ const AdminStaff = () => {
 
         setIsProcessing(true);
         try {
-            const response = await api.delete(`/auth/delete-staff/${selectedStaff.id_staff}`);
+            const endpoint = activeTab === 'staff'
+                ? `/auth/delete-staff/${selectedStaff.id_staff}`
+                : `/auth/delete-penagih/${selectedStaff.id_penagih}`;
+
+            const response = await api.delete(endpoint);
 
             if (response.data.success) {
                 alert(response.data.message);
                 setShowDeleteModal(false);
                 setSelectedStaff(null);
-                // Refresh data tabel ke halaman 1
                 fetchStaff(1, searchTerm);
             }
         } catch (err) {
@@ -170,7 +187,25 @@ const AdminStaff = () => {
                     Tambah Staff Baru
                 </button>
             </div>
-
+            <div className="flex p-1 bg-gray-100 rounded-2xl w-fit border border-gray-200">
+                <button
+                    onClick={() =>
+                        setActiveTab('staff')}
+                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'staff' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400'}`}
+                >
+                    INTERNAL STAFF
+                </button>
+                <button
+                    onClick={() => {
+                        setActiveTab('penagih');
+                        setSearchTerm('');
+                        fetchStaff(1, '', 'penagih')
+                    }}
+                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'penagih' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400'}`}
+                >
+                    PETUGAS PENAGIH
+                </button>
+            </div>
             {/* --- TOOLBAR --- */}
             <div className="bg-white p-4 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1 group">
@@ -195,7 +230,7 @@ const AdminStaff = () => {
                         <thead className="bg-gray-50/50 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">
                             <tr>
                                 <th className="p-8">Nama Lengkap / Username</th>
-                                <th className="p-8">Hak Akses (Role)</th>
+                                <th className="p-8">{activeTab === 'staff' ? 'Hak Akses (Role)' : 'Wilayah Tugas'}</th>
                                 <th className="p-8">Status</th>
                                 <th className="p-8 text-center">Keamanan</th>
                             </tr>
@@ -230,9 +265,15 @@ const AdminStaff = () => {
                                         </div>
                                     </td>
                                     <td className="p-8">
-                                        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 w-fit px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest border border-blue-100">
-                                            <ShieldCheck size={12} /> {s.role || 'STAFF'}
-                                        </div>
+                                        {activeTab === 'staff' ? (
+                                            <div className="flex items-center gap-2 bg-blue-50 text-blue-700 w-fit px-3 py-1.5 rounded-xl font-black text-[10px] uppercase border border-blue-100">
+                                                <ShieldCheck size={12} /> {s.role}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2 bg-green-50 text-green-700 w-fit px-3 py-1.5 rounded-xl font-black text-[10px] uppercase border border-green-100">
+                                                <MapPin size={12} /> {s.kelurahan}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="p-8">
                                         <StatusBadge status={s.status || 'Aktif'} />
@@ -262,7 +303,6 @@ const AdminStaff = () => {
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>
-
                                         </div>
                                     </td>
                                 </tr>
@@ -332,18 +372,31 @@ const AdminStaff = () => {
 
                                 {/* ROLE (Sesuai dengan enum backend: Admin, UPT, DLH, Bendahara) */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Role Akun</label>
-                                    <select
-                                        name="role"
-                                        value={formData.role}
-                                        onChange={handleInputChange}
-                                        className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest"
-                                    >
-                                        <option value="UPT">UPT</option>
-                                        <option value="DLH">Bidang DLH</option>
-                                        <option value="Bendahara">Bendahara</option>
-                                        <option value="Admin">Administrator</option>
-                                    </select>
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                                        {activeTab === 'staff' ? 'Role Akun' : 'Wilayah Tugas'}
+                                    </label>
+                                    {activeTab === 'staff' ? (
+                                        <select
+                                            name="role" value={formData.role}
+                                            onChange={handleInputChange}
+                                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest"
+                                        >
+                                            <option value="UPT">UPT</option>
+                                            <option value="DLH">Bidang DLH</option>
+                                            <option value="Bendahara">Bendahara</option>
+                                            <option value="Admin">Administrator</option>
+                                        </select>
+                                    ) : (
+                                        <select
+                                            name="kelurahan" value={formData.kelurahan}
+                                            onChange={handleInputChange}
+                                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest"
+                                        >
+                                            <option value="Pakansari">Pakansari</option>
+                                            <option value="Cibinong">Cibinong</option>
+                                            <option value="Sukahati">Sukahati</option>
+                                        </select>
+                                    )}
                                 </div>
 
                                 {/* PASSWORD */}
@@ -401,7 +454,7 @@ const AdminStaff = () => {
                         <h3 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">Set Password Baru</h3>
                         <p className="text-sm text-gray-400 mt-2 font-medium">
                             Mengubah akses untuk staff: <br />
-                            <span className="text-slate-800 font-black uppercase tracking-widest">{selectedStaff.username}</span>
+                            <span className="text-slate-800 font-black uppercase tracking-widest">{selectedStaff?.username}</span>
                         </p>
 
                         <div className="mt-8 w-full space-y-4 text-left">
