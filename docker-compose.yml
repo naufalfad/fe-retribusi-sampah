@@ -6,7 +6,7 @@ services:
         # --- MASUKKAN ALAMAT API ASLI DI SINI ---
         # Jangan pakai localhost. Pakai domain backendmu (HTTPS).
         # Contoh: https://rekas.geocitra.com
-        - VITE_API_URL=https://rekas.geocitra.com
+        - VITE_APP_BASE_URL=https://rekas.geocitra.com
     container_name: rekas-fe
     restart: always
     networks:
