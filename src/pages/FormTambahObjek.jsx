@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import FormInput from '../components/ui/FormInput';
 import {
-    Building2, User, Upload, Send, ChevronLeft,
+    Building2, User, Upload, Send, ChevronLeft, Search,
     Info, AlertCircle, MapPin, Loader2, FileText, X
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
@@ -71,94 +71,6 @@ const FormTambahObjek = ({ isStaff = false }) => {
         iconAnchor: [16, 16],
     });
 
-    const [provinsiOptions, setProvinsiOptions] = useState([]);
-    const [kabupatenOptions, setKabupatenOptions] = useState([]);
-    const [kecamatanOptions, setKecamatanOptions] = useState([]);
-    const [kelurahanOptions, setKelurahanOptions] = useState([]);
-    const [kodeposOptions, setKodeposOptions] = useState([]);
-    const selectedProvinsi = watch('id_provinsi');
-    const selectedKabupaten = watch('id_kabupaten');
-    const selectedKecamatan = watch('id_kecamatan');
-    const selectedKelurahanId = watch('id_kelurahan');
-
-    useEffect(() => {
-        if (!selectedKelurahanId || kelurahanOptions.length === 0) return;
-
-        // Cari objek kelurahan yang dipilih dari list opsi
-        const selectedObj = kelurahanOptions.find(k => k.id === selectedKelurahanId);
-
-        if (selectedObj) {
-            // 1. Set Kode Pos otomatis
-            setValue('kodepos', selectedObj.kode_pos);
-
-            // 2. Set Koordinat Peta otomatis (Titik awal desa tersebut)
-            if (selectedObj.lokasi && selectedObj.lokasi.coordinates) {
-                const [lng, lat] = selectedObj.lokasi.coordinates;
-                setMapPosition([lat, lng]);
-                setValue('latitude', lat.toString());
-                setValue('longitude', lng.toString());
-            }
-        }
-    }, [selectedKelurahanId, kelurahanOptions, setValue]);
-
-    //Provinsi
-    useEffect(() => {
-        const fetchProvinsi = async () => {
-            const res = await api.get('/wilayah/provinsi');
-            setProvinsiOptions(res.data.data || []);
-        };
-        fetchProvinsi();
-    }, []);
-
-    //Kabupaten
-    useEffect(() => {
-        if (!selectedProvinsi) return;
-
-        setKabupatenOptions([]);
-        setKecamatanOptions([]);
-        setKelurahanOptions([]);
-        setKodeposOptions([]);
-
-        setValue('id_kabupaten', '');
-        setValue('id_kecamatan', '');
-        setValue('id_kelurahan', '');
-        setValue('kode_pos', '');
-
-        api.get(`/wilayah/kabupaten/${selectedProvinsi}`)
-            .then(res => setKabupatenOptions(res.data.data || []));
-    }, [selectedProvinsi]);
-
-    //Kecamatan
-    useEffect(() => {
-        if (!selectedKabupaten) return;
-
-        setKecamatanOptions([]);
-        setKelurahanOptions([]);
-        setKodeposOptions([]);
-
-        setValue('id_kecamatan', '');
-        setValue('id_kelurahan', '');
-        setValue('kode_pos', '');
-
-        api.get(`/wilayah/kecamatan/${selectedKabupaten}`)
-            .then(res => setKecamatanOptions(res.data.data || []));
-    }, [selectedKabupaten]);
-
-    //Kelurahan
-    useEffect(() => {
-        if (!selectedKecamatan) return;
-
-        setKelurahanOptions([]);
-        setKodeposOptions([]);
-
-        setValue('id_kelurahan', '');
-        setValue('kode_pos', '');
-
-        api.get(`/wilayah/kelurahan/${selectedKecamatan}`)
-            .then(res => setKelurahanOptions(res.data.data || []));
-    }, [selectedKecamatan]);
-
-
     // --- STATES ---
     const [type, setType] = useState('pribadi'); // 'pribadi' (Rumah Tinggal) atau 'badan' (Non Rumah Tinggal)
     const [kelasData, setKelasData] = useState([]); // Semua data dari API
@@ -168,6 +80,66 @@ const FormTambahObjek = ({ isStaff = false }) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingKelas, setIsFetchingKelas] = useState(true);
+    const [allKelurahan, setAllKelurahan] = useState([]); // Master data
+    const [filteredKelurahan, setFilteredKelurahan] = useState([]); // Data hasil filter
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [searchLabel, setSearchLabel] = useState(""); // Teks yang tampil di input
+
+    const selectedKelId = watch('id_kelurahan');
+
+    // 1. Ambil data Kelurahan (beserta relasinya) saat pertama kali buka form
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            // Ambil semua kelurahan (Gunakan limit besar atau tanpa limit di backend)
+            const res = await api.get('/wilayah/search-kelurahan?q=');
+            if (res.data.success) {
+                setAllKelurahan(res.data.data);
+                setFilteredKelurahan(res.data.data);
+            }
+        };
+        fetchInitialData();
+    }, []);
+
+    // 2. Logic Filter saat user mengetik
+    const handleSearch = (e) => {
+        const val = e.target.value;
+        setSearchLabel(val);
+        setIsDropdownOpen(true);
+
+        if (val === "") {
+            setFilteredKelurahan(allKelurahan);
+        } else {
+            const filtered = allKelurahan.filter(k =>
+                k.name.toLowerCase().includes(val.toLowerCase())
+            );
+            setFilteredKelurahan(filtered);
+        }
+    };
+
+    // 3. Logic saat item dipilih
+    const handleSelectKelurahan = (kel) => {
+        // Set field ID ke React Hook Form
+        setValue('id_kelurahan', kel.id, { shouldValidate: true });
+        setValue('id_kecamatan', kel.RefKecamatan?.id);
+        setValue('id_kabupaten', kel.RefKecamatan?.RefKabupaten?.id);
+        setValue('id_provinsi', kel.RefKecamatan?.RefKabupaten?.RefProvinsi?.id);
+        setValue('kodepos', kel.kode_pos);
+
+        // Set Label yang tampil
+        setSearchLabel(kel.name);
+
+        // Update Map
+        if (kel.lokasi && kel.lokasi.coordinates) {
+            const [lng, lat] = kel.lokasi.coordinates;
+            setMapPosition([lat, lng]);
+            setValue('latitude', lat.toString());
+            setValue('longitude', lng.toString());
+        }
+
+        setIsDropdownOpen(false);
+    };
+
+    const activeKelData = allKelurahan.find(k => k.id === selectedKelId);
 
     // --- 1. FETCH DATA KELAS DARI API ---
     useEffect(() => {
@@ -231,15 +203,12 @@ const FormTambahObjek = ({ isStaff = false }) => {
         formData.append('rt_rw_objek', data.rt_rw);
         formData.append('telepon_objek', data.telepon);
         formData.append('koordinat_objek', `${data.latitude},${data.longitude}`);
-        const provName = provinsiOptions.find(p => p.id === data.id_provinsi)?.name || '';
-        const kabName = kabupatenOptions.find(k => k.id === data.id_kabupaten)?.name || '';
-        const kecName = kecamatanOptions.find(k => k.id === data.id_kecamatan)?.name || '';
-        const kelObj = kelurahanOptions.find(k => k.id === data.id_kelurahan);
 
-        formData.append('provinsi_objek', provName);
-        formData.append('kabupaten_objek', kabName);
-        formData.append('kecamatan_objek', kecName);
-        formData.append('kelurahan_objek', kelObj?.name || '');
+        const selectedKel = allKelurahan.find(k => k.id === data.id_kelurahan);
+        formData.append('provinsi_objek', selectedKel?.RefKecamatan?.RefKabupaten?.RefProvinsi?.name || '');
+        formData.append('kabupaten_objek', selectedKel?.RefKecamatan?.RefKabupaten?.name || '');
+        formData.append('kecamatan_objek', selectedKel?.RefKecamatan?.name || '');
+        formData.append('kelurahan_objek', selectedKel?.name || '');
         formData.append('kode_pos_objek', data.kodepos);
 
         selectedFiles.forEach(file => {
@@ -297,54 +266,96 @@ const FormTambahObjek = ({ isStaff = false }) => {
                         <FormInput label="Jalan / No. Rumah" name="alamat_jalan" register={register} errors={errors} />
                         <FormInput label="Nomor Telepon / WA" name="telepon" register={register} errors={errors} />
                         <FormInput label="RT / RW" name="rt_rw" register={register} errors={errors} />
-                        <FormSelect
-                            label="Provinsi"
-                            name="id_provinsi"
-                            register={register}
-                            errors={errors}
-                            options={provinsiOptions.map(p => ({
-                                id: p.id,
-                                label: p.name
-                            }))}
-                        />
-                        <FormSelect
-                            label="Kabupaten / Kota"
-                            name="id_kabupaten"
-                            register={register}
-                            errors={errors}
-                            options={kabupatenOptions.map(k => ({
-                                id: k.id,
-                                label: k.name
-                            }))}
-                        />
-                        <FormSelect
-                            label="Kecamatan"
-                            name="id_kecamatan"
-                            register={register}
-                            errors={errors}
-                            options={kecamatanOptions.map(k => ({
-                                id: k.id,
-                                label: k.name
-                            }))}
-                        />
-                        <FormSelect
-                            label="Kelurahan / Desa"
-                            name="id_kelurahan"
-                            register={register}
-                            errors={errors}
-                            options={kelurahanOptions.map(k => ({
-                                id: k.id,
-                                label: k.name
-                            }))}
-                        />
-                        <FormInput
-                            label="Kode Pos"
-                            name="kodepos"
-                            register={register}
-                            errors={errors}
-                            readOnly
-                            placeholder="Pilih Kelurahan dahulu"
-                        />
+                        {/* SMART SELECT KELURAHAN */}
+                        <div className="md:col-span-2 relative">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                                Kelurahan / Desa (Cari atau Pilih)
+                            </label>
+
+                            <div className="relative group mt-1.5">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <MapPin size={18} />
+                                </div>
+
+                                <input
+                                    type="text"
+                                    placeholder="Klik untuk pilih atau ketik nama desa..."
+                                    value={searchLabel}
+                                    onChange={handleSearch}
+                                    onFocus={() => setIsDropdownOpen(true)}
+                                    className={`w-full pl-12 pr-12 py-3.5 bg-gray-50 border-2 rounded-2xl outline-none transition-all text-sm font-bold text-gray-700 
+                ${errors.id_kelurahan ? 'border-red-500' : 'border-gray-100 focus:border-green-700'}`}
+                                />
+
+                                {/* Ikon Dropdown di kanan */}
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                    <ChevronDown size={18} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                </div>
+
+                                {/* DROPDOWN MENU */}
+                                {isDropdownOpen && (
+                                    <>
+                                        {/* Overlay transparan untuk menutup dropdown saat klik luar */}
+                                        <div className="fixed inset-0 z-[998]" onClick={() => setIsDropdownOpen(false)}></div>
+
+                                        <div className="absolute z-[999] left-0 right-0 mt-2 bg-white border border-gray-100 shadow-2xl rounded-2xl max-h-64 overflow-y-auto custom-scrollbar animate-in slide-in-from-top-2">
+                                            {filteredKelurahan.length > 0 ? (
+                                                filteredKelurahan.map((kel) => (
+                                                    <div
+                                                        key={kel.id}
+                                                        onClick={() => handleSelectKelurahan(kel)}
+                                                        className="p-4 hover:bg-green-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <div>
+                                                                <p className="text-sm font-black text-gray-800 uppercase">{kel.name}</p>
+                                                                <p className="text-[10px] text-gray-400 font-bold uppercase">
+                                                                    Kec. {kel.RefKecamatan?.name} • Kab. {kel.RefKecamatan?.RefKabupaten?.name}
+                                                                </p>
+                                                            </div>
+                                                            <span className="text-[10px] font-mono text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                                                {kel.kode_pos}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="p-8 text-center text-gray-400 italic text-xs">Kelurahan tidak ditemukan...</div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            {errors.id_kelurahan && <span className="text-[10px] text-red-500 font-bold ml-1">{errors.id_kelurahan.message}</span>}
+                        </div>
+
+                        {/* INFO FIELD OTOMATIS (READ ONLY) */}
+                        <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-6 rounded-[2rem] border border-gray-100 mt-2">
+                            <div className="space-y-1">
+                                <label className="text-[8px] font-black text-gray-400 uppercase">Kecamatan</label>
+                                <p className="text-xs font-black text-gray-700 uppercase">
+                                    {activeKelData?.RefKecamatan?.name || '-'}
+                                </p>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[8px] font-black text-gray-400 uppercase">Kabupaten</label>
+                                <p className="text-xs font-black text-gray-700 uppercase">
+                                    {activeKelData?.RefKecamatan?.RefKabupaten?.name || '-'}
+                                </p>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[8px] font-black text-gray-400 uppercase">Provinsi</label>
+                                <p className="text-xs font-black text-gray-700 uppercase">
+                                    {activeKelData?.RefKecamatan?.RefKabupaten?.RefProvinsi?.name || '-'}
+                                </p>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[8px] font-black text-gray-400 uppercase">Kode Pos</label>
+                                <p className="text-xs font-black text-green-700">
+                                    {activeKelData?.kode_pos || '-'}
+                                </p>
+                            </div>
+                        </div>
 
                         {/* Section 2: Klasifikasi */}
                         <div className="md:col-span-2 border-b pb-2 pt-4"><h3 className="font-bold text-gray-800 flex items-center gap-2"><Info size={18} className="text-green-700" /> 2. Klasifikasi Retribusi</h3></div>

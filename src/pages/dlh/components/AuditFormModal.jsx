@@ -197,7 +197,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                             <input type="number" {...register('tarif_audit')} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400 focus:bg-white/10 transition-all" placeholder="0" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Durasi Pelanggaran (Bulan)</label>
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Durasi Denda (Bulan)</label>
                                             <input type="number" {...register('durasi_audit')} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400 focus:bg-white/10 transition-all" placeholder="0" />
                                         </div>
 
@@ -212,7 +212,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                         </div>
 
                                         <div className="md:col-span-2 bg-gradient-to-r from-green-600 to-emerald-700 p-8 rounded-[2.5rem] mt-4 shadow-lg">
-                                            <label className="block text-[10px] font-black text-white/70 uppercase tracking-widest mb-3">C. Total Wajib Dibayar / SKRDKB (Rp)</label>
+                                            <label className="block text-[10px] font-black text-white/70 uppercase tracking-widest mb-3">C. Total Retribusi Kurang / Lebih Bayar (Rp)</label>
                                             <div className="flex items-center gap-4">
                                                 <Calculator className="text-white/40" size={32} />
                                                 <input type="number" {...register('total_wajib_bayar')} className="w-full bg-transparent font-black text-5xl text-white outline-none p-0 tracking-tighter" placeholder="0" />
