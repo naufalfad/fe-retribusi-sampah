@@ -45,7 +45,7 @@ const StaffLoginPage = () => {
     return (
         <div
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/taman-bogor.png')" }}
+            style={{ backgroundImage: "url('/kebun-raya.png')" }}
         >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 
@@ -112,7 +112,7 @@ const StaffLoginPage = () => {
                 </div>
 
                 <p className="text-center mt-8 text-xs text-gray-300 font-medium italic drop-shadow-sm">
-                    &copy; 2026 Dinas Lingkungan Hidup Kota Bogor <br />
+                    &copy; 2026 Dinas Lingkungan Hidup Kabupaten Bogor <br />
                     Keamanan data adalah prioritas kami.
                 </p>
             </div>

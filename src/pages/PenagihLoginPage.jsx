@@ -49,7 +49,7 @@ const PenagihLoginPage = () => {
     return (
         <div
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative font-sans"
-            style={{ backgroundImage: "url('/taman-bogor.png')" }} // Sesuaikan dengan image folder public Anda
+            style={{ backgroundImage: "url('/kebun-raya.png')" }} // Sesuaikan dengan image folder public Anda
         >
             <div className="absolute inset-0 bg-gradient-to-tr from-green-950/90 via-green-900/70 to-emerald-800/50 backdrop-blur-[3px]"></div>
 

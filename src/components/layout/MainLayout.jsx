@@ -49,7 +49,7 @@ const MainLayout = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff/login', '/penagih'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff', '/penagih', '/landing-page'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuCofig = {
@@ -81,7 +81,7 @@ const MainLayout = ({ children }) => {
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
-            //{ icon: Landmark, label: 'Penerbitan SKRD', path: '/bendahara/skrd' },
+            { icon: ListCollapse, label: 'List Bayar', path: '/bendahara/list-bayar' },
             { icon: CheckCircle2, label: 'Validasi Pembayaran', path: '/bendahara/ssrd' },
             { icon: Landmark, label: 'Manual Payment', path: '/bendahara/pembayaran-manual' },
         ],
@@ -121,7 +121,7 @@ const MainLayout = ({ children }) => {
         } else if (activeRole === 'user') {
             navigate('/login');
         } else {
-            navigate('/staff/login');
+            navigate('/staff');
         }
     };
 

@@ -109,9 +109,9 @@ const DlhListSkrd = () => {
                     <h1 className="text-2xl font-black text-gray-800 tracking-tight uppercase leading-none">Manajemen Tagihan SKRD</h1>
                     <p className="text-sm text-gray-500 font-medium mt-1">Pantau status pembayaran dan piutang retribusi objek.</p>
                 </div>
-                <button className="bg-gray-900 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-xl hover:bg-black transition-all">
+                {/* <button className="bg-gray-900 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-xl hover:bg-black transition-all">
                     <Download size={18} /> Export Laporan
-                </button>
+                </button> */}
             </div>
 
             {/* Statistik Ringkas (Opsional: Bisa dihubungkan ke API Dashboard) */}

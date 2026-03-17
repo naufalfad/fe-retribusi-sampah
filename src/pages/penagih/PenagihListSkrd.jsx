@@ -29,9 +29,13 @@ const PenagihListSkrd = () => {
     const fetchSkrd = async (query = '') => {
         setLoading(true);
         try {
+            const userData = JSON.parse(localStorage.getItem('user'));
+            const kelurahanPenagih = userData?.kelurahan;
+
             const response = await api.get('/skrd/list-unpaid-skrd', {
                 params: {
-                    search: query
+                    search: query,
+                    kelurahan: kelurahanPenagih
                 }
             });
             if (response.data.status === 'success') {
@@ -39,6 +43,7 @@ const PenagihListSkrd = () => {
             }
         } catch (error) {
             console.error("Gagal mengambil data SKRD:", error);
+            showNotification("Gagal memuat data tagihan wilayah.", "error");
         } finally {
             setLoading(false);
         }

@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
 import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/LoginPage';
 import UserDashboard from './pages/wajibRetribusi/UserDashboard';
@@ -14,7 +16,7 @@ import DlhDashboard from './pages/dlh/DlhDashboard';
 import DlhPaymentMonitoring from './pages/dlh/DlhPaymentMonitoring';
 import DlhLayananValidation from './pages/dlh/DlhLayananValidation';
 import BendaharaDashboard from './pages/bendahara/BendaharaDashboard';
-import BendaharaSkrd from './pages/bendahara/BendaharaSkrd';
+import BendaharaListBayar from './pages/bendahara/BendaharaListBayar';
 import BendaharaSsrd from './pages/bendahara/BendaharaSsrd';
 import DlhListSkrd from './pages/dlh/DlhListSkrd';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -56,59 +58,70 @@ function App() {
           <Route path="/layanan" element={<LayananPage />} />
 
           {/* Halaman Login Staff */}
-          <Route path="/staff/login" element={<StaffLoginPage />} />
+          <Route path="/staff" element={<StaffLoginPage />} />
+          <Route path="/penagih" element={<PenagihLoginPage />} />
 
           {/* Halaman UPT */}
-          <Route path="/upt/dashboard" element={<UptDashboard />} />
-          <Route path="/upt/verifikasi" element={<UptVerifikasi />} />
-          <Route path="/upt/list" element={<UptListSubjek />} />
-          <Route path="/upt/daftar-user" element={<FormTambahSubjek isStaff={true} />} />
-          <Route path="/upt/layanan" element={<UptLayanan />} />
-          <Route path="/upt/database" element={<UptDatabase />} />
-          <Route path="/upt/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
-          <Route path="/upt/manajemen-objek" element={<ObjectManagement />} />
-          <Route path="/upt/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          <Route element={<ProtectedRoute allowedRoles={['UPT', 'Admin']} />}>
+            <Route path="/upt/dashboard" element={<UptDashboard />} />
+            <Route path="/upt/verifikasi" element={<UptVerifikasi />} />
+            <Route path="/upt/list" element={<UptListSubjek />} />
+            <Route path="/upt/daftar-user" element={<FormTambahSubjek isStaff={true} />} />
+            <Route path="/upt/layanan" element={<UptLayanan />} />
+            <Route path="/upt/database" element={<UptDatabase />} />
+            <Route path="/upt/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
+            <Route path="/upt/manajemen-objek" element={<ObjectManagement />} />
+            <Route path="/upt/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          </Route>
 
           {/* Halaman DLH */}
-          <Route path="/dlh/dashboard" element={<DlhDashboard />} />
-          <Route path="/dlh/list-subjek" element={<DlhListSubjek />} />
-          <Route path="/dlh/list-objek" element={<DlhListObjek />} />
-          <Route path="/dlh/daftar-user" element={<FormTambahSubjek isStaff={true} />} />
-          <Route path="/dlh/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
-          <Route path="/dlh/validasi-bayar" element={<DlhValidasiBayar />} />
-          <Route path="/dlh/pembayaran" element={<DlhPaymentMonitoring />} />
-          <Route path="/dlh/layanan" element={<DlhLayananValidation />} />
-          <Route path="/dlh/list-skrd" element={<DlhListSkrd />} />
-          <Route path="/dlh/manajemen-objek" element={<ObjectManagement />} />
-          <Route path="/dlh/peraturan" element={<DocumentsPage isAdmin={false} />} />
-          <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
+          <Route element={<ProtectedRoute allowedRoles={['DLH', 'Admin']} />}>
+            <Route path="/dlh/dashboard" element={<DlhDashboard />} />
+            <Route path="/dlh/list-subjek" element={<DlhListSubjek />} />
+            <Route path="/dlh/list-objek" element={<DlhListObjek />} />
+            <Route path="/dlh/daftar-user" element={<FormTambahSubjek isStaff={true} />} />
+            <Route path="/dlh/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
+            <Route path="/dlh/validasi-bayar" element={<DlhValidasiBayar />} />
+            <Route path="/dlh/pembayaran" element={<DlhPaymentMonitoring />} />
+            <Route path="/dlh/layanan" element={<DlhLayananValidation />} />
+            <Route path="/dlh/list-skrd" element={<DlhListSkrd />} />
+            <Route path="/dlh/manajemen-objek" element={<ObjectManagement />} />
+            <Route path="/dlh/peraturan" element={<DocumentsPage isAdmin={false} />} />
+            <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
+          </Route>
 
           {/* Halaman Bendahara */}
-          <Route path="/bendahara/dashboard" element={<BendaharaDashboard />} />
-          <Route path="/bendahara/skrd" element={<BendaharaSkrd />} />
-          <Route path="/bendahara/ssrd" element={<BendaharaSsrd />} />
-          <Route path="/bendahara/pembayaran-manual" element={<BendaharaManualPayment />} />
-          <Route path="/bendahara/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          <Route element={<ProtectedRoute allowedRoles={['Bendahara', 'Admin']} />}>
+            <Route path="/bendahara/dashboard" element={<BendaharaDashboard />} />
+            <Route path="/bendahara/list-bayar" element={<BendaharaListBayar />} />
+            <Route path="/bendahara/ssrd" element={<BendaharaSsrd />} />
+            <Route path="/bendahara/pembayaran-manual" element={<BendaharaManualPayment />} />
+            <Route path="/bendahara/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          </Route>
 
           {/* Halaman Admin */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/staff" element={<AdminStaff />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
-          <Route path="/admin/form-preview" element={<AdminFormPreview />} />
-          <Route path="/admin/logs" element={<AdminLogs />} />
-          <Route path="/admin/manajemen-objek" element={<ObjectManagement />} />
-          <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
+          <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/staff" element={<AdminStaff />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/form-preview" element={<AdminFormPreview />} />
+            <Route path="/admin/logs" element={<AdminLogs />} />
+            <Route path="/admin/manajemen-objek" element={<ObjectManagement />} />
+            <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
+          </Route>
 
           {/* Halaman Penagih */}
-          <Route path="/penagih" element={<PenagihLoginPage />} />
-          <Route path="/penagih/dashboard" element={<PenagihDashboard />} />
-          <Route path="/penagih/list-skrd" element={<PenagihListSkrd />} />
-          <Route path="/penagih/wilayah" element={<PenagihWilayah />} />
-          <Route path="/penagih/riwayat" element={<PenagihRiwayat />} />
-          <Route path="/penagih/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          <Route element={<ProtectedRoute allowedRoles={['Penagih']} />}>
+            <Route path="/penagih/dashboard" element={<PenagihDashboard />} />
+            <Route path="/penagih/list-skrd" element={<PenagihListSkrd />} />
+            <Route path="/penagih/wilayah" element={<PenagihWilayah />} />
+            <Route path="/penagih/riwayat" element={<PenagihRiwayat />} />
+            <Route path="/penagih/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          </Route>
 
           {/* Redirect otomatis ke login jika rute tidak dikenal */}
-          <Route path="*" element={<Navigate to="/staff/login" replace />} />
+          <Route path="/landing-page" element={<LandingPage />} />
+          <Route path="*" element={<Navigate to="/landing-page" replace />} />
         </Routes>
       </MainLayout>
     </Router>

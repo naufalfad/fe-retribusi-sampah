@@ -245,9 +245,9 @@ const DlhReporting = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-5 text-center">
-                                        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full border border-emerald-100">
-                                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                                            SINKRON BJB
+                                        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full border border-emerald-100 uppercase">
+                                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse "></span>
+                                            {item.status}
                                         </span>
                                     </td>
                                 </tr>

@@ -196,7 +196,7 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
                                         <Ruler size={14} /> Volume Sampah per Bulan
                                     </label>
                                     <div className="relative">
-                                        <input type="number" value={volume} onChange={(e) => setVolume(e.target.value)} className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl py-3 px-4 text-xl font-black outline-none focus:border-green-600" placeholder="0.00" />
+                                        <input type="number" value={volume} onChange={(e) => setVolume(e.target.value)} onWheel={(e) => e.target.blur()} className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl py-3 px-4 text-xl font-black outline-none focus:border-green-600" placeholder="0.00" />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-gray-300">m³</span>
                                     </div>
                                 </div>

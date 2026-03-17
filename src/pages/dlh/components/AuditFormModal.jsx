@@ -1,14 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, act } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
-    X, Save, MapPin, Info, AlertCircle,
-    Calculator, Banknote, User, Building2, Loader2, ChevronDown, Calendar, History
+    X, Save, MapPin, Info,
+    Calculator, Banknote, Loader2, ChevronDown, History
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../../../api/axios';
+
+const toTitik = (val) => {
+    if (!val && val !== 0) return "";
+    let stringValue = val.toString().replace(/\D/g, ""); // Hanya ambil angka
+    return stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+// Menghapus titik agar menjadi angka murni untuk kalkulasi & Database
+const toAngka = (val) => {
+    if (!val) return 0;
+    const clean = val.toString().replace(/\./g, "");
+    return parseInt(clean, 10) || 0;
+};
 
 // Validasi Schema
 const schema = z.object({
@@ -23,7 +36,8 @@ const schema = z.object({
     longitude: z.string().min(1, "Longitude diperlukan"),
     catatan_audit: z.string().min(10, "Wajib memberikan alasan audit"),
     tarif_audit: z.string().min(1, "Tarif wajib diisi"),
-    durasi_audit: z.string().min(1, "Durasi wajib diisi"),
+    durasi_audit: z.string().optional(),
+    volume_audit: z.string().optional(),
     total_terhutang: z.string().min(1, "Total terhutang wajib diisi"),
     total_terbayar: z.string().min(1, "Total terbayar wajib diisi"),
     total_wajib_bayar: z.string().min(1, "Total wajib bayar wajib diisi"),
@@ -63,12 +77,19 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
             kelas_retribusi: objek.id_kelas.toString(),
             latitude: objek.lat ? objek.lat.toString() : "",
             longitude: objek.lng ? objek.lng.toString() : "",
-            tarif_audit: "", durasi_audit: "", total_terhutang: "", total_terbayar: "", total_wajib_bayar: "",
+            tarif_audit: "",
+            durasi_audit: "1",
+            volume_audit: "",
+            total_terhutang: "",
+            total_terbayar: "",
+            total_wajib_bayar: "0",
             catatan_audit: ""
         }
     });
 
     const watchKelas = watch('kelas_retribusi');
+    const watchA = watch('total_terhutang');
+    const watchB = watch('total_terbayar');
 
     useEffect(() => {
         api.get('/objek/all-kelas').then(res => {
@@ -86,14 +107,33 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
 
     const activeClass = filteredKelas.find(item => item.id_kelas.toString() === watchKelas);
 
+    useEffect(() => {
+        if (activeClass) {
+            const tarifDasar = activeClass.tarif_kelas ? activeClass.tarif_kelas.toString() : "0";
+            setValue('tarif_audit', tarifDasar);
+        }
+    }, [activeClass, setValue]);
+
+    useEffect(() => {
+        const a = toAngka(watchA);
+        const b = toAngka(watchB);
+        setValue('total_wajib_bayar', toTitik(a - b));
+    }, [watchA, watchB, setValue]);
+
     const onSubmit = async (data) => {
         setIsLoading(true);
         try {
-            await api.put('/objek/submit-audit', {
+            const payload = {
+                ...data,
                 id_objek: objek.id_objek,
                 id_kelas_temuan: data.kelas_retribusi,
-                ...data
-            });
+                tarif_audit: toAngka(data.tarif_audit),
+                total_terhutang: toAngka(data.total_terhutang),
+                total_terbayar: toAngka(data.total_terbayar),
+                total_wajib_bayar: toAngka(data.total_wajib_bayar),
+            };
+
+            await api.put('/objek/submit-audit', payload);
             alert("Hasil Audit Manual Berhasil Disimpan.");
             onSuccess();
             onClose();
@@ -188,34 +228,94 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                     </div>
 
                                     <h3 className="relative z-10 text-[10px] font-black text-green-400 uppercase tracking-[0.2em] border-b border-white/10 pb-4 flex items-center gap-2">
-                                        <Banknote size={14} /> 2. Perhitungan Manual (Field Findings)
+                                        <Banknote size={14} /> 2. Perhitungan Manual (Audit Hasil Survey)
                                     </h3>
 
                                     <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {/* Field Tarif (ReadOnly) */}
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Tarif Retribusi (Audit)</label>
-                                            <input type="number" {...register('tarif_audit')} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400 focus:bg-white/10 transition-all" placeholder="0" />
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Durasi Denda (Bulan)</label>
-                                            <input type="number" {...register('durasi_audit')} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400 focus:bg-white/10 transition-all" placeholder="0" />
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Tarif Retribusi (Sistem)</label>
+                                            <input
+                                                readOnly
+                                                {...register('tarif_audit')}
+                                                className="w-full p-4 bg-white/5 border border-white/20 rounded-2xl font-black text-slate-500 outline-none cursor-not-allowed"
+                                            />
                                         </div>
 
+                                        {/* --- KONDISI DINAMIS DI SINI --- */}
+                                        {type === 'pribadi' ? (
+                                            <div className="space-y-1 animate-in fade-in slide-in-from-right-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Durasi Pelanggaran (Bulan)</label>
+                                                <input
+                                                    type="number"
+                                                    {...register('durasi_audit')}
+                                                    onWheel={(e) => e.target.blur()}
+                                                    className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400"
+                                                    placeholder="0"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-1 animate-in fade-in slide-in-from-right-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Volume Temuan (m³)</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="number"
+                                                        {...register('volume_audit')}
+                                                        onWheel={(e) => e.target.blur()}
+                                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl font-black text-white outline-none focus:border-green-400"
+                                                        placeholder="0"
+                                                    />
+                                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-white/20">M3</span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* FIELD A: TERHUTANG */}
                                         <div className="md:col-span-2 space-y-1.5 pt-4 border-t border-white/5">
-                                            <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">A. Total Retribusi Terhutang (Rp)</label>
-                                            <input type="number" {...register('total_terhutang')} className="w-full p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl font-black text-2xl text-blue-400 outline-none" placeholder="0" />
+                                            <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1 flex justify-between">
+                                                <span>A. Total Retribusi Terhutang (Rp)</span>
+                                                <span className="text-[8px] italic opacity-50">Input Manual</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                {...register('total_terhutang')}
+                                                onChange={(e) => setValue('total_terhutang', toTitik(e.target.value))}
+                                                className="w-full p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl font-black text-2xl text-blue-400 outline-none focus:bg-blue-500/20"
+                                                placeholder="0"
+                                            />
                                         </div>
 
+                                        {/* FIELD B: TELAH DIBAYAR */}
                                         <div className="md:col-span-2 space-y-1.5">
-                                            <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1">B. Retribusi Telah Dibayar (Rp)</label>
-                                            <input type="number" {...register('total_terbayar')} className="w-full p-5 bg-red-500/10 border border-red-500/20 rounded-2xl font-black text-2xl text-red-400 outline-none" placeholder="0" />
+                                            <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1 flex justify-between">
+                                                <span>B. Retribusi Telah Dibayar (Rp)</span>
+                                                <span className="text-[8px] italic opacity-50">Input Manual</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                {...register('total_terbayar')}
+                                                onChange={(e) => setValue('total_terbayar', toTitik(e.target.value))}
+                                                className="w-full p-5 bg-red-500/10 border border-red-500/20 rounded-2xl font-black text-2xl text-red-400 outline-none focus:bg-red-500/20"
+                                                placeholder="0"
+                                            />
                                         </div>
 
-                                        <div className="md:col-span-2 bg-gradient-to-r from-green-600 to-emerald-700 p-8 rounded-[2.5rem] mt-4 shadow-lg">
+                                        {/* FIELD C: HASIL SELISIH (HASIL KALKULASI) */}
+                                        <div className="md:col-span-2 bg-gradient-to-r from-green-600 to-emerald-700 p-8 rounded-[2.5rem] mt-4 shadow-lg border border-green-500/30">
                                             <label className="block text-[10px] font-black text-white/70 uppercase tracking-widest mb-3">C. Total Retribusi Kurang / Lebih Bayar (Rp)</label>
                                             <div className="flex items-center gap-4">
-                                                <Calculator className="text-white/40" size={32} />
-                                                <input type="number" {...register('total_wajib_bayar')} className="w-full bg-transparent font-black text-5xl text-white outline-none p-0 tracking-tighter" placeholder="0" />
+                                                <div className="p-3 bg-white/20 rounded-2xl">
+                                                    <Calculator className="text-white" size={32} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <input
+                                                        readOnly
+                                                        type="text"
+                                                        {...register('total_wajib_bayar')}
+                                                        className="w-full bg-transparent font-black text-5xl text-white outline-none p-0 tracking-tighter"
+                                                    />
+                                                    <p className="text-[9px] text-white/50 font-bold uppercase mt-2 italic">Otomatis: (A - B)</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
