@@ -25,7 +25,7 @@ const LandingPage = () => {
         { name: 'Beranda', href: '#home' },
         { name: 'Fitur', href: '#features' },
         { name: 'Alur Layanan', href: '#workflow' },
-        { name: 'Dasar Hukum', href: '/peraturan' },
+        { name: 'Dasar Hukum', href: '#' },
     ];
 
     return (
@@ -108,7 +108,7 @@ const LandingPage = () => {
 
                 <div className="max-w-7xl mx-auto px-6 relative z-20 text-center md:text-left">
                     <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-md border border-green-500/30 px-4 py-1.5 rounded-full text-green-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                        <ShieldCheck size={14} /> Official DLH Kabupaten Bogor
+                        <ShieldCheck size={14} /> Kantor DLH Kabupaten Bogor
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] uppercase italic mb-8">
                         Mewujudkan <br />
@@ -119,12 +119,12 @@ const LandingPage = () => {
                         REKAS adalah sistem integrasi retribusi pelayanan persampahan yang transparan, akurat, dan memudahkan masyarakat dalam berkontribusi menjaga kebersihan daerah.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <button
+                        {/* <button
                             onClick={() => navigate('/signUp')}
                             className="bg-green-600 hover:bg-white hover:text-green-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl shadow-green-900/40 transition-all flex items-center justify-center gap-3 active:scale-95"
                         >
                             Daftar Akun Baru <ArrowRight size={18} />
-                        </button>
+                        </button> */}
                         <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all">
                             Panduan Layanan
                         </button>
@@ -230,14 +230,14 @@ const LandingPage = () => {
                         Sudah Siap Berkontribusi?
                     </h3>
                     <p className="text-slate-500 text-lg mb-12 font-medium">
-                        Gabung bersama ribuan warga lainnya yang telah menggunakan layanan digital REKAS untuk pengelolaan kebersihan yang lebih baik.
+                        Gabung bersama kami dalam menggunakan layanan digital REKAS untuk pengelolaan kebersihan yang lebih baik.
                     </p>
-                    <button
+                    {/* <button
                         onClick={() => navigate('/signUp')}
                         className="bg-green-700 hover:bg-black text-white px-12 py-6 rounded-[2rem] font-black uppercase text-sm tracking-[0.2em] shadow-2xl shadow-green-900/20 transition-all active:scale-95"
                     >
                         Daftarkan NPWRD Anda Sekarang
-                    </button>
+                    </button> */}
                 </div>
             </section>
 
