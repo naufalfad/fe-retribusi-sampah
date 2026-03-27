@@ -55,7 +55,7 @@ const LandingPage = () => {
                         ))}
                     </div>
 
-                    {/* Auth Buttons */}
+                    {/* Auth Buttons - DISKEMBUNYIKAN PADA MOBILE/TABLET */}
                     <div className="hidden md:flex items-center gap-3">
                         <button
                             onClick={() => navigate('/penagih')}
@@ -73,7 +73,7 @@ const LandingPage = () => {
 
                     {/* Mobile Toggle */}
                     <button className="md:hidden text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                        {isMenuOpen ? <X /> : <Menu />}
+                        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
                     </button>
                 </div>
 
@@ -86,9 +86,8 @@ const LandingPage = () => {
                                     {link.name}
                                 </a>
                             ))}
-                            <hr />
-                            <button onClick={() => navigate('/login')} className="w-full bg-slate-100 py-4 rounded-2xl font-black uppercase text-xs">Login Wajib Retribusi</button>
-                            <button onClick={() => navigate('/staff/login')} className="w-full bg-green-700 text-white py-4 rounded-2xl font-black uppercase text-xs">Portal Petugas</button>
+                            {/* <hr />
+                            <button onClick={() => navigate('/login')} className="w-full bg-slate-100 py-4 rounded-2xl font-black uppercase text-xs">Login Wajib Retribusi</button> */}
                         </div>
                     </div>
                 )}
@@ -96,7 +95,6 @@ const LandingPage = () => {
 
             {/* --- HERO SECTION --- */}
             <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-40 overflow-hidden">
-                {/* Background Image / Pattern */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-white z-10"></div>
                     <img
@@ -118,16 +116,36 @@ const LandingPage = () => {
                     <p className="text-lg md:text-xl text-white/80 max-w-2xl font-medium leading-relaxed mb-10">
                         REKAS adalah sistem integrasi retribusi pelayanan persampahan yang transparan, akurat, dan memudahkan masyarakat dalam berkontribusi menjaga kebersihan daerah.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        {/* <button
-                            onClick={() => navigate('/signUp')}
-                            className="bg-green-600 hover:bg-white hover:text-green-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl shadow-green-900/40 transition-all flex items-center justify-center gap-3 active:scale-95"
-                        >
-                            Daftar Akun Baru <ArrowRight size={18} />
-                        </button> */}
-                        <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all">
+
+                    {/* CONTAINER TOMBOL UTAMA */}
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 md:flex md:flex-row gap-4 justify-center md:justify-start">
+                        {/* Tombol Panduan (Selalu Ada) */}
+                        <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all flex items-center justify-center gap-2">
                             Panduan Layanan
                         </button>
+
+                        {/* TOMBOL PORTAL (Hanya muncul di Ponsel & Tab / md:hidden) */}
+                        <button
+                            onClick={() => navigate('/penagih')}
+                            className="flex md:hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all items-center justify-center gap-2"
+                        >
+                            <Smartphone size={16} /> Portal Penagih
+                        </button>
+
+                        <button
+                            onClick={() => navigate('/staff')}
+                            className="flex md:hidden bg-green-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-xl shadow-green-900/40 transition-all active:scale-95 items-center justify-center gap-2"
+                        >
+                            <Users size={16} /> Portal Petugas
+                        </button>
+
+                        {/* Tombol Login WR (Hanya muncul di Mobile sebagai alternatif) */}
+                        {/* <button
+                            onClick={() => navigate('/login')}
+                            className="flex md:hidden bg-white text-slate-900 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all items-center justify-center gap-2"
+                        >
+                            Login Wajib Retribusi
+                        </button> */}
                     </div>
                 </div>
             </section>
