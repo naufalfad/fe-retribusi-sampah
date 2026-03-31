@@ -90,7 +90,6 @@ const FormTambahObjek = ({ isStaff = false }) => {
     // 1. Ambil data Kelurahan (beserta relasinya) saat pertama kali buka form
     useEffect(() => {
         const fetchInitialData = async () => {
-            // Ambil semua kelurahan (Gunakan limit besar atau tanpa limit di backend)
             const res = await api.get('/wilayah/search-kelurahan?q=');
             if (res.data.success) {
                 setAllKelurahan(res.data.data);
@@ -101,18 +100,18 @@ const FormTambahObjek = ({ isStaff = false }) => {
     }, []);
 
     // 2. Logic Filter saat user mengetik
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         const val = e.target.value;
         setSearchLabel(val);
         setIsDropdownOpen(true);
 
-        if (val === "") {
-            setFilteredKelurahan(allKelurahan);
-        } else {
-            const filtered = allKelurahan.filter(k =>
-                k.name.toLowerCase().includes(val.toLowerCase())
-            );
-            setFilteredKelurahan(filtered);
+        try {
+            const res = await api.get(`/wilayah/search-kelurahan?q=${val}`);
+            if (res.data.success) {
+                setFilteredKelurahan(res.data.data);
+            }
+        } catch (err) {
+            console.error(err);
         }
     };
 

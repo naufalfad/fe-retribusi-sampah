@@ -149,12 +149,14 @@ const FormTambahSubjek = ({ isStaff = false }) => {
 
     // 1. Load Data Kelurahan (Hanya 1x saat mount)
     useEffect(() => {
-        api.get('/wilayah/search-kelurahan?q=').then(res => {
+        const fetchInitialData = async () => {
+            const res = await api.get('/wilayah/search-kelurahan?q=');
             if (res.data.success) {
                 setAllKelurahan(res.data.data);
                 setFilteredKelurahan(res.data.data);
             }
-        });
+        };
+        fetchInitialData();
     }, []);
 
     // 2. Handler Pilih Kelurahan
