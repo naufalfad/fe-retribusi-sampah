@@ -33,6 +33,8 @@ const DlhPaymentMonitoring = () => {
                     jumlah: Number(item.amount_paid),
                     status: item.payment_status,
                     ssrd_no: item.no_ssrd,
+                    points_used: item.points_used || 0,
+                    point_value: item.point_value || 0,
                     raw: item
                 }));
 
@@ -94,6 +96,7 @@ const DlhPaymentMonitoring = () => {
                             <tr>
                                 <th className="p-6">Objek Retribusi</th>
                                 <th className="p-6">No. SKRD / Nominal</th>
+                                <th className="p-6">Poin Digunakan</th>
                                 <th className="p-6">Tgl Bayar</th>
                                 <th className="p-6">Status</th>
                                 <th className="p-6 text-center">Aksi</th>
@@ -132,6 +135,23 @@ const DlhPaymentMonitoring = () => {
                                             </p>
                                         </td>
 
+                                        <td className="p-6">
+                                            {p.points_used > 0 ? (
+                                                <div className="mt-2 space-y-1">
+                                                    <p className="text-xs font-black text-amber-600">
+                                                        - {p.points_used.toLocaleString()} Poin
+                                                    </p>
+                                                    <p className="text-xs text-slate-400 font-bold">
+                                                        ≈ Rp {p.point_value.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <p className="text-xs font-black text-slate-400">
+                                                    0
+                                                </p>
+                                            )}
+                                        </td>
+
                                         <td className="p-6 text-sm text-gray-600">
                                             {p.tgl_bayar}
                                         </td>
@@ -151,10 +171,6 @@ const DlhPaymentMonitoring = () => {
                                                 >
                                                     <FileCheck2 size={14} />
                                                     Lihat SSRD
-                                                </button>
-
-                                                <button className="p-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200">
-                                                    <Printer size={18} />
                                                 </button>
                                             </div>
                                         </td>

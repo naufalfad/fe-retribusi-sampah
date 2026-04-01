@@ -24,7 +24,7 @@ const PenagihLoginPage = () => {
 
         try {
             // KIRIM KE ROUTE BARU
-            const response = await api.post('/auth/login-penagih', {
+            const response = await api.post('/auth/login-petugas-lapangan', {
                 username: formData.username,
                 password: formData.password
             });

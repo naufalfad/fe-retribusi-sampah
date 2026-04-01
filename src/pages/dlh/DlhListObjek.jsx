@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     Search, Printer, Eye, Filter, ClipboardCheck, Home,
     Building2, MapPin, Loader2, ChevronLeft, ChevronRight,
-    X, FileText, CalendarDays, Wallet
+    X, FileText, CalendarDays, Wallet, Star
 } from 'lucide-react';
 import api from '../../api/axios';
 import SkrdPreviewModal from './components/SkrdPreviewModal';
@@ -114,6 +114,7 @@ const DlhListObjek = () => {
                             <tr>
                                 <th className="p-8">Objek Retribusi</th>
                                 <th className="p-8 text-center">Info Wilayah</th>
+                                <th className="p-8 text-center">Saldo Poin</th>
                                 <th className="p-8 text-center">Riwayat SKRD</th>
                                 <th className="p-8 text-center">Aksi Operasional</th>
                             </tr>
@@ -142,6 +143,19 @@ const DlhListObjek = () => {
                                             <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase italic">
                                                 <MapPin size={10} className="inline mr-1" /> {obj.kecamatan_objek}
                                             </p>
+                                        </td>
+                                        <td className="p-8 text-center">
+                                            <div className="inline-flex flex-col items-center">
+                                                <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-xl border border-amber-100 shadow-sm">
+                                                    <Star size={14} fill="currentColor" className="text-amber-400" />
+                                                    <span className="font-black text-xs">
+                                                        {(obj.PoinObjek?.saldo_poin || 0).toLocaleString('id-ID')}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[8px] font-black text-slate-400 uppercase mt-1 tracking-tighter">
+                                                    Reward Terkumpul
+                                                </p>
+                                            </div>
                                         </td>
                                         <td className="p-8 text-center">
                                             {/* Badge Riwayat SKRD (Mirip Jumlah Aset di List Subjek) */}

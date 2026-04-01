@@ -39,6 +39,11 @@ import DocumentsPage from './pages/DocumentsPage';
 import ObjectManagement from './pages/ObjectManagement';
 import DlhPemeriksaan from './pages/dlh/DlhPemeriksaan';
 import DlhValidasiBayar from './pages/dlh/DlhValidasiBayar';
+import PengangkutDashboard from './pages/pengangkut/PengangkutDashboard';
+import PengangkutInputPoin from './pages/pengangkut/PengangkutInputPoin';
+import PengangkutMonitoring from './pages/pengangkut/PengangkutMonitoring';
+import PengangkutRiwayat from './pages/pengangkut/PengangkutRiwayat';
+import AdminPoinSettings from './pages/admin/AdminPoinSetting';
 
 function App() {
   return (
@@ -108,6 +113,7 @@ function App() {
             <Route path="/admin/logs" element={<AdminLogs />} />
             <Route path="/admin/manajemen-objek" element={<ObjectManagement />} />
             <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
+            <Route path="/admin/poin" element={<AdminPoinSettings />} />
           </Route>
 
           {/* Halaman Penagih */}
@@ -117,6 +123,13 @@ function App() {
             <Route path="/penagih/wilayah" element={<PenagihWilayah />} />
             <Route path="/penagih/riwayat" element={<PenagihRiwayat />} />
             <Route path="/penagih/peraturan" element={<DocumentsPage isAdmin={false} />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['Pengangkut']} />}>
+            <Route path="/pengangkut/dashboard" element={<PengangkutDashboard />} />
+            <Route path="/pengangkut/input-poin" element={<PengangkutInputPoin />} />
+            <Route path="/pengangkut/monitoring" element={<PengangkutMonitoring />} />
+            <Route path="/pengangkut/riwayat" element={<PengangkutRiwayat />} />
           </Route>
 
           {/* Redirect otomatis ke login jika rute tidak dikenal */}
