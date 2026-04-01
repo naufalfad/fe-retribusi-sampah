@@ -58,16 +58,16 @@ const LandingPage = () => {
                     {/* Auth Buttons - DISKEMBUNYIKAN PADA MOBILE/TABLET */}
                     <div className="hidden md:flex items-center gap-3">
                         <button
-                            onClick={() => navigate('/penagih')}
+                            onClick={() => navigate('/petugas-lapangan')}
                             className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${isScrolled ? 'text-slate-900 hover:bg-slate-100' : 'text-white hover:bg-white/10'}`}
                         >
-                            Portal Penagih
+                            Portal Petugas Lapangan
                         </button>
                         <button
                             onClick={() => navigate('/staff')}
                             className="bg-green-700 hover:bg-black text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl shadow-green-900/20 transition-all active:scale-95"
                         >
-                            Portal Petugas
+                            Portal Petugas Internal
                         </button>
                     </div>
 

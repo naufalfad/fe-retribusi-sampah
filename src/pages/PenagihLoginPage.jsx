@@ -62,13 +62,13 @@ const PenagihLoginPage = () => {
                         REKAS <span className="text-green-400 italic">MOBILE</span>
                     </h1>
                     <p className="text-sm text-green-100 font-bold uppercase tracking-[0.2em] opacity-80">
-                        Petugas Penagihan Lapangan
+                        Petugas Lapangan
                     </p>
                 </div>
 
                 <div className="bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl p-10 border border-white/20">
                     <div className="mb-8 text-center">
-                        <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight">Otoritas Penagih</h2>
+                        <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight">Otoritas Petugas Lapangan</h2>
                         <p className="text-xs text-gray-400 font-bold mt-1 uppercase tracking-widest">Gunakan ID Petugas Anda</p>
                     </div>
 

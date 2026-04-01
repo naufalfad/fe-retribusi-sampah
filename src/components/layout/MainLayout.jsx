@@ -72,7 +72,7 @@ const MainLayout = ({ children }) => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff', '/penagih', '/landing-page'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff', '/petugas-lapangan', '/landing-page'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuConfig = {
@@ -144,7 +144,7 @@ const MainLayout = ({ children }) => {
     const handleLogout = () => {
         localStorage.clear();
         if (['penagih', 'pengangkut'].includes(activeRole)) {
-            navigate('/penagih');
+            navigate('/petugas-lapangan');
         } else if (activeRole === 'user') {
             navigate('/login');
         } else {

@@ -64,7 +64,7 @@ function App() {
 
           {/* Halaman Login Staff */}
           <Route path="/staff" element={<StaffLoginPage />} />
-          <Route path="/penagih" element={<PenagihLoginPage />} />
+          <Route path="/petugas-lapangan" element={<PenagihLoginPage />} />
 
           {/* Halaman UPT */}
           <Route element={<ProtectedRoute allowedRoles={['UPT', 'Admin']} />}>
