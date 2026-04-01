@@ -31,8 +31,14 @@ const AdminStaff = () => {
         username: '',
         password: '',
         role: 'UPT',
-        kelurahan: 'Pakansari'
+        kelurahan: ''
     });
+
+    const openAddModal = () => {
+        setFormData({ username: '', password: '', role: 'UPT', kelurahan: '' }); // Reset form
+        setKelSearchTerm('');
+        setShowAddModal(true);
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -43,7 +49,7 @@ const AdminStaff = () => {
         e.preventDefault();
         setIsProcessing(true);
         try {
-            const endpoint = activeTab === 'staff' ? '/auth/register-staff' : '/auth/register-penagih';
+            const endpoint = activeTab === 'staff' ? '/auth/register-staff' : '/auth/register-petugas';
             const payload = activeTab === 'staff'
                 ? { username: formData.username, password: formData.password, role: formData.role }
                 : { username: formData.username, password: formData.password, kelurahan: formData.kelurahan };
@@ -64,12 +70,46 @@ const AdminStaff = () => {
         }
     };
 
+    const [kelOptions, setKelOptions] = useState([]);
+    const [isKelLoading, setIsKelLoading] = useState(false);
+    const [showKelDropdown, setShowKelDropdown] = useState(false);
+    const [kelSearchTerm, setKelSearchTerm] = useState('');
+
+    const fetchKelurahan = async (query = '') => {
+        setIsKelLoading(true);
+        try {
+            const res = await api.get('/wilayah/search-kelurahan', {
+                params: { q: query }
+            });
+            if (res.data.success) {
+                setKelOptions(res.data.data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsKelLoading(false);
+        }
+    };
+
+    // Debounce pencarian
+    const debouncedKelSearch = useCallback(
+        debounce((val) => fetchKelurahan(val), 500),
+        []
+    );
+
+    // Ambil data kelurahan saat modal dibuka dan tab adalah 'penagih'
+    useEffect(() => {
+        if (showAddModal && activeTab === 'penagih') {
+            fetchKelurahan('');
+        }
+    }, [showAddModal, activeTab]);
+
     // --- API INTEGRATION ---
-    const fetchStaff = async (page = 1, search = '') => {
+    const fetchStaff = async (page = 1, search = '', tab = activeTab) => {
         setLoading(true);
         try {
             // Ganti endpoint secara dinamis
-            const endpoint = activeTab === 'staff' ? '/auth/list-staff' : '/auth/list-penagih';
+            const endpoint = tab === 'staff' ? '/auth/list-staff' : '/auth/list-petugas';
             const res = await api.get(endpoint, {
                 params: { page, limit: 10, search }
             });
@@ -84,9 +124,17 @@ const AdminStaff = () => {
             }
         } catch (err) {
             console.error("Gagal mengambil data:", err);
+            setStaffList([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleTabChange = (newTab) => {
+        setActiveTab(newTab);
+        setSearchTerm(''); // Reset pencarian
+        setStaffList([]); // Kosongkan list agar muncul loading
+        setPagination(prev => ({ ...prev, current_page: 1 })); // Reset ke hal 1
     };
 
     const debouncedSearch = useCallback(
@@ -95,9 +143,8 @@ const AdminStaff = () => {
     );
 
     useEffect(() => {
-        const page = pagination?.current_page || 1;
-        fetchStaff(page, searchTerm);
-    }, [pagination?.current_page, activeTab]);
+        fetchStaff(pagination.current_page, searchTerm, activeTab);
+    }, [activeTab, pagination.current_page]);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
@@ -125,7 +172,7 @@ const AdminStaff = () => {
         try {
             const endpoint = activeTab === 'staff'
                 ? `/auth/reset-password-staff/${selectedStaff.id_staff}`
-                : `/auth/reset-password-penagih/${selectedStaff.id_penagih}`;
+                : `/auth/reset-password-petugas/${selectedStaff.id_petugas}`;
 
             const response = await api.put(endpoint, {
                 newPassword: customPassword
@@ -152,7 +199,7 @@ const AdminStaff = () => {
         try {
             const endpoint = activeTab === 'staff'
                 ? `/auth/delete-staff/${selectedStaff.id_staff}`
-                : `/auth/delete-penagih/${selectedStaff.id_penagih}`;
+                : `/auth/delete-petugas/${selectedStaff.id_petugas}`;
 
             const response = await api.delete(endpoint);
 
@@ -180,7 +227,7 @@ const AdminStaff = () => {
                     <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest italic">Pusat Kendali Akun REKAS</p>
                 </div>
                 <button
-                    onClick={() => setShowAddModal(true)}
+                    onClick={() => openAddModal()}
                     className="group bg-green-700 text-white px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-green-900/20 hover:bg-black transition-all active:scale-95"
                 >
                     <UserPlus size={18} className="group-hover:rotate-12 transition-transform" />
@@ -189,21 +236,16 @@ const AdminStaff = () => {
             </div>
             <div className="flex p-1 bg-gray-100 rounded-2xl w-fit border border-gray-200">
                 <button
-                    onClick={() =>
-                        setActiveTab('staff')}
-                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'staff' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400'}`}
+                    onClick={() => handleTabChange('staff')}
+                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'staff' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                     INTERNAL STAFF
                 </button>
                 <button
-                    onClick={() => {
-                        setActiveTab('penagih');
-                        setSearchTerm('');
-                        fetchStaff(1, '', 'penagih')
-                    }}
-                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'penagih' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400'}`}
+                    onClick={() => handleTabChange('petugas')}
+                    className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'petugas' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                 >
-                    PETUGAS PENAGIH
+                    PETUGAS LAPANGAN
                 </button>
             </div>
             {/* --- TOOLBAR --- */}
@@ -379,7 +421,7 @@ const AdminStaff = () => {
                                         <select
                                             name="role" value={formData.role}
                                             onChange={handleInputChange}
-                                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest"
+                                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest transition-all"
                                         >
                                             <option value="UPT">UPT</option>
                                             <option value="DLH">Bidang DLH</option>
@@ -387,15 +429,66 @@ const AdminStaff = () => {
                                             <option value="Admin">Administrator</option>
                                         </select>
                                     ) : (
-                                        <select
-                                            name="kelurahan" value={formData.kelurahan}
-                                            onChange={handleInputChange}
-                                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-xs uppercase tracking-widest"
-                                        >
-                                            <option value="Pakansari">Pakansari</option>
-                                            <option value="Cibinong">Cibinong</option>
-                                            <option value="Sukahati">Sukahati</option>
-                                        </select>
+                                        <div className="space-y-1.5 md:col-span-1 relative">
+                                            <div className="relative group">
+                                                <input
+                                                    required
+                                                    type="text"
+                                                    placeholder="Cari Kelurahan..."
+                                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-700 font-bold text-sm"
+
+                                                    value={kelSearchTerm}
+
+                                                    onFocus={() => {
+                                                        setShowKelDropdown(true);
+                                                        if (kelOptions.length === 0) fetchKelurahan('');
+                                                    }}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setKelSearchTerm(val);
+                                                        setFormData(prev => ({ ...prev, kelurahan: val }));
+                                                        debouncedKelSearch(val);
+                                                    }}
+                                                    onBlur={() => {
+                                                        setTimeout(() => setShowKelDropdown(false), 200);
+                                                    }}
+                                                />
+                                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                                    {isKelLoading ? <Loader2 size={16} className="animate-spin text-green-600" /> : <MapPin size={16} className="text-gray-300" />}
+                                                </div>
+                                            </div>
+
+                                            {/* DROPDOWN HASIL PENCARIAN */}
+                                            {showKelDropdown && (
+                                                <div className="absolute z-[100] top-[105%] left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto overflow-x-hidden animate-in fade-in zoom-in-95 duration-200">
+                                                    {kelOptions.length === 0 && !isKelLoading && (
+                                                        <div className="p-4 text-center text-[10px] font-black text-gray-400 uppercase">Data Tidak Ditemukan</div>
+                                                    )}
+
+                                                    {kelOptions.map((kel) => (
+                                                        <button
+                                                            key={kel.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setFormData(prev => ({ ...prev, kelurahan: kel.name }));
+
+                                                                setKelSearchTerm(kel.name);
+
+                                                                setShowKelDropdown(false);
+                                                            }}
+                                                            className="w-full p-4 text-left hover:bg-green-50 flex flex-col border-b border-gray-50 last:border-0 group transition-colors"
+                                                        >
+                                                            <span className="text-sm font-black text-gray-700 group-hover:text-green-700 uppercase tracking-tight">
+                                                                {kel.name}
+                                                            </span>
+                                                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                                                                Kec. {kel.RefKecamatan?.name}
+                                                            </span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
 
