@@ -24,7 +24,7 @@ const PaymentPage = () => {
     // --- 2. LOAD MIDTRANS SNAP SCRIPT OTOMATIS ---
     useEffect(() => {
         const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-        const clientKey = "Mid-client-6tlrMY13kNoFhcCt";
+        const clientKey = import.meta.env.MIDTRANS_CLIENT_KEY;
 
         let scriptTag = document.createElement('script');
         scriptTag.src = midtransScriptUrl;

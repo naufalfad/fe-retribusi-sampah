@@ -30,7 +30,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
     useEffect(() => {
         if (!isOpen) return;
         const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-        const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
+        const clientKey = import.meta.env.MIDTRANS_CLIENT_KEY;
 
         let scriptTag = document.createElement('script');
         scriptTag.src = midtransScriptUrl;
