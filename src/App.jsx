@@ -44,6 +44,7 @@ import PengangkutInputPoin from './pages/pengangkut/PengangkutInputPoin';
 import PengangkutMonitoring from './pages/pengangkut/PengangkutMonitoring';
 import PengangkutRiwayat from './pages/pengangkut/PengangkutRiwayat';
 import AdminPoinSettings from './pages/admin/AdminPoinSetting';
+import UbahPassword from './pages/wajibRetribusi/UbahPassword';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
           <Route path="/skrd" element={<SkrdList />} />
           <Route path="/pembayaran" element={<PaymentPage />} />
           <Route path="/layanan" element={<LayananPage />} />
+          <Route path="/ubah-password" element={<UbahPassword />} />
 
           {/* Halaman Login Staff */}
           <Route path="/staff" element={<StaffLoginPage />} />

@@ -7,7 +7,8 @@ import {
     ClipboardList, Database, CheckCircle2, Home,
     ListChecks, ListIcon, ListCollapse, Users,
     Settings, ShieldAlert, ListOrdered, BookOpen,
-    Edit3, Map, User
+    Edit3, Map, User,
+    Key
 } from 'lucide-react';
 
 // --- Sub-component: Sidebar Item ---
@@ -54,15 +55,19 @@ const MainLayout = ({ children }) => {
 
     const [userData, setUserData] = useState(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
-        return { username: savedUser?.username || "Administrator" };
+
+        return {
+            name: savedUser?.username || savedUser?.npwrd_subjek || "User"
+        };
     });
 
     // 2. Pantau perubahan URL (location.pathname)
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
+
         if (savedUser) {
             setUserData({
-                username: savedUser.username || "Administrator"
+                name: savedUser.username || savedUser.npwrd_subjek || "User"
             });
         }
     }, [location.pathname]);
@@ -79,9 +84,9 @@ const MainLayout = ({ children }) => {
         user: [
             { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
             { icon: FileText, label: 'Tagihan SKRD', path: '/skrd' },
-            { icon: CreditCard, label: 'Pembayaran SSRD', path: '/pembayaran' },
             { icon: UserCircle, label: 'Layanan', path: '/layanan' },
             { icon: Home, label: 'Daftar Objek Baru', path: '/daftar' },
+            { icon: Key, label: 'Ubah Password', path: '/ubah-password' },
         ],
         upt: [
             { icon: LayoutDashboard, label: 'Dashboard UPT', path: '/upt/dashboard' },
@@ -212,7 +217,7 @@ const MainLayout = ({ children }) => {
                         <div className={`mb-4 px-2 py-3 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center transition-all duration-300 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
                             <div className="relative shrink-0">
                                 <div className="w-10 h-10 rounded-lg bg-green-100 text-green-700 flex items-center justify-center font-bold border border-green-200 shadow-sm">
-                                    {userData.username.charAt(0).toUpperCase()}
+                                    {userData.name.charAt(0).toUpperCase()}
                                 </div>
                             </div>
 
@@ -220,7 +225,7 @@ const MainLayout = ({ children }) => {
                             {!isCollapsed && (
                                 <div className="flex flex-col overflow-hidden transition-opacity duration-300">
                                     <span className="text-sm font-bold text-gray-700 truncate leading-tight">
-                                        {userData.username}
+                                        {userData.name}
                                     </span>
                                     <span className="text-[10px] text-green-600 uppercase font-bold tracking-wider">
                                         {activeRole}

@@ -1,43 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, Building2, Home, MapPin, Search, FileText,
     AlertCircle, Printer, X, Download, ShieldCheck
 } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
+import api from '../../api/axios';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
 
     // State untuk Modal Kartu
+    const [user, setUser] = useState(null);
     const [showCard, setShowCard] = useState(false);
-    const [selectedAsset, setSelectedAsset] = useState(null);
+    const [assets, setAssets] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const [assets] = useState([
-        {
-            id: 1,
-            npwrd: '4.1.2.01.02.000001',
-            nama_objek: 'Kinan Kari',
-            alamat: 'Perumahan Kebun Hijau Blok A1, Sukahati',
-            kategori: 'PRIBADI',
-            status: 'Terverifikasi',
-            no_registrasi: 'REG-2026-0001'
-        },
-        {
-            id: 2,
-            npwrd: '4.1.2.01.02.000088',
-            nama_objek: 'Ruko Kinan Kari',
-            alamat: 'Jl. Raya Pemda No. 12, Cibinong',
-            kategori: 'BADAN',
-            status: 'Terverifikasi',
-            no_registrasi: 'REG-2026-0088'
-        },
-    ]);
+    assets.map((asset) => ({
+        id: asset.id_objek,
+        npor: asset.npor_objek,
+        nama: asset.nama_objek,
+        alamat: asset.alamat_objek,
+        kategori: asset.kategori_objek,
+        status: asset.status_objek
+    }))
 
-    const handleOpenCard = (asset) => {
-        setSelectedAsset(asset);
-        setShowCard(true);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await api.get('/objek/objek-saya');
+
+                setAssets(res.data.data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const savedUser = JSON.parse(localStorage.getItem('subjek'));
+
+        if (savedUser) {
+            setUser(savedUser);
+        }
+    }, []);
+
+    if (loading) {
+        return <div className="text-center py-20">Loading...</div>;
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
@@ -45,9 +59,9 @@ const UserDashboard = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
                 <div className="relative z-10">
                     <p className="text-sm text-green-700 font-bold mb-1 uppercase tracking-widest">Selamat Datang di REKAS,</p>
-                    <h2 className="text-3xl font-black text-gray-800 tracking-tighter italic">Kinan Kari</h2>
+                    <h2 className="text-3xl font-black text-gray-800 tracking-tighter uppercase">{user?.nama_subjek || 'User'}</h2>
                     <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm font-sans">
-                        <span className="font-medium uppercase">NIK: 3201XXXXXXXXXXXX</span>
+                        <span className="font-medium uppercase">NPWRD: {user?.npwrd_subjek || 'User'}</span>
                         <span className="h-1 w-1 bg-gray-300 rounded-full"></span>
                         <span className="font-medium">Member sejak 2026</span>
                     </div>
@@ -64,11 +78,11 @@ const UserDashboard = () => {
             <div className="space-y-6 font-sans">
                 <div className="flex items-center justify-between px-2">
                     <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2">
-                        <Building2 className="text-green-700" size={24} /> Daftar Aset NPWRD
+                        <Building2 className="text-green-700" size={24} /> Daftar Aset Objek
                     </h3>
                     {assets.length > 0 && (
                         <button onClick={() => navigate('/daftar')} className="flex items-center gap-2 text-green-700 font-bold hover:underline text-sm uppercase tracking-tighter">
-                            <Plus size={18} /> Tambah NPWRD Baru
+                            <Plus size={18} /> Tambah Objek Baru
                         </button>
                     )}
                 </div>
@@ -87,13 +101,13 @@ const UserDashboard = () => {
                                         </span>
                                     </div>
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 leading-none">NPWRD ID</p>
-                                    <h4 className="text-lg font-mono font-bold text-green-800 mb-4">{asset.npwrd}</h4>
+                                    <h4 className="text-lg font-mono font-bold text-green-800 mb-4">{asset.npor_objek}</h4>
                                     <div className="space-y-4 pt-4 border-t border-gray-50">
                                         <div>
                                             <p className="text-sm font-black text-gray-800 leading-tight uppercase">{asset.nama_objek}</p>
                                             <div className="flex items-center gap-2 text-gray-400 mt-1">
                                                 <MapPin size={14} className="shrink-0" />
-                                                <p className="text-xs truncate font-medium">{asset.alamat}</p>
+                                                <p className="text-xs truncate font-medium">{asset.alamat_objek}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -105,13 +119,13 @@ const UserDashboard = () => {
                                         <FileText size={14} /> Tagihan
                                     </button>
                                     {/* GANTI ARROW MENJADI PRINTER */}
-                                    <button
+                                    {/* <button
                                         onClick={() => handleOpenCard(asset)}
                                         className="p-3 bg-gray-800 text-white rounded-2xl hover:bg-green-700 transition-all flex items-center justify-center shadow-lg active:scale-95 group-hover:rotate-6"
                                         title="Cetak Kartu NPWRD"
                                     >
                                         <Printer size={18} />
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         ))}
@@ -120,9 +134,9 @@ const UserDashboard = () => {
                     <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-200 p-12 md:p-20 flex flex-col items-center text-center animate-in zoom-in duration-500">
                         <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-700 mb-6"><Building2 size={48} /></div>
                         <h3 className="text-2xl font-black text-gray-800 tracking-tight uppercase">Belum Ada Aset Terdaftar</h3>
-                        <p className="text-gray-500 max-w-sm mt-2 text-sm leading-relaxed font-medium italic font-sans">Anda belum memiliki nomor NPWRD. Silakan ajukan pendaftaran untuk rumah atau ruko Anda.</p>
+                        <p className="text-gray-500 max-w-sm mt-2 text-sm leading-relaxed font-medium italic font-sans">Anda belum memiliki nomor NPOR/Objek. Silakan ajukan pendaftaran untuk rumah atau ruko Anda.</p>
                         <div className="mt-10 flex flex-col md:flex-row gap-4">
-                            <button onClick={() => navigate('/daftar')} className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 transition-all transform hover:scale-105 uppercase text-xs tracking-widest"><Plus size={20} /> Daftarkan NPWRD Baru</button>
+                            <button onClick={() => navigate('/daftar')} className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 transition-all transform hover:scale-105 uppercase text-xs tracking-widest"><Plus size={20} /> Daftarkan NPOR Baru</button>
                         </div>
                     </div>
                 )}

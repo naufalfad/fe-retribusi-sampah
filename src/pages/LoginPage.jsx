@@ -1,9 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, ShieldCheck } from 'lucide-react';
+import api from '../api/axios';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [npwrd, setNpwrd] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await api.post('/auth/login-subjek', {
+                npwrd_subjek: npwrd,
+                password_subjek: password
+            });
+            api.interceptors.request.use((config) => {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            });
+
+            // simpan token & user
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('subjek', JSON.stringify(res.data.user));
+
+            navigate('/dashboard');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Login gagal');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         // Wrapper utama dengan Background Image dari folder public
@@ -19,12 +52,12 @@ const LoginPage = () => {
                 {/* SISI KIRI: Branding & Informasi */}
                 <div className="flex-1 text-center md:text-left space-y-6">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider border border-white/20">
-                        <ShieldCheck size={14} /> Official Portal DLH
+                        <ShieldCheck size={14} /> Portal Resmi REKAS
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-tight drop-shadow-lg">
                         E-Retribusi Sampah <br />
-                        <span className="text-green-400">Kabupaten Bogor</span>
+                        <span className="text-green-400">REKAS</span>
                     </h1>
 
                     <p className="text-lg text-gray-100 max-w-md font-medium drop-shadow-md">
@@ -60,18 +93,20 @@ const LoginPage = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-800">Masuk</h2>
-                                    <p className="text-sm text-gray-500 font-medium">Inputkan Email dan Password Anda</p>
+                                    <p className="text-sm text-gray-500 font-medium">Inputkan NPWRD dan Password Anda</p>
                                 </div>
                             </div>
 
-                            <form onSubmit={(e) => { e.preventDefault(); navigate('/dashboard'); }} className="space-y-6">
+                            <form onSubmit={handleLogin} className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
-                                        Email
+                                        NPWRD
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Masukkan Email"
+                                        placeholder="Masukkan NPWRD"
+                                        value={npwrd}
+                                        onChange={(e) => setNpwrd(e.target.value)}
                                         className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-700/5 focus:border-green-700 outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                                         required
                                     />
@@ -83,6 +118,8 @@ const LoginPage = () => {
                                     <input
                                         type="password"
                                         placeholder="Masukkan Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-700/5 focus:border-green-700 outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                                         required
                                     />
@@ -90,9 +127,10 @@ const LoginPage = () => {
 
                                 <button
                                     type="submit"
+                                    disabled={loading}
                                     className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-4 rounded-2xl shadow-xl shadow-green-700/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 text-lg"
                                 >
-                                    Masuk ke Dashboard
+                                    {loading ? 'Loading...' : 'Masuk ke Dashboard'}
                                 </button>
                             </form>
 
