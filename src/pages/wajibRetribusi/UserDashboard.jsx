@@ -90,7 +90,7 @@ const UserDashboard = () => {
                 {assets.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {assets.map((asset) => (
-                            <div key={asset.id} className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col">
+                            <div key={asset.id_objek} className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col">
                                 <div className="p-8 flex-grow">
                                     <div className="flex justify-between items-start mb-6">
                                         <div className={`p-4 rounded-2xl ${asset.kategori === 'PRIBADI' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>

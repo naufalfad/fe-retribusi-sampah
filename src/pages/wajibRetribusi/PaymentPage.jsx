@@ -88,7 +88,7 @@ const PaymentPage = () => {
         setIsProcessing(true);
         try {
             // Panggil API backend yang sudah kita buat sebelumnya
-            const res = await api.post('/ssrd/pembayaran-user', {
+            const res = await api.post('/ssrd/pembayaran', {
                 id_skrd: skrd.id_skrd,
                 use_points: usePoints
             });
@@ -102,7 +102,7 @@ const PaymentPage = () => {
                     },
                     onPending: function (result) {
                         alert("Menunggu Pembayaran...");
-                        navigate('/pembayaran');
+                        navigate('/skrd');
                     },
                     onError: function (result) {
                         alert("Pembayaran Gagal!");

@@ -37,7 +37,7 @@ const LayananPage = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-gray-800 tracking-tight uppercase">Layanan Mandiri</h1>
-                    <p className="text-gray-500 text-sm font-medium">Ajukan perubahan atau penonaktifan obyek retribusi Anda.</p>
+                    <p className="text-gray-500 text-sm font-medium">Ajukan perubahan atau penonaktifan objek retribusi Anda.</p>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@ const LayananPage = () => {
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Building2 size={24} /></div>
                             <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Pilih Obyek/Aset:</p>
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Pilih Objek/Aset:</p>
                                 <h2 className="text-lg font-black text-gray-800 tracking-tighter uppercase">{selectedAsset.nama}</h2>
                                 <p className="text-xs text-blue-600 font-mono font-bold">{selectedAsset.npwrd}</p>
                             </div>
@@ -106,14 +106,14 @@ const LayananPage = () => {
                                         </div>
                                     </div>
                                     <div className="space-y-4">
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nama Obyek Baru</label>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nama Objek Baru</label>
                                         <input type="text" placeholder="Contoh: Ruko Maju Jaya 2" className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-50 focus:border-green-600 outline-none transition-all text-sm font-bold" />
 
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Telepon Obyek Baru</label>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Telepon Objek Baru</label>
                                         <input type="text" placeholder="0812xxxx" className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-50 focus:border-green-600 outline-none transition-all text-sm font-bold" />
                                     </div>
                                     <div className="space-y-4">
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Alamat Lengkap Obyek Baru</label>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Alamat Lengkap Objek Baru</label>
                                         <textarea placeholder="Masukkan alamat lengkap baru..." rows="5" className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-50 focus:border-green-600 outline-none transition-all text-sm font-bold"></textarea>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@ const LayananPage = () => {
                                 <div className="space-y-6">
                                     <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100">
                                         <p className="text-xs text-red-800 font-bold leading-relaxed uppercase tracking-tighter italic">
-                                            "Anda mengajukan penghentian retribusi untuk obyek: {selectedAsset.nama}."
+                                            "Anda mengajukan penghentian retribusi untuk objek: {selectedAsset.nama}."
                                         </p>
                                     </div>
                                     <div>

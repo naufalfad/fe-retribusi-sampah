@@ -84,8 +84,8 @@ const MainLayout = ({ children }) => {
         user: [
             { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
             { icon: FileText, label: 'Tagihan SKRD', path: '/skrd' },
-            { icon: UserCircle, label: 'Layanan', path: '/layanan' },
-            { icon: Home, label: 'Daftar Objek Baru', path: '/daftar' },
+            // { icon: UserCircle, label: 'Layanan', path: '/layanan' },
+            // { icon: Home, label: 'Daftar Objek Baru', path: '/daftar' },
             { icon: Key, label: 'Ubah Password', path: '/ubah-password' },
         ],
         upt: [
