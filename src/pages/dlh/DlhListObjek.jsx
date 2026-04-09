@@ -7,6 +7,7 @@ import {
 import api from '../../api/axios';
 import SkrdPreviewModal from './components/SkrdPreviewModal';
 import ObjekDetailModal from './components/ObjekDetailModal';
+import StatusBadge from '../../components/common/StatusBadge';
 
 const DlhListObjek = () => {
     const [objekList, setObjekList] = useState([]);
@@ -134,6 +135,9 @@ const DlhListObjek = () => {
                                                     </p>
                                                     <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">
                                                         Owner: {obj.Subjek?.nama_subjek || '-'}
+                                                    </p>
+                                                    <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">
+                                                        status: <StatusBadge status={obj.status_objek} />
                                                     </p>
                                                 </div>
                                             </div>

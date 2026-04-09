@@ -45,6 +45,8 @@ import PengangkutMonitoring from './pages/pengangkut/PengangkutMonitoring';
 import PengangkutRiwayat from './pages/pengangkut/PengangkutRiwayat';
 import AdminPoinSettings from './pages/admin/AdminPoinSetting';
 import UbahPassword from './pages/wajibRetribusi/UbahPassword';
+import DlhLayananMonitoring from './pages/dlh/DlhLayananMonitoring';
+import SsrdList from './pages/wajibRetribusi/SsrdList';
 
 function App() {
   return (
@@ -60,6 +62,7 @@ function App() {
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/daftar" element={<FormTambahObjek isStaff={false} />} />
           <Route path="/skrd" element={<SkrdList />} />
+          <Route path="/ssrd" element={<SsrdList />} />
           <Route path="/pembayaran" element={<PaymentPage />} />
           <Route path="/layanan" element={<LayananPage />} />
           <Route path="/ubah-password" element={<UbahPassword />} />
@@ -95,6 +98,7 @@ function App() {
             <Route path="/dlh/manajemen-objek" element={<ObjectManagement />} />
             <Route path="/dlh/peraturan" element={<DocumentsPage isAdmin={false} />} />
             <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
+            <Route path="/dlh/layanan-monitoring" element={<DlhLayananMonitoring />} />
           </Route>
 
           {/* Halaman Bendahara */}

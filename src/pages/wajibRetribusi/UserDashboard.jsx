@@ -80,11 +80,11 @@ const UserDashboard = () => {
                     <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2">
                         <Building2 className="text-green-700" size={24} /> Daftar Aset Objek
                     </h3>
-                    {assets.length > 0 && (
+                    {/* {assets.length > 0 && (
                         <button onClick={() => navigate('/daftar')} className="flex items-center gap-2 text-green-700 font-bold hover:underline text-sm uppercase tracking-tighter">
                             <Plus size={18} /> Tambah Objek Baru
                         </button>
-                    )}
+                    )} */}
                 </div>
 
                 {assets.length > 0 ? (
@@ -93,14 +93,14 @@ const UserDashboard = () => {
                             <div key={asset.id_objek} className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col">
                                 <div className="p-8 flex-grow">
                                     <div className="flex justify-between items-start mb-6">
-                                        <div className={`p-4 rounded-2xl ${asset.kategori === 'PRIBADI' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
-                                            {asset.kategori === 'PRIBADI' ? <Home size={24} /> : <Building2 size={24} />}
+                                        <div className={`p-4 rounded-2xl ${asset.kategori_objek === 'Rumah Tinggal' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
+                                            {asset.kategori_objek === 'Rumah Tinggal' ? <Home size={24} /> : <Building2 size={24} />}
                                         </div>
                                         <span className="bg-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
                                             {asset.status}
                                         </span>
                                     </div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 leading-none">NPWRD ID</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 leading-none">NPOR ID</p>
                                     <h4 className="text-lg font-mono font-bold text-green-800 mb-4">{asset.npor_objek}</h4>
                                     <div className="space-y-4 pt-4 border-t border-gray-50">
                                         <div>

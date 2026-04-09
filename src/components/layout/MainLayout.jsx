@@ -3,7 +3,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, Landmark, MapPin, History,
     FileText, Star, CreditCard, LogOut, Menu,
-    X, ChevronLeft, ChevronRight, UserCircle,
+    Leaf, ChevronLeft, ChevronRight, UserCircle,
     ClipboardList, Database, CheckCircle2, Home,
     ListChecks, ListIcon, ListCollapse, Users,
     Settings, ShieldAlert, ListOrdered, BookOpen,
@@ -84,7 +84,8 @@ const MainLayout = ({ children }) => {
         user: [
             { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
             { icon: FileText, label: 'Tagihan SKRD', path: '/skrd' },
-            // { icon: UserCircle, label: 'Layanan', path: '/layanan' },
+            { icon: ClipboardList, label: 'Bukti SSRD', path: '/ssrd' },
+            { icon: UserCircle, label: 'Layanan', path: '/layanan' },
             // { icon: Home, label: 'Daftar Objek Baru', path: '/daftar' },
             { icon: Key, label: 'Ubah Password', path: '/ubah-password' },
         ],
@@ -104,6 +105,7 @@ const MainLayout = ({ children }) => {
             { icon: Edit3, label: 'Manajemen Objek', path: '/dlh/manajemen-objek' },
             { icon: UserCircle, label: 'Pemeriksaan', path: '/dlh/pemeriksaan' },
             { icon: CreditCard, label: 'Validasi Bayar', path: '/dlh/validasi-bayar' },
+            { icon: ClipboardList, label: 'Pengajuan Masuk', path: '/dlh/layanan-monitoring' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
@@ -132,6 +134,16 @@ const MainLayout = ({ children }) => {
         ]
     };
 
+    const headerConfig = {
+        user: { title: "REKAS", subtitle: "Wajib Retribusi" },
+        upt: { title: "UPT", subtitle: "Unit Pelayanan" },
+        dlh: { title: "DLH KOTA", subtitle: "Sistem Monitoring" },
+        bendahara: { title: "KEUANGAN", subtitle: "Panel Bendahara" },
+        admin: { title: "REKAS", subtitle: "Administrator" },
+        penagih: { title: "PETUGAS", subtitle: "Penagihan Lapangan" },
+        pengangkut: { title: "LOGISTIK", subtitle: "Unit Pengangkut" }
+    };
+
     const getActiveRole = () => {
         const path = location.pathname;
         if (path.startsWith('/upt')) return 'upt';
@@ -145,6 +157,8 @@ const MainLayout = ({ children }) => {
 
     const activeRole = getActiveRole();
     const menuItems = menuConfig[activeRole] || [];
+
+    const currentHeader = headerConfig[activeRole] || { title: "REKAS", subtitle: "GenX 3.1" };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -179,13 +193,20 @@ const MainLayout = ({ children }) => {
                     {/* LOGO AREA */}
                     <div className="p-6 flex items-center justify-between">
                         {(!isCollapsed || isMobileOpen) ? (
-                            <div className="flex flex-col">
-                                <span className="font-black text-green-700 text-2xl tracking-tighter">REKAS</span>
-                                <span className="text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase">GenX 3.1</span>
+                            <div className="flex items-center gap-3">
+                                <div className="bg-green-700 p-1.5 rounded-lg shadow-green-900/20 shadow-lg shrink-0">
+                                    <Leaf className="text-white" size={20} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-black text-green-700 text-2xl tracking-tighter">{currentHeader.title}</span>
+                                    <span className="text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase">{currentHeader.subtitle}</span>
+                                </div>
                             </div>
                         ) : (
                             <div className="w-full flex justify-center">
-                                <div className="w-10 h-10 bg-green-700 rounded-xl flex items-center justify-center text-white font-black italic">R</div>
+                                <div className="bg-green-700 p-2 rounded-xl shadow-green-900/20 shadow-lg hover:scale-110 transition-transform cursor-pointer">
+                                    <Leaf className="text-white" size={24} />
+                                </div>
                             </div>
                         )}
 
@@ -270,9 +291,14 @@ const MainLayout = ({ children }) => {
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {/* HEADER UNTUK MOBILE */}
                 <header className="md:hidden bg-white border-b border-gray-100 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
-                    <div className="flex flex-col">
-                        <span className="font-black text-green-700 leading-none">REKAS</span>
-                        <span className="text-[8px] text-gray-400 tracking-widest uppercase">GenX 3.1</span>
+                    <div className="flex items-center gap-3">
+                        <div className="bg-green-700 p-1.5 rounded-lg shadow-lg">
+                            <Leaf className="text-white" size={18} />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="font-black text-green-700 leading-none">{currentHeader.title}</span>
+                            <span className="text-[8px] text-gray-400 tracking-widest uppercase">{currentHeader.subtitle}</span>
+                        </div>
                     </div>
                     <button
                         onClick={() => setIsMobileOpen(true)}
