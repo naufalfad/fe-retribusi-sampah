@@ -86,8 +86,8 @@ const LandingPage = () => {
                                     {link.name}
                                 </a>
                             ))}
-                            {/* <hr />
-                            <button onClick={() => navigate('/login')} className="w-full bg-slate-100 py-4 rounded-2xl font-black uppercase text-xs">Login Wajib Retribusi</button> */}
+                            <hr />
+                            <button onClick={() => navigate('/login')} className="w-full bg-slate-100 py-4 rounded-2xl font-black uppercase text-xs">Login Wajib Retribusi</button>
                         </div>
                     </div>
                 )}
@@ -120,6 +120,12 @@ const LandingPage = () => {
                     {/* CONTAINER TOMBOL UTAMA */}
                     <div className="flex flex-col sm:grid sm:grid-cols-2 md:flex md:flex-row gap-4 justify-center md:justify-start">
                         {/* Tombol Panduan (Selalu Ada) */}
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="bg-green-600 hover:bg-white hover:text-green-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl shadow-green-900/40 transition-all flex items-center justify-center gap-3 active:scale-95"
+                        >
+                            Portal Wajib Retribusi <ArrowRight size={18} />
+                        </button>
                         <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all flex items-center justify-center gap-2">
                             Panduan Layanan
                         </button>
@@ -140,12 +146,12 @@ const LandingPage = () => {
                         </button>
 
                         {/* Tombol Login WR (Hanya muncul di Mobile sebagai alternatif) */}
-                        {/* <button
+                        <button
                             onClick={() => navigate('/login')}
                             className="flex md:hidden bg-white text-slate-900 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all items-center justify-center gap-2"
                         >
                             Login Wajib Retribusi
-                        </button> */}
+                        </button>
                     </div>
                 </div>
             </section>
