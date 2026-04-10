@@ -14,6 +14,7 @@ const DlhReporting = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
     const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
     const [selectedKecamatan, setSelectedKecamatan] = useState('');
+    const [kecamatanList, setKecamatanList] = useState([]);
 
     const daftarBulan = [
         { val: '1', label: 'Januari' }, { val: '2', label: 'Februari' },
@@ -47,15 +48,27 @@ const DlhReporting = () => {
         finally { setLoading(false); }
     };
 
+    const fetchKecamatan = async () => {
+        try {
+            const res = await api.get('/wilayah/kecamatan/1.1');
+            if (res.data.success) {
+                setKecamatanList(res.data.data);
+            }
+        } catch (err) {
+            console.error('Gagal ambil kecamatan:', err);
+        }
+    };
+
     useEffect(() => {
         fetchSummary();
         fetchReportData();
+        fetchKecamatan();
     }, [reportType]);
 
     const handleDownloadPdf = async () => {
         try {
 
-            const response = await api.get('/report/cetak-report', {
+            const response = await api.get('/report/cetak-penerimaan', {
                 params: {
                     type: reportType,
                     year: selectedYear,
@@ -169,8 +182,16 @@ const DlhReporting = () => {
                                     className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold text-white outline-none focus:border-green-500 appearance-none"
                                 >
                                     <option className="bg-slate-900" value="">Semua Kecamatan</option>
-                                    <option className="bg-slate-900" value="Cibinong">Cibinong</option>
-                                    <option className="bg-slate-900" value="Ciawi">Ciawi</option>
+
+                                    {kecamatanList.map((kec) => (
+                                        <option
+                                            key={kec.id_kecamatan}
+                                            className="bg-slate-900"
+                                            value={kec.name}
+                                        >
+                                            {kec.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         )}

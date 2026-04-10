@@ -109,7 +109,7 @@ const ObjectManagement = () => {
         <div className="space-y-6 pb-20 animate-in fade-in duration-500 font-sans">
             {/* HEADER */}
             <div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                     Manajemen <span className="text-green-700">Objek</span>
                 </h1>
                 <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest italic">Otoritas Perubahan & Penonaktifan Aset REKAS</p>

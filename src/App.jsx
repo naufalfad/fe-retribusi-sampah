@@ -47,6 +47,7 @@ import AdminPoinSettings from './pages/admin/AdminPoinSetting';
 import UbahPassword from './pages/wajibRetribusi/UbahPassword';
 import DlhLayananMonitoring from './pages/dlh/DlhLayananMonitoring';
 import SsrdList from './pages/wajibRetribusi/SsrdList';
+import StatusPendaftaranSubjek from './pages/StatusPendaftaranSubjek';
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
           <Route path="/pembayaran" element={<PaymentPage />} />
           <Route path="/layanan" element={<LayananPage />} />
           <Route path="/ubah-password" element={<UbahPassword />} />
+          {/* <Route path="/status-pendaftaran" element={<StatusPendaftaranSubjek />} /> */}
 
           {/* Halaman Login Staff */}
           <Route path="/staff" element={<StaffLoginPage />} />

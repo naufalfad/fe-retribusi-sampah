@@ -69,7 +69,7 @@ const DlhLayananMonitoring = () => {
             {/* HEADER */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-2">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                         Monitoring <span className="text-blue-600">Layanan</span> Mandiri
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest leading-none">
@@ -118,32 +118,51 @@ const DlhLayananMonitoring = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
-                                <tr><td colSpan="5" className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-blue-600" /></td></tr>
-                            ) : requests.map((req) => (
-                                <tr key={req.id_pengajuan} className="hover:bg-blue-50/30 transition-all group">
-                                    <td className="p-8 font-mono text-xs font-bold text-slate-500 italic">#{req.id_pengajuan}</td>
-                                    <td className="p-8">
-                                        <h4 className="font-black text-slate-800 text-sm uppercase leading-tight">{req.data_lama?.nama_objek}</h4>
-                                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Pemilik: {req.Subjek?.nama_subjek}</p>
-                                    </td>
-                                    <td className="p-8">
-                                        <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${req.jenis_pengajuan === 'Perubahan Data' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
-                                            {req.jenis_pengajuan}
-                                        </span>
-                                    </td>
-                                    <td className="p-8 text-xs font-bold text-slate-400 uppercase">
-                                        {new Date(req.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                    </td>
-                                    <td className="p-8 text-center">
-                                        <button
-                                            onClick={() => { setSelectedReq(req); setShowDetail(true); }}
-                                            className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all shadow-lg active:scale-90"
-                                        >
-                                            <Eye size={18} />
-                                        </button>
+                                <tr>
+                                    <td colSpan="5" className="p-20 text-center">
+                                        <Loader2 className="animate-spin mx-auto text-blue-600" />
                                     </td>
                                 </tr>
-                            ))}
+                            ) : requests.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" className="p-20 text-center">
+                                        <div className="flex flex-col items-center justify-center gap-3 text-slate-400">
+                                            <FileText size={40} />
+                                            <p className="text-sm font-black uppercase tracking-widest">
+                                                Tidak ada pengajuan
+                                            </p>
+                                            <p className="text-xs font-bold">
+                                                Belum ada data pengajuan layanan yang tersedia
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                requests.map((req) => (
+                                    <tr key={req.id_pengajuan} className="hover:bg-blue-50/30 transition-all group">
+                                        <td className="p-8 font-mono text-xs font-bold text-slate-500 italic">#{req.id_pengajuan}</td>
+                                        <td className="p-8">
+                                            <h4 className="font-black text-slate-800 text-sm uppercase leading-tight">{req.data_lama?.nama_objek}</h4>
+                                            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Pemilik: {req.Subjek?.nama_subjek}</p>
+                                        </td>
+                                        <td className="p-8">
+                                            <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${req.jenis_pengajuan === 'Perubahan Data' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
+                                                {req.jenis_pengajuan}
+                                            </span>
+                                        </td>
+                                        <td className="p-8 text-xs font-bold text-slate-400 uppercase">
+                                            {new Date(req.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </td>
+                                        <td className="p-8 text-center">
+                                            <button
+                                                onClick={() => { setSelectedReq(req); setShowDetail(true); }}
+                                                className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all shadow-lg active:scale-90"
+                                            >
+                                                <Eye size={18} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )))}
                         </tbody>
                     </table>
                 </div>

@@ -88,7 +88,7 @@ const LayananPage = () => {
             try {
                 // Ganti dengan endpoint asli Anda untuk objek milik user
                 const [objRes, kelRes] = await Promise.all([
-                    api.get('/objek/list-objek'),
+                    api.get('/objek/objek-saya'),
                     api.get('/wilayah/search-kelurahan?q=')
                 ]);
                 setMyObjects(objRes.data.data || []);
@@ -254,7 +254,7 @@ const LayananPage = () => {
                     </button>
                 )}
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                         Layanan <span className="text-green-700">Mandiri</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest leading-none">
@@ -277,7 +277,14 @@ const LayananPage = () => {
                                     <div className={`p-4 rounded-2xl ${obj.kategori_objek === 'Non Rumah Tinggal' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
                                         {obj.kategori_objek === 'Non Rumah Tinggal' ? <Building2 size={24} /> : <Home size={24} />}
                                     </div>
-                                    <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">Pilih Aset</span>
+                                    <span
+                                        className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${obj.status_objek?.toLowerCase() === 'aktif'
+                                            ? 'bg-green-100 text-green-700'
+                                            : 'bg-red-100 text-red-700'
+                                            }`}
+                                    >
+                                        {obj.status_objek}
+                                    </span>
                                 </div>
                                 <h4 className="font-black text-slate-800 uppercase text-lg tracking-tight leading-none mb-2 group-hover:text-green-700 transition-colors">
                                     {obj.nama_objek}

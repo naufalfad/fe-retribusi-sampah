@@ -244,7 +244,7 @@ const DlhValidasiBayar = () => {
                                     <div className="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
                                         <div className="col-span-2">
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Atas Nama Penyetor</p>
-                                            <p className="text-sm font-black text-slate-800 uppercase underline decoration-indigo-200 underline-offset-4">{selectedData.atas_nama_pembayar || 'N/A'}</p>
+                                            <p className="text-sm font-black text-slate-800 uppercase underline decoration-indigo-200 underline-offset-4">{selectedData.Skrd?.Objek?.Subjek?.nama_subjek || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Metode Bayar</p>
@@ -254,12 +254,12 @@ const DlhValidasiBayar = () => {
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Tanggal Bayar</p>
                                             <p className="text-xs font-black text-slate-800 uppercase">{selectedData.paid_at_formatted || selectedData.paid_at}</p>
                                         </div>
-                                        <div className="col-span-2 pt-4 border-t border-slate-200">
+                                        {/* <div className="col-span-2 pt-4 border-t border-slate-200">
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none text-blue-600 italic">Informasi Bank (Jika Transfer)</p>
                                             <p className="text-xs font-bold text-slate-600 uppercase italic">
                                                 {selectedData.nama_bank || '-'} | {selectedData.no_rekening || '-'}
                                             </p>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>

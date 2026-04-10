@@ -77,7 +77,8 @@ const MainLayout = ({ children }) => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff', '/petugas-lapangan', '/landing-page'];
+    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff',
+        '/petugas-lapangan', '/landing-page', '/status-pendaftaran'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuConfig = {
@@ -105,7 +106,7 @@ const MainLayout = ({ children }) => {
             { icon: Edit3, label: 'Manajemen Objek', path: '/dlh/manajemen-objek' },
             { icon: UserCircle, label: 'Pemeriksaan', path: '/dlh/pemeriksaan' },
             { icon: CreditCard, label: 'Validasi Bayar', path: '/dlh/validasi-bayar' },
-            { icon: ClipboardList, label: 'Pengajuan Masuk', path: '/dlh/layanan-monitoring' },
+            { icon: ClipboardList, label: 'Pengajuan Layanan', path: '/dlh/layanan-monitoring' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },

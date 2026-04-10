@@ -25,6 +25,22 @@ const BendaharaManualPayment = () => {
         paidAt: new Date().toISOString().split('T')[0]
     });
 
+    const formatRupiah = (value) => {
+        if (!value) return '';
+        const numberString = value.replace(/[^,\d]/g, '');
+        const split = numberString.split(',');
+        const sisa = split[0].length % 3;
+        let rupiah = split[0].substr(0, sisa);
+        const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            const separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        return rupiah;
+    };
+
     // --- FETCH DATA DARI API ---
     const fetchSKRD = async () => {
         setLoading(true);
@@ -71,7 +87,7 @@ const BendaharaManualPayment = () => {
             const payload = {
                 id_skrd: selectedData.id_skrd,
                 payment_method: paymentForm.method,
-                amount_paid: Number(paymentForm.amount),
+                amount_paid: Number(paymentForm.amount.replace(/\./g, '')),
                 paid_at: paymentForm.paidAt
             };
 
@@ -249,13 +265,12 @@ const BendaharaManualPayment = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Metode Bayar</label>
                                     <select
+                                        disabled
                                         className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-600 font-bold text-sm"
                                         value={paymentForm.method}
                                         onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })}
                                     >
                                         <option value="Tunai">Tunai / Cash</option>
-                                        <option value="Debit EDC">Debit / EDC Bank</option>
-                                        <option value="QRIS Statis">QRIS Loket</option>
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
@@ -275,10 +290,13 @@ const BendaharaManualPayment = () => {
                                     <div className="relative group">
                                         <div className="absolute left-6 top-1/2 -translate-y-1/2 text-green-700 font-black text-xl">Rp</div>
                                         <input
-                                            type="number"
+                                            type="text"
                                             className="w-full pl-16 pr-6 py-6 bg-green-50 border-2 border-green-100 rounded-3xl outline-none focus:border-green-600 text-3xl font-black text-green-700 tracking-tighter shadow-inner"
                                             value={paymentForm.amount}
-                                            onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })}
+                                            onChange={(e) => {
+                                                const formatted = formatRupiah(e.target.value);
+                                                setPaymentForm({ ...paymentForm, amount: formatted });
+                                            }}
                                             placeholder="0"
                                         />
                                     </div>

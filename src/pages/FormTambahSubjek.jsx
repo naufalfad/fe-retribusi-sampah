@@ -178,7 +178,13 @@ const FormTambahSubjek = ({ isStaff = false }) => {
         }
     };
 
-    const backPath = () => isStaff ? navigate(-1) : "/login";
+    const backPath = () => {
+        if (isStaff) {
+            navigate(-1);
+        } else {
+            navigate("/login");
+        }
+    };
 
     // --- LOGIKA SUBMIT API ---
     const onSubmit = async (data) => {

@@ -65,7 +65,7 @@ const LoginPage = () => {
                     </p>
 
                     <div className="pt-4">
-                        <button
+                        {/* <button
                             onClick={() => navigate('/signUp')}
                             className="group relative flex items-center gap-4 bg-white/10 border-2 border-white/30 p-4 rounded-2xl hover:bg-white/20 hover:border-white transition-all duration-300 w-full md:w-auto backdrop-blur-md"
                         >
@@ -76,7 +76,7 @@ const LoginPage = () => {
                                 <p className="text-xs font-medium opacity-80">Belum terdaftar?</p>
                                 <p className="font-bold">Daftar Akun Baru</p>
                             </div>
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 

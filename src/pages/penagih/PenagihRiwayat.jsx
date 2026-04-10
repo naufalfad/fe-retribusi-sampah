@@ -131,7 +131,7 @@ const PenagihRiwayat = () => {
                                         ID Log: #{log.id_log}
                                     </p>
                                     <h4 className="font-black text-slate-800 text-sm uppercase tracking-tight truncate w-40 sm:w-64">
-                                        {data.no_skrd || 'SKRD-GENERATED'}
+                                        {'SSRD-GENERATED'}
                                     </h4>
                                     <div className="flex items-center gap-2 mt-1">
                                         <Clock size={10} className="text-slate-400" />
