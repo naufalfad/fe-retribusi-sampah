@@ -62,6 +62,23 @@ const BendaharaManualPayment = () => {
         fetchSKRD();
     }, []);
 
+    // --- LOAD MIDTRANS SNAP SCRIPT ---
+    useEffect(() => {
+        if (!showPaymentModal) return;
+        const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+        const clientKey = import.meta.env.MIDTRANS_CLIENT_KEY || "";
+
+        let scriptTag = document.createElement('script');
+        scriptTag.src = midtransScriptUrl;
+        scriptTag.setAttribute('data-client-key', clientKey);
+        scriptTag.async = true;
+        document.body.appendChild(scriptTag);
+
+        return () => {
+            document.body.removeChild(scriptTag);
+        };
+    }, [showPaymentModal]);
+
     // --- FILTER SEARCH ---
     const filteredData = skrdList.filter(item =>
         item.no_skrd.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -72,7 +89,7 @@ const BendaharaManualPayment = () => {
     // --- HANDLERS ---
     const handleOpenPayment = (item) => {
         setSelectedData(item);
-        setPaymentForm({ ...paymentForm, amount: item.total_bayar });
+        setPaymentForm({ ...paymentForm, amount: formatRupiah(item.total_bayar.toString()) });
         setShowPaymentModal(true);
     };
 
@@ -84,39 +101,66 @@ const BendaharaManualPayment = () => {
         setIsProcessing(true);
 
         try {
-            const payload = {
-                id_skrd: selectedData.id_skrd,
-                payment_method: paymentForm.method,
-                amount_paid: Number(paymentForm.amount.replace(/\./g, '')),
-                paid_at: paymentForm.paidAt
-            };
+            if (paymentForm.method === 'Online') {
+                const response = await api.post('/ssrd/pembayaran', {
+                    id_skrd: selectedData.id_skrd,
+                    use_points: false
+                });
 
-            if (Number(paymentForm.amount) !== Number(selectedData.total_bayar)) {
-                alert('Nominal pembayaran harus sama dengan total tagihan');
-                setIsProcessing(false);
-                return;
+                if (response.data.success) {
+                    window.snap.pay(response.data.snap_token, {
+                        onSuccess: (result) => {
+                            alert("Pembayaran Online Berhasil!");
+                            setShowPaymentModal(false);
+                            setSelectedData(null);
+                            fetchSKRD();
+                        },
+                        onPending: (result) => {
+                            alert("Menunggu pembayaran online diselesaikan.");
+                            setShowPaymentModal(false);
+                            setSelectedData(null);
+                            fetchSKRD();
+                        },
+                        onClose: () => setIsProcessing(false)
+                    });
+                }
+            } else {
+                const payload = {
+                    id_skrd: selectedData.id_skrd,
+                    payment_method: 'Tunai',
+                    amount_paid: Number(paymentForm.amount.replace(/\./g, '')),
+                    paid_at: paymentForm.paidAt
+                };
+
+                if (Number(paymentForm.amount.replace(/\./g, '')) !== Number(selectedData.total_bayar)) {
+                    alert('Nominal pembayaran harus sama dengan total tagihan');
+                    setIsProcessing(false);
+                    return;
+                }
+
+                const response = await api.post(
+                    '/ssrd/penetapan-ssrd',
+                    payload
+                );
+
+                alert(`SSRD berhasil diterbitkan\nNo SSRD: ${response.data.data_ssrd.no_ssrd}`);
+
+                setShowPaymentModal(false);
+                setSelectedData(null);
+                fetchSKRD();
             }
-
-            const response = await api.post(
-                '/ssrd/penetapan-ssrd',
-                payload
-            );
-
-            alert(`SSRD berhasil diterbitkan\nNo SSRD: ${response.data.data_ssrd.no_ssrd}`);
-
-            setShowPaymentModal(false);
-            setSelectedData(null);
-            fetchSKRD();
 
         } catch (error) {
             console.error('Gagal memproses pembayaran:', error);
 
             alert(
                 error.response?.data?.message ||
-                'Terjadi kesalahan saat menyimpan SSRD'
+                'Terjadi kesalahan saat memproses pembayaran'
             );
         } finally {
-            setIsProcessing(false);
+            if (paymentForm.method !== 'Online') {
+                setIsProcessing(false);
+            }
         }
     };
 
@@ -127,7 +171,7 @@ const BendaharaManualPayment = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">Pembayaran Loket</h1>
-                    <p className="text-slate-500 font-medium text-sm mt-1 italic">Input pelunasan tagihan secara langsung di Kantor Dinas.</p>
+                    <p className="text-slate-500 font-medium text-sm mt-1 ">Input pelunasan tagihan secara langsung di Kantor Dinas.</p>
                 </div>
                 <button
                     onClick={fetchSKRD}
@@ -181,7 +225,7 @@ const BendaharaManualPayment = () => {
                                             <p className="font-black text-slate-800 text-sm uppercase tracking-tight">
                                                 {item.Objek.Subjek.nama_subjek}
                                             </p>
-                                            <p className="text-[10px] font-bold text-green-700 font-mono italic">
+                                            <p className="text-[10px] font-bold text-green-700 font-mono ">
                                                 NPWRD: {item.Objek.Subjek.npwrd_subjek}
                                             </p>
                                             <p className="text-[10px] text-slate-400 uppercase">Objek: {item.Objek.nama_objek}</p>
@@ -235,7 +279,7 @@ const BendaharaManualPayment = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black uppercase tracking-tighter leading-none">Konfirmasi Pelunasan</h3>
-                                    <p className="text-[10px] text-green-200 font-bold mt-1 uppercase tracking-widest italic">
+                                    <p className="text-[10px] text-green-200 font-bold mt-1 uppercase tracking-widest ">
                                         Input Data SSRD - {selectedData.Objek.Subjek.nama_subjek}
                                     </p>
                                 </div>
@@ -265,42 +309,73 @@ const BendaharaManualPayment = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Metode Bayar</label>
                                     <select
-                                        disabled
                                         className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-green-600 font-bold text-sm"
                                         value={paymentForm.method}
-                                        onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })}
+                                        onChange={(e) => {
+                                            const selectedMethod = e.target.value;
+                                            setPaymentForm({
+                                                ...paymentForm,
+                                                method: selectedMethod,
+                                                amount: selectedMethod === 'Online'
+                                                    ? formatRupiah(selectedData.total_bayar.toString())
+                                                    : paymentForm.amount
+                                            });
+                                        }}
                                     >
                                         <option value="Tunai">Tunai / Cash</option>
+                                        <option value="Online">Online / Midtrans</option>
                                     </select>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Tanggal Bayar</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                                        <input
-                                            type="date"
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-sm"
-                                            value={paymentForm.paidAt}
-                                            onChange={(e) => setPaymentForm({ ...paymentForm, paidAt: e.target.value })}
-                                        />
+                                {paymentForm.method === 'Tunai' ? (
+                                    <div className="space-y-1.5 animate-in fade-in">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Tanggal Bayar</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                            <input
+                                                type="date"
+                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold text-sm"
+                                                value={paymentForm.paidAt}
+                                                onChange={(e) => setPaymentForm({ ...paymentForm, paidAt: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="space-y-1.5 animate-in fade-in">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Status Pembayaran</label>
+                                        <div className="p-4 bg-blue-50 text-blue-700 rounded-2xl border border-blue-100 font-bold text-xs uppercase ">
+                                            Midtrans Gateway Active
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="col-span-2 space-y-1.5 pt-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">Nominal Tunai Yang Diterima (Rp)</label>
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-slate-500">
+                                        {paymentForm.method === 'Online' ? 'Nominal Pembayaran Online (Rp)' : 'Nominal Tunai Yang Diterima (Rp)'}
+                                    </label>
                                     <div className="relative group">
                                         <div className="absolute left-6 top-1/2 -translate-y-1/2 text-green-700 font-black text-xl">Rp</div>
                                         <input
                                             type="text"
-                                            className="w-full pl-16 pr-6 py-6 bg-green-50 border-2 border-green-100 rounded-3xl outline-none focus:border-green-600 text-3xl font-black text-green-700 tracking-tighter shadow-inner"
+                                            readOnly={paymentForm.method === 'Online'}
+                                            className={`w-full pl-16 pr-6 py-6 border-2 rounded-3xl outline-none text-3xl font-black tracking-tighter shadow-inner ${
+                                                paymentForm.method === 'Online'
+                                                    ? 'bg-gray-100 border-gray-200 text-slate-400 cursor-not-allowed'
+                                                    : 'bg-green-50 border-green-100 text-green-700 focus:border-green-600'
+                                            }`}
                                             value={paymentForm.amount}
                                             onChange={(e) => {
-                                                const formatted = formatRupiah(e.target.value);
-                                                setPaymentForm({ ...paymentForm, amount: formatted });
+                                                if (paymentForm.method !== 'Online') {
+                                                    const formatted = formatRupiah(e.target.value);
+                                                    setPaymentForm({ ...paymentForm, amount: formatted });
+                                                }
                                             }}
                                             placeholder="0"
                                         />
                                     </div>
-                                    <p className="text-[10px] text-slate-400 font-bold italic ml-2 mt-1">* Pastikan nominal tepat sesuai nilai tagihan di atas.</p>
+                                    <p className="text-[10px] text-slate-400 font-bold  ml-2 mt-1">
+                                        {paymentForm.method === 'Online'
+                                            ? '* Nominal otomatis terkunci sesuai tagihan untuk gerbang pembayaran online.'
+                                            : '* Pastikan nominal tepat sesuai nilai tagihan di atas.'}
+                                    </p>
                                 </div>
                             </div>
 
@@ -318,7 +393,7 @@ const BendaharaManualPayment = () => {
                                     className="flex-[2] py-5 bg-green-700 text-white rounded-[1.5rem] font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-green-900/20 hover:bg-black transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
                                 >
                                     {isProcessing ? <Loader2 className="animate-spin" /> : <CheckCircle2 size={18} />}
-                                    Simpan & Terbitkan SSRD
+                                    {paymentForm.method === 'Online' ? 'Bayar via Midtrans' : 'Simpan & Terbitkan SSRD'}
                                 </button>
                             </div>
                         </form>

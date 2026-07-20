@@ -108,7 +108,7 @@ const LandingPage = () => {
                     <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-md border border-green-500/30 px-4 py-1.5 rounded-full text-green-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
                         <ShieldCheck size={14} /> Kantor DLH Kabupaten Bogor
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] uppercase italic mb-8">
+                    <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] uppercase  mb-8">
                         Mewujudkan <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">Bogor Bersih</span> <br />
                         & Terkelola.
@@ -204,7 +204,7 @@ const LandingPage = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                         <div>
                             <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">
-                                3 Langkah Mudah <br /> <span className="text-green-500 italic">Menuju Kepatuhan</span>
+                                3 Langkah Mudah <br /> <span className="text-green-500 ">Menuju Kepatuhan</span>
                             </h3>
                             <div className="space-y-10">
                                 {[
@@ -275,7 +275,7 @@ const LandingPage = () => {
                             </div>
                             <span className="font-black text-xl tracking-tighter uppercase">REKAS</span>
                         </div>
-                        <p className="text-slate-500 text-sm max-w-sm leading-relaxed font-medium italic">
+                        <p className="text-slate-500 text-sm max-w-sm leading-relaxed font-medium ">
                             Sistem Elektronik Retribusi Pelayanan Persampahan / Kebersihan. <br />
                             Dinas Lingkungan Hidup Kabupaten Bogor.
                         </p>
@@ -300,7 +300,7 @@ const LandingPage = () => {
                             Cibinong, Kabupaten Bogor <br />
                             Jawa Barat 16914
                         </p>
-                        <p className="text-sm text-green-700 font-black italic">support@rekas.id</p>
+                        <p className="text-sm text-green-700 font-black ">support@rekas.id</p>
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">

@@ -303,7 +303,7 @@ const LayananPage = () => {
                     <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-200 p-16 flex flex-col items-center text-center animate-in zoom-in mx-2">
                         <Building2 size={48} className="text-gray-200 mb-4" />
                         <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">Belum Ada Objek Terdaftar</h3>
-                        <p className="text-gray-400 max-w-sm mt-2 text-sm font-medium italic italic">Anda tidak memiliki aset yang terverifikasi untuk diajukan perubahan.</p>
+                        <p className="text-gray-400 max-w-sm mt-2 text-sm font-medium  ">Anda tidak memiliki aset yang terverifikasi untuk diajukan perubahan.</p>
                     </div>
                 )
             )}

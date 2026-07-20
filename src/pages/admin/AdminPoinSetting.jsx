@@ -133,7 +133,7 @@ const AdminPoinSettings = () => {
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Nilai Tukar Saat Ini</p>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-5xl font-black text-slate-900 tracking-tighter">10</span>
-                                        <span className="text-xl font-black text-indigo-600 italic">Rupiah / Poin</span>
+                                        <span className="text-xl font-black text-indigo-600 ">Rupiah / Poin</span>
                                     </div>
                                 </div>
 
@@ -164,7 +164,7 @@ const AdminPoinSettings = () => {
                                         </div>
                                         <div className="text-left">
                                             <h4 className="font-black text-slate-800 uppercase text-sm leading-none mb-1">{cat.nama_kategori}</h4>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase italic">Per {cat.satuan}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase ">Per {cat.satuan}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-1 text-left">
@@ -176,8 +176,8 @@ const AdminPoinSettings = () => {
                                 <div className="mt-8 flex items-end justify-between text-left">
                                     <div>
                                         <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Poin / {cat.satuan}</p>
-                                        <p className="text-3xl font-black text-emerald-600 italic tracking-tighter">
-                                            +{cat.poin_per_m3} <span className="text-[10px] not-italic uppercase opacity-40">Pts</span>
+                                        <p className="text-3xl font-black text-emerald-600  tracking-tighter">
+                                            +{cat.poin_per_m3} <span className="text-[10px] not- uppercase opacity-40">Pts</span>
                                         </p>
                                     </div>
                                     <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 text-right">

@@ -103,7 +103,7 @@ const PengangkutInputPoin = () => {
                 <button onClick={() => navigate(-1)} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 active:scale-90 transition-all">
                     <ArrowLeft size={20} className="text-slate-600" />
                 </button>
-                <h1 className="text-xl font-black text-slate-800 uppercase italic leading-none">
+                <h1 className="text-xl font-black text-slate-800 uppercase  leading-none">
                     Input <span className="text-emerald-700">Volume Pengangkutan</span>
                 </h1>
             </div>

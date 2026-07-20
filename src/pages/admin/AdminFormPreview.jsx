@@ -151,7 +151,7 @@ const AdminFormPreview = () => {
                                 <div className="text-[16px] font-bold uppercase mt-1">
                                     <LiveInput name="dinas" value={formData.dinas} onChange={handleInputChange} className="w-full text-center font-bold" placeholder="DINAS LINGKUNGAN HUTAN" />
                                 </div>
-                                <div className="text-[10px] mt-1 italic">
+                                <div className="text-[10px] mt-1 ">
                                     <LiveInput name="alamat" value={formData.alamat} onChange={handleInputChange} className="w-full text-center" placeholder="Komplek Kantor ke-PU-an, Jl. Tegar Beriman Cibinong 16914" />
                                 </div>
                                 <div className="text-[10px] text-blue-600 underline">
@@ -159,7 +159,7 @@ const AdminFormPreview = () => {
                                 </div>
                             </div>
                             <div className="w-40 border border-black p-2 ml-4">
-                                <div className="text-right font-black italic mb-2">SKRD</div>
+                                <div className="text-right font-black  mb-2">SKRD</div>
                                 <div className="flex justify-between"><span>MASA :</span> <span className="font-bold">1</span></div>
                                 <div className="flex justify-between"><span>TAHUN :</span> <span className="font-bold">2026</span></div>
                             </div>
@@ -203,7 +203,7 @@ const AdminFormPreview = () => {
                                     <td className="border-x border-black p-2">Retribusi Pelayanan Persampahan/Kebersihan</td>
                                     <td className="border-x border-black p-2 text-right">69.750,00</td>
                                 </tr>
-                                <tr className="border-b border-black italic">
+                                <tr className="border-b border-black ">
                                     <td className="border-x border-black p-2"></td>
                                     <td className="border-x border-black p-2 px-8">Tarif Retribusi Rumah Tinggal Dari TPS/TPST</td>
                                     <td className="border-x border-black p-2 text-right">56.950,00</td>
@@ -260,8 +260,8 @@ const AdminFormPreview = () => {
                                     </td>
                                     <td className="w-40 border border-black p-2 align-top">
                                         <div className="font-bold text-[12px]">SSRD.</div>
-                                        <div className="italic text-[10px]">
-                                            <LiveInput name="prefix_ssrd" value={formData.prefix_ssrd} onChange={handleInputChange} className="w-full italic" placeholder="SSRD/20260130/316095" />
+                                        <div className=" text-[10px]">
+                                            <LiveInput name="prefix_ssrd" value={formData.prefix_ssrd} onChange={handleInputChange} className="w-full " placeholder="SSRD/20260130/316095" />
                                         </div>
                                     </td>
                                 </tr>
@@ -275,7 +275,7 @@ const AdminFormPreview = () => {
                                     <td className="w-6 p-2 border-r border-black">a.</td>
                                     <td className="w-48 p-2">Telah menerima uang sebesar</td>
                                     <td className="w-4 p-2">:</td>
-                                    <td className="p-2 font-bold italic"># 199.650 #</td>
+                                    <td className="p-2 font-bold "># 199.650 #</td>
                                 </tr>
                                 <tr className="border-t border-black">
                                     <td className="p-2 border-r border-black">b.</td>
@@ -291,7 +291,7 @@ const AdminFormPreview = () => {
                                 </tr>
                                 <tr>
                                     <td className="p-2 border-r border-black"></td>
-                                    <td className="p-2 italic px-4">Alamat</td>
+                                    <td className="p-2  px-4">Alamat</td>
                                     <td className="p-2">:</td>
                                     <td className="p-2 border-b border-dotted border-black">Pemda raya</td>
                                 </tr>
@@ -299,7 +299,7 @@ const AdminFormPreview = () => {
                                     <td className="p-2 border-r border-black">d.</td>
                                     <td className="p-2">Sebagai Pembayaran</td>
                                     <td className="p-2">:</td>
-                                    <td className="p-2 italic">Retribusi Pelayanan Persampahan/Kebersihan Masa 3 2024</td>
+                                    <td className="p-2 ">Retribusi Pelayanan Persampahan/Kebersihan Masa 3 2024</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -332,7 +332,7 @@ const AdminFormPreview = () => {
                                     <td className="p-2 border-r border-black">Nomor SKRD</td>
                                     <td className="p-2">:</td>
                                     <td className="p-2">
-                                        <div className="flex justify-between font-bold italic uppercase">
+                                        <div className="flex justify-between font-bold  uppercase">
                                             <span>SKRD/2024/09/X9N0Z</span>
                                             <span>Tanggal Setor : 30 Januari 2026</span>
                                         </div>
@@ -351,7 +351,7 @@ const AdminFormPreview = () => {
                                 </tr>
                                 <tr className="h-20">
                                     <td className="border-r border-black"></td>
-                                    <td className="border-r border-black italic text-[8px] text-gray-400">Digital Signature Verified</td>
+                                    <td className="border-r border-black  text-[8px] text-gray-400">Digital Signature Verified</td>
                                     <td></td>
                                 </tr>
                                 <tr className="font-bold border-t border-black">
@@ -368,7 +368,7 @@ const AdminFormPreview = () => {
                                 <div className="text-[11px] font-bold">
                                     <LiveInput name="pejabat_jabatan" value={formData.pejabat_jabatan} onChange={handleInputChange} className="w-full text-center font-bold" placeholder="MAYOR KUTIP 3" />
                                 </div>
-                                <div className="italic text-[10px] my-1">ttd.</div>
+                                <div className=" text-[10px] my-1">ttd.</div>
                                 <div className="relative group w-20 h-24 mx-auto border border-dashed border-gray-100 flex items-center justify-center overflow-hidden">
                                     {ttdPreview ? <img src={ttdPreview} className="w-full h-full object-contain" alt="TTD" /> : <Upload className="text-gray-300" />}
                                     <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileChange(e, 'ttd')} />

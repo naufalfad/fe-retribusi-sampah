@@ -43,13 +43,13 @@ const StatusPendaftaranSubjek = () => {
                 <div className="p-10 space-y-8">
                     {isPending ? (
                         <div className="space-y-4 text-center">
-                            <h3 className="text-lg font-black text-slate-800 uppercase italic leading-tight">Mohon Menunggu Verifikasi Petugas</h3>
+                            <h3 className="text-lg font-black text-slate-800 uppercase  leading-tight">Mohon Menunggu Verifikasi Petugas</h3>
                             <p className="text-sm text-slate-500 leading-relaxed font-medium">
                                 Saat ini berkas pendaftaran Anda sedang dalam tahap peninjauan oleh petugas <span className="text-slate-900 font-bold">UPT Wilayah</span> dan <span className="text-slate-900 font-bold">Dinas Lingkungan Hidup</span>.
                             </p>
                             <div className="bg-amber-50 p-6 rounded-[2rem] border border-amber-100 flex gap-4 text-left">
                                 <Info className="text-amber-600 shrink-0" size={20} />
-                                <p className="text-[10px] text-amber-800 font-bold uppercase leading-relaxed tracking-tight italic">
+                                <p className="text-[10px] text-amber-800 font-bold uppercase leading-relaxed tracking-tight ">
                                     Proses verifikasi biasanya memakan waktu 1-3 hari kerja. Anda akan mendapatkan notifikasi jika akun sudah diaktifkan.
                                 </p>
                             </div>
@@ -57,14 +57,14 @@ const StatusPendaftaranSubjek = () => {
                     ) : (
                         <div className="space-y-6">
                             <div className="text-center">
-                                <h3 className="text-lg font-black text-slate-800 uppercase italic">Pendaftaran Anda Ditangguhkan</h3>
+                                <h3 className="text-lg font-black text-slate-800 uppercase ">Pendaftaran Anda Ditangguhkan</h3>
                                 <p className="text-sm text-slate-500 font-medium mt-1">Ditemukan ketidaksesuaian pada data yang Anda kirimkan.</p>
                             </div>
 
                             {/* PESAN PENOLAKAN DARI DINAS */}
                             <div className="bg-red-50 p-8 rounded-[2.5rem] border-2 border-dashed border-red-100">
                                 <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">Alasan Penolakan / Catatan Petugas:</p>
-                                <p className="text-sm font-bold text-red-800 leading-relaxed italic">
+                                <p className="text-sm font-bold text-red-800 leading-relaxed ">
                                     "{user?.catatan_dinas || 'Dokumen KTP tidak terbaca jelas atau alamat tidak sesuai dengan titik koordinat peta. Harap lampirkan ulang dokumen yang valid.'}"
                                 </p>
                             </div>
@@ -97,7 +97,7 @@ const StatusPendaftaranSubjek = () => {
                 </div>
 
                 <div className="p-6 bg-gray-50 text-center">
-                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest italic leading-none">
+                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest  leading-none">
                         REKAS Digital System &copy; 2026 DLH Kabupaten Bogor
                     </p>
                 </div>

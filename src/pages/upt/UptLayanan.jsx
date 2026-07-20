@@ -216,7 +216,7 @@ const UptLayanan = () => {
                                     </div>
                                     <div className="space-y-1">
                                         <span className="text-xs text-gray-500">Alasan Perubahan:</span>
-                                        <p className="text-sm bg-gray-50 p-3 rounded-xl text-gray-700 italic">"Perubahan nama sesuai Akta Notaris terbaru nomor 123/2025."</p>
+                                        <p className="text-sm bg-gray-50 p-3 rounded-xl text-gray-700 ">"Perubahan nama sesuai Akta Notaris terbaru nomor 123/2025."</p>
                                     </div>
                                 </div>
                             </div>

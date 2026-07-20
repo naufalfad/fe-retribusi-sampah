@@ -71,7 +71,7 @@ const SkrdList = () => {
                             <AlertCircle size={16} />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Total Tunggakan Aktif</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter italic">
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter ">
                             {formatCurrency(totalUnpaid)}
                         </h2>
                         <p className="text-[11px] text-slate-400 mt-2 font-medium">
@@ -154,7 +154,7 @@ const SkrdList = () => {
                                     {/* INFO TAGIHAN (Tengah) */}
                                     <div className="flex flex-col md:items-center text-left md:text-center space-y-1">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Masa Pajak</p>
-                                        <p className="text-sm font-black text-slate-700 uppercase italic">
+                                        <p className="text-sm font-black text-slate-700 uppercase ">
                                             {getNamaBulan(bill.periode_bulan)} {bill.periode_tahun}
                                         </p>
                                         <p className="text-[10px] font-bold text-gray-400 font-mono tracking-tighter">
@@ -166,7 +166,7 @@ const SkrdList = () => {
                                     <div className="w-full md:w-auto flex flex-row md:flex-col justify-between items-center md:items-end gap-2 border-t md:border-t-0 pt-4 md:pt-0 border-slate-50">
                                         <div className="text-right">
                                             <p className="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none mb-1">Total Tagihan</p>
-                                            <p className="text-2xl font-black text-slate-900 tracking-tighter italic">
+                                            <p className="text-2xl font-black text-slate-900 tracking-tighter ">
                                                 {formatCurrency(bill.total_bayar)}
                                             </p>
                                         </div>
@@ -191,7 +191,7 @@ const SkrdList = () => {
                                 {/* Jatuh Tempo Footer Card */}
                                 <div className="bg-gray-50/50 px-8 py-2 flex items-center gap-2 border-t border-slate-50">
                                     <Calendar size={12} className="text-slate-400" />
-                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ">
                                         Batas Akhir Pembayaran: <span className="text-red-500 font-black">{new Date(bill.jatuh_tempo).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                                     </p>
                                 </div>
@@ -207,8 +207,8 @@ const SkrdList = () => {
                     <Info size={24} />
                 </div>
                 <div>
-                    <h5 className="text-[11px] font-black text-blue-800 uppercase tracking-widest mb-1 leading-none italic">Informasi Penagihan</h5>
-                    <p className="text-[10px] text-blue-700 leading-relaxed font-medium italic">
+                    <h5 className="text-[11px] font-black text-blue-800 uppercase tracking-widest mb-1 leading-none ">Informasi Penagihan</h5>
+                    <p className="text-[10px] text-blue-700 leading-relaxed font-medium ">
                         Daftar ini mencakup seluruh aset/objek retribusi yang terdaftar atas nama Anda. Jika terdapat ketidaksesuaian data objek, silakan ajukan perubahan melalui menu <span className="font-black underline">Layanan Mandiri</span>.
                     </p>
                 </div>

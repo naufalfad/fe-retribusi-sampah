@@ -191,7 +191,7 @@ const DlhListSkrd = () => {
                                             </td>
                                             <td className="p-8">
                                                 <p className="text-xs font-bold text-gray-700 leading-none">{skrd.no_skrd}</p>
-                                                <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase italic tracking-tighter">
+                                                <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase  tracking-tighter">
                                                     Masa: {skrd.masa} Bulan
                                                 </p>
                                             </td>
@@ -228,7 +228,7 @@ const DlhListSkrd = () => {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="p-20 text-center text-gray-400 font-bold italic">
+                                    <td colSpan="6" className="p-20 text-center text-gray-400 font-bold ">
                                         {loading ? 'Memuat data...' : 'Tidak ada data SKRD.'}
                                     </td>
                                 </tr>

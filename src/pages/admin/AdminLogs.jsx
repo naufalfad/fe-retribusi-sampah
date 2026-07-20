@@ -190,7 +190,7 @@ const AdminLogs = () => {
                                         </td>
                                         <td className="p-8">
                                             <p className="text-xs font-bold text-slate-700 leading-tight">{log.aksi.replace(/_/g, ' ')}</p>
-                                            <p className="text-[9px] text-slate-400 font-mono mt-1 italic line-clamp-1">{log.deskripsi}</p>
+                                            <p className="text-[9px] text-slate-400 font-mono mt-1  line-clamp-1">{log.deskripsi}</p>
                                         </td>
                                         <td className="p-8">
                                             <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 w-fit shadow-sm">
@@ -275,7 +275,7 @@ const AdminLogs = () => {
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-green-600 rounded-2xl shadow-lg"><ShieldAlert size={24} /></div>
                                 <div>
-                                    <h3 className="font-black uppercase tracking-widest text-sm leading-none italic">Deep Audit Metadata</h3>
+                                    <h3 className="font-black uppercase tracking-widest text-sm leading-none ">Deep Audit Metadata</h3>
                                     <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-[0.2em]">Transaction ID: {selectedLog.id_log}</p>
                                 </div>
                             </div>
@@ -298,7 +298,7 @@ const AdminLogs = () => {
                             {/* Narasi Aksi */}
                             <div className="space-y-2">
                                 <p className="text-[10px] font-black text-green-700 uppercase tracking-widest ml-1">Deskripsi Aktivitas</p>
-                                <div className="bg-green-50/50 p-6 rounded-[2rem] border border-green-100 italic">
+                                <div className="bg-green-50/50 p-6 rounded-[2rem] border border-green-100 ">
                                     <p className="text-sm font-bold text-green-900 leading-relaxed">
                                         "{selectedLog.deskripsi}"
                                     </p>

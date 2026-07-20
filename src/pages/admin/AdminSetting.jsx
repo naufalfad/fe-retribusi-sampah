@@ -274,7 +274,7 @@ const AdminSettings = () => {
                                             <input type="file" className="hidden" accept="image/*" onChange={handleTtdChange} />
                                         </label>
                                     </div>
-                                    <p className="text-[8px] text-gray-400 mt-3 italic text-center leading-relaxed">
+                                    <p className="text-[8px] text-gray-400 mt-3  text-center leading-relaxed">
                                         * Gunakan format PNG tanpa background <br /> untuk hasil cetak terbaik.
                                     </p>
                                 </div>
@@ -359,12 +359,12 @@ const AdminSettings = () => {
                                 <input type="file" className="hidden" accept="image/*" onChange={handleLogoChange} />
                             </label>
                         </div>
-                        <p className="text-[9px] text-gray-400 italic px-6 mb-2">Logo ini muncul pada KOP surat resmi.</p>
+                        <p className="text-[9px] text-gray-400  px-6 mb-2">Logo ini muncul pada KOP surat resmi.</p>
                     </div>
 
                     <div className="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden text-left">
                         <div className="relative z-10">
-                            <h4 className="text-xl font-black italic tracking-tighter leading-tight uppercase mb-6">
+                            <h4 className="text-xl font-black  tracking-tighter leading-tight uppercase mb-6">
                                 Sistem <br /> Peninjauan
                             </h4>
 
@@ -394,7 +394,7 @@ const AdminSettings = () => {
                                 </div>
                             </button>
 
-                            <p className="mt-4 text-[9px] font-medium text-white/60 italic leading-relaxed uppercase tracking-widest text-center px-4">
+                            <p className="mt-4 text-[9px] font-medium text-white/60  leading-relaxed uppercase tracking-widest text-center px-4">
                                 * Pratinjau mencakup tampilan cetak SKRD dan SSRD secara keseluruhan.
                             </p>
                         </div>

@@ -6,6 +6,17 @@ import {
 } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 
+const toTitik = (val) => {
+    if (!val && val !== 0) return "";
+    let stringValue = val.toString().replace(/\D/g, "");
+    return stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const toAngka = (val) => {
+    if (!val) return 0;
+    return parseInt(val.toString().replace(/\./g, ""), 10) || 0;
+};
+
 const DlhValidasiBayar = () => {
     // --- STATES ---
     const [activeTab, setActiveTab] = useState('pending');
@@ -54,7 +65,7 @@ const DlhValidasiBayar = () => {
     // --- 2. HANDLERS ---
     const handleOpenRecon = (data) => {
         setSelectedData(data);
-        setActualAmount(data.amount_paid); // Default nominal yang diinput penagih
+        setActualAmount(toTitik(data.amount_paid)); // Default nominal yang diinput penagih
         setShowReconModal(true);
     };
 
@@ -69,7 +80,7 @@ const DlhValidasiBayar = () => {
             const payload = {
                 id_ssrd: selectedData.id_ssrd,
                 action: action, // 'approve' atau 'reject'
-                nominal_real: action === 'reject' ? actualAmount : selectedData.amount_paid,
+                nominal_real: action === 'reject' ? toAngka(actualAmount) : selectedData.amount_paid,
                 alasan_tolak: action === 'reject' ? rejectReason : null,
                 catatan: notes
             };
@@ -135,9 +146,9 @@ const DlhValidasiBayar = () => {
                             <tr key={item.id_ssrd} className="hover:bg-slate-50/80 transition-colors">
                                 <td className="p-8">
                                     <h4 className="font-black text-slate-800 text-sm uppercase">{item.Skrd?.Objek?.nama_objek || 'N/A'}</h4>
-                                    <p className="text-[10px] font-bold text-indigo-600 font-mono italic">{item.Skrd?.no_skrd}</p>
+                                    <p className="text-[10px] font-bold text-indigo-600 font-mono ">{item.Skrd?.no_skrd}</p>
                                 </td>
-                                <td className="p-8 font-black text-slate-400 text-sm italic">Rp {parseInt(item.Skrd?.total_bayar).toLocaleString()}</td>
+                                <td className="p-8 font-black text-slate-400 text-sm ">Rp {parseInt(item.Skrd?.total_bayar).toLocaleString()}</td>
                                 <td className="p-8">
                                     <div className={`p-3 rounded-2xl border-2 flex items-center justify-between ${parseInt(item.amount_paid) < parseInt(item.Skrd?.total_bayar) ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'}`}>
                                         <p className={`font-black text-sm ${parseInt(item.amount_paid) < parseInt(item.Skrd?.total_bayar) ? 'text-red-700' : 'text-green-700'}`}>Rp {parseInt(item.amount_paid).toLocaleString()}</p>
@@ -154,7 +165,7 @@ const DlhValidasiBayar = () => {
                                 </td>
                             </tr>
                         )) : (
-                            <tr><td colSpan="4" className="p-20 text-center text-gray-400 italic">Antrean audit kosong.</td></tr>
+                            <tr><td colSpan="4" className="p-20 text-center text-gray-400 ">Antrean audit kosong.</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -172,7 +183,7 @@ const DlhValidasiBayar = () => {
                                     <FileSearch size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none italic">Workspace Audit Transaksi</h3>
+                                    <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none ">Workspace Audit Transaksi</h3>
                                     <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-widest leading-none">Verifikasi Data SKRD vs Laporan Realisasi Pembayaran</p>
                                 </div>
                             </div>
@@ -198,7 +209,7 @@ const DlhValidasiBayar = () => {
                                         <div>
                                             <p className="text-[9px] font-black text-slate-400 uppercase">Wajib Retribusi / NPWRD</p>
                                             <p className="text-sm font-black text-slate-800 uppercase">{selectedData.Skrd?.Objek?.Subjek?.nama_subjek}</p>
-                                            <p className="text-xs font-bold text-indigo-600 font-mono italic">{selectedData.Skrd?.Objek?.Subjek?.npwrd_subjek}</p>
+                                            <p className="text-xs font-bold text-indigo-600 font-mono ">{selectedData.Skrd?.Objek?.Subjek?.npwrd_subjek}</p>
                                         </div>
                                         <div className="pt-4 border-t border-slate-50">
                                             <p className="text-[9px] font-black text-slate-400 uppercase">Total Tagihan Pokok</p>
@@ -234,7 +245,7 @@ const DlhValidasiBayar = () => {
 
                                         {/* Alert Selisih jika Kurang Bayar */}
                                         {parseInt(selectedData.amount_paid) < parseInt(selectedData.Skrd?.total_bayar) && (
-                                            <div className="mt-3 flex items-center gap-2 text-[10px] font-black text-red-600 bg-white/50 w-fit px-3 py-1 rounded-full uppercase italic">
+                                            <div className="mt-3 flex items-center gap-2 text-[10px] font-black text-red-600 bg-white/50 w-fit px-3 py-1 rounded-full uppercase ">
                                                 <AlertTriangle size={12} /> Selisih Kurang: Rp {(parseInt(selectedData.Skrd?.total_bayar) - parseInt(selectedData.amount_paid)).toLocaleString('id-ID')}
                                             </div>
                                         )}
@@ -248,15 +259,15 @@ const DlhValidasiBayar = () => {
                                         </div>
                                         <div>
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Metode Bayar</p>
-                                            <p className="text-xs font-black text-indigo-700 uppercase italic">{selectedData.payment_method || 'Tunai'}</p>
+                                            <p className="text-xs font-black text-indigo-700 uppercase ">{selectedData.payment_method || 'Tunai'}</p>
                                         </div>
                                         <div>
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Tanggal Bayar</p>
                                             <p className="text-xs font-black text-slate-800 uppercase">{selectedData.paid_at_formatted || selectedData.paid_at}</p>
                                         </div>
                                         {/* <div className="col-span-2 pt-4 border-t border-slate-200">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none text-blue-600 italic">Informasi Bank (Jika Transfer)</p>
-                                            <p className="text-xs font-bold text-slate-600 uppercase italic">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none text-blue-600 ">Informasi Bank (Jika Transfer)</p>
+                                            <p className="text-xs font-bold text-slate-600 uppercase ">
                                                 {selectedData.nama_bank || '-'} | {selectedData.no_rekening || '-'}
                                             </p>
                                         </div> */}
@@ -269,7 +280,7 @@ const DlhValidasiBayar = () => {
                         <div className="p-8 border-t bg-white px-10 flex flex-col md:flex-row justify-between items-center gap-6">
                             <div className="flex items-center gap-3">
                                 <Info size={16} className="text-amber-500" />
-                                <p className="text-[10px] text-slate-400 font-bold uppercase italic">Validasi manual diperlukan untuk verifikasi ke mutasi rekening koran.</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase ">Validasi manual diperlukan untuk verifikasi ke mutasi rekening koran.</p>
                             </div>
                             <div className="flex gap-4 w-full md:w-auto">
                                 <button
@@ -319,10 +330,10 @@ const DlhValidasiBayar = () => {
                                     <div className="space-y-2 animate-in slide-in-from-top-2">
                                         <label className="block text-[10px] font-black text-red-400 uppercase tracking-widest ml-1">Uang Real Diterima Di Bank (Rp)</label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             className="w-full p-4 bg-red-50 border-2 border-red-100 rounded-2xl font-black text-xl text-red-700 outline-none"
                                             value={actualAmount}
-                                            onChange={(e) => setActualAmount(e.target.value)}
+                                            onChange={(e) => setActualAmount(toTitik(e.target.value))}
                                         />
                                     </div>
                                 )}

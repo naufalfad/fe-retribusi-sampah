@@ -319,7 +319,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div className="p-8 text-center text-gray-400 italic text-xs">Kelurahan tidak ditemukan...</div>
+                                                <div className="p-8 text-center text-gray-400  text-xs">Kelurahan tidak ditemukan...</div>
                                             )}
                                         </div>
                                     </>
@@ -361,7 +361,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
 
                         <div className="md:col-span-2">
                             {isFetchingKelas ? (
-                                <div className="flex items-center gap-2 text-xs font-bold text-gray-400 italic py-3"><Loader2 className="animate-spin" size={14} /> Memuat data tarif...</div>
+                                <div className="flex items-center gap-2 text-xs font-bold text-gray-400  py-3"><Loader2 className="animate-spin" size={14} /> Memuat data tarif...</div>
                             ) : (
                                 <FormSelect
                                     label="Pilih Kelas Objek"
@@ -380,7 +380,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                                             <h4 className="font-bold text-gray-800">
                                                 {activeClass.nama_kelas}
                                             </h4>
-                                            <p className="text-[11px] text-gray-500 italic mt-1">
+                                            <p className="text-[11px] text-gray-500  mt-1">
                                                 {activeClass.deskripsi_kelas}
                                             </p>
                                         </div>
@@ -424,7 +424,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-[10px] text-gray-400 italic">
+                                                <p className="text-[10px] text-gray-400 ">
                                                     Tidak ada komponen pelayanan tambahan
                                                 </p>
                                             )}
@@ -481,7 +481,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                                         <Upload size={28} className="text-green-600" />
                                     </div>
                                     <p className="text-sm font-black text-gray-700 uppercase tracking-widest">Pilih berkas dokumen</p>
-                                    <p className="text-[10px] text-gray-400 mt-1 italic font-medium">Klik untuk upload IMB, Foto Lokasi, atau KTP (Bisa pilih banyak)</p>
+                                    <p className="text-[10px] text-gray-400 mt-1  font-medium">Klik untuk upload IMB, Foto Lokasi, atau KTP (Bisa pilih banyak)</p>
                                 </div>
                                 <input type="file" multiple className="hidden" onChange={handleFileChange} />
                             </label>
@@ -525,7 +525,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
                             {selectedFiles.length === 0 && (
                                 <div className="flex items-center gap-2 px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
                                     <AlertCircle size={14} className="text-gray-400" />
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Belum ada dokumen yang dipilih</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ">Belum ada dokumen yang dipilih</p>
                                 </div>
                             )}
                         </div>

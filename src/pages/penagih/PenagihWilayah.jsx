@@ -73,7 +73,7 @@ const PenagihWilayah = () => {
                             </div>
                             <div className="text-right">
                                 <p className="text-[9px] font-black text-green-400 uppercase tracking-widest leading-none mb-1">Capaian Realisasi</p>
-                                <p className="text-3xl font-black italic tracking-tighter">{data.statistik.persentase_capaian}%</p>
+                                <p className="text-3xl font-black  tracking-tighter">{data.statistik.persentase_capaian}%</p>
                             </div>
                         </div>
 
@@ -98,7 +98,7 @@ const PenagihWilayah = () => {
             {/* --- 3. DAFTAR BLOK RT/RW (PRIORITY LIST) --- */}
             <div className="px-2 space-y-4">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm italic">
+                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm ">
                         <BarChart3 className="text-blue-600" size={18} /> Sebaran Tunggakan RT/RW
                     </h3>
                     <span className="text-[9px] font-black text-slate-400 uppercase bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
@@ -139,7 +139,7 @@ const PenagihWilayah = () => {
 
                             {/* Footer Card */}
                             <div className="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center">
-                                <div className="flex items-center gap-2 text-[9px] font-bold text-slate-400 uppercase italic">
+                                <div className="flex items-center gap-2 text-[9px] font-bold text-slate-400 uppercase ">
                                     <TrendingUp size={12} className="text-blue-500" />
                                     Area Prioritas Ke-{idx + 1}
                                 </div>
@@ -159,7 +159,7 @@ const PenagihWilayah = () => {
                         <CheckCircle2 size={24} />
                     </div>
                     <div>
-                        <h5 className="text-[11px] font-black text-blue-800 uppercase tracking-widest mb-1 leading-none italic">Tips Efisiensi</h5>
+                        <h5 className="text-[11px] font-black text-blue-800 uppercase tracking-widest mb-1 leading-none ">Tips Efisiensi</h5>
                         <p className="text-[10px] text-blue-700 leading-relaxed font-medium">
                             Urutan area di atas didasarkan pada jumlah tunggakan nominal tertinggi. Selesaikan RT/RW teratas untuk mencapai target PAD lebih cepat.
                         </p>

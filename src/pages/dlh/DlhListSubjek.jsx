@@ -149,7 +149,7 @@ const DlhListSubjek = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-6 text-xs font-bold text-gray-500 uppercase italic">
+                                        <td className="p-6 text-xs font-bold text-gray-500 uppercase ">
                                             {wr.kategori_subjek}
                                         </td>
                                         <td className="p-6 text-center">
@@ -188,7 +188,7 @@ const DlhListSubjek = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="p-20 text-center text-gray-400 italic font-bold">
+                                    <td colSpan="6" className="p-20 text-center text-gray-400  font-bold">
                                         Data tidak ditemukan.
                                     </td>
                                 </tr>
@@ -294,7 +294,7 @@ const DlhListSubjek = () => {
                                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300 mb-4">
                                         <Layers size={40} />
                                     </div>
-                                    <p className="text-gray-400 italic font-black uppercase text-xs tracking-[0.2em]">Belum ada objek terdaftar pada subjek ini.</p>
+                                    <p className="text-gray-400  font-black uppercase text-xs tracking-[0.2em]">Belum ada objek terdaftar pada subjek ini.</p>
                                 </div>
                             )}
                         </div>

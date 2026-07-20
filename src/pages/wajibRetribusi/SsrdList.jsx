@@ -115,13 +115,13 @@ const SsrdList = () => {
                         <tbody className="divide-y divide-gray-50">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 italic">
+                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 ">
                                         Memuat data SSRD...
                                     </td>
                                 </tr>
                             ) : payments.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 italic">
+                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 ">
                                         Belum ada SSRD terbit
                                     </td>
                                 </tr>

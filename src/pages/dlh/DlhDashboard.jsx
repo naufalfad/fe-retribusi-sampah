@@ -284,7 +284,7 @@ const DlhReporting = () => {
 const Card = ({ label, val, color }) => (
     <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{label}</p>
-        <h3 className={`text-2xl font-black italic tracking-tighter ${color}`}>{val}</h3>
+        <h3 className={`text-2xl font-black  tracking-tighter ${color}`}>{val}</h3>
     </div>
 );
 

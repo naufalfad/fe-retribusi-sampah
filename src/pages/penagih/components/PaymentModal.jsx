@@ -157,7 +157,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                     <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm flex justify-between items-center">
                         <div>
                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Tagihan Pokok</p>
-                            <p className="text-xl font-black text-slate-800 italic">Rp {toTitik(calculation.totalBill)}</p>
+                            <p className="text-xl font-black text-slate-800 ">Rp {toTitik(calculation.totalBill)}</p>
                         </div>
                     </div>
 
@@ -165,7 +165,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
 
                     {/* Metode Pembayaran - Grid diubah jadi 2 kolom */}
                     <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 italic">Metode Setoran</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 ">Metode Setoran</label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 onClick={() => setPayMethod('tunai')}
@@ -190,7 +190,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-inner text-center space-y-4">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Uang Tunai Diterima</label>
                                 <div className="flex items-center justify-center gap-3">
-                                    <span className="text-2xl font-black text-slate-300 italic">Rp</span>
+                                    <span className="text-2xl font-black text-slate-300 ">Rp</span>
                                     <input
                                         type="text"
                                         value={inputAmount}
@@ -199,7 +199,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                                         placeholder="0"
                                     />
                                 </div>
-                                <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-blue-500 uppercase italic bg-blue-50 py-2 rounded-xl">
+                                <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-blue-500 uppercase  bg-blue-50 py-2 rounded-xl">
                                     <Info size={12} /> Sisa wajib bayar: {toTitik(calculation.netToPay)}
                                 </div>
                             </div>
@@ -211,7 +211,7 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                                 <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest leading-relaxed">
                                     Klik tombol dibawah untuk <br />
                                     Memicu Gerbang Pembayaran Online <br />
-                                    <span className="text-xl text-slate-900 font-black italic">Rp {toTitik(calculation.netToPay)}</span>
+                                    <span className="text-xl text-slate-900 font-black ">Rp {toTitik(calculation.netToPay)}</span>
                                 </p>
                             </div>
                         )}
@@ -239,13 +239,13 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                                     <AlertCircle size={40} />
                                 </div>
                                 <h3 className="text-2xl font-black uppercase tracking-widest leading-none">Verifikasi Fisik</h3>
-                                <p className="text-xs text-slate-400 mt-2 uppercase tracking-widest italic font-bold">Pastikan uang tunai sudah diterima</p>
+                                <p className="text-xs text-slate-400 mt-2 uppercase tracking-widest  font-bold">Pastikan uang tunai sudah diterima</p>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 text-center">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Setoran Tunai</p>
-                                    <p className="text-5xl font-black text-green-400 tracking-tighter italic leading-none">Rp {inputAmount}</p>
+                                    <p className="text-5xl font-black text-green-400 tracking-tighter  leading-none">Rp {inputAmount}</p>
                                 </div>
                             </div>
 

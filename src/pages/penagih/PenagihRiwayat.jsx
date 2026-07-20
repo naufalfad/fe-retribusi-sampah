@@ -84,7 +84,7 @@ const PenagihRiwayat = () => {
                 <div className="relative z-10 flex justify-between items-center">
                     <div>
                         <p className="text-[9px] font-black text-green-400 uppercase tracking-[0.2em] mb-1">Uang di Tangan (Hari Ini)</p>
-                        <h2 className="text-3xl font-black tracking-tighter italic">{formatCurrency(summary.totalTunai)}</h2>
+                        <h2 className="text-3xl font-black tracking-tighter ">{formatCurrency(summary.totalTunai)}</h2>
                         <div className="flex items-center gap-2 mt-3">
                             <span className="bg-white/10 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest text-slate-300">
                                 {summary.totalTransaksi} Transaksi Berhasil
@@ -144,7 +144,7 @@ const PenagihRiwayat = () => {
 
                             {/* Amount & Status */}
                             <div className="text-right flex flex-col items-end">
-                                <p className="text-lg font-black text-slate-900 tracking-tighter italic leading-none mb-2">
+                                <p className="text-lg font-black text-slate-900 tracking-tighter  leading-none mb-2">
                                     {formatCurrency(data.nominal)}
                                 </p>
                                 <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${isTunai ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-600 border-green-100'}`}>
@@ -166,7 +166,7 @@ const PenagihRiwayat = () => {
                         <AlertCircle size={24} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold text-slate-500 leading-relaxed uppercase italic">
+                        <p className="text-[10px] font-bold text-slate-500 leading-relaxed uppercase ">
                             Riwayat ini mencatat setiap kali Anda menekan tombol <span className="text-slate-900 font-black">"Simpan Setoran"</span>. Gunakan data ini untuk rekonsiliasi sore hari dengan Bendahara.
                         </p>
                     </div>

@@ -110,7 +110,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
     useEffect(() => {
         if (activeClass) {
             const tarifDasar = activeClass.tarif_kelas ? activeClass.tarif_kelas.toString() : "0";
-            setValue('tarif_audit', tarifDasar);
+            setValue('tarif_audit', toTitik(tarifDasar));
         }
     }, [activeClass, setValue]);
 
@@ -274,7 +274,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                         <div className="md:col-span-2 space-y-1.5 pt-4 border-t border-white/5">
                                             <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1 flex justify-between">
                                                 <span>A. Total Retribusi Terhutang (Rp)</span>
-                                                <span className="text-[8px] italic opacity-50">Input Manual</span>
+                                                <span className="text-[8px]  opacity-50">Input Manual</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -289,7 +289,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                         <div className="md:col-span-2 space-y-1.5">
                                             <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest ml-1 flex justify-between">
                                                 <span>B. Retribusi Telah Dibayar (Rp)</span>
-                                                <span className="text-[8px] italic opacity-50">Input Manual</span>
+                                                <span className="text-[8px]  opacity-50">Input Manual</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -314,7 +314,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                                         {...register('total_wajib_bayar')}
                                                         className="w-full bg-transparent font-black text-5xl text-white outline-none p-0 tracking-tighter"
                                                     />
-                                                    <p className="text-[9px] text-white/50 font-bold uppercase mt-2 italic">Otomatis: (A - B)</p>
+                                                    <p className="text-[9px] text-white/50 font-bold uppercase mt-2 ">Otomatis: (A - B)</p>
                                                 </div>
                                             </div>
                                         </div>

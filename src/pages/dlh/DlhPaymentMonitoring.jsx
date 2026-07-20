@@ -96,7 +96,7 @@ const DlhPaymentMonitoring = () => {
                             <tr>
                                 <th className="p-6">Objek Retribusi</th>
                                 <th className="p-6">No. SKRD / Nominal</th>
-                                <th className="p-6">Poin Digunakan</th>
+                                {/* <th className="p-6">Poin Digunakan</th> */}
                                 <th className="p-6">Tgl Bayar</th>
                                 <th className="p-6">Status</th>
                                 <th className="p-6 text-center">Aksi</th>
@@ -106,13 +106,13 @@ const DlhPaymentMonitoring = () => {
                         <tbody className="divide-y divide-gray-50">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 italic">
+                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 ">
                                         Memuat data SSRD...
                                     </td>
                                 </tr>
                             ) : payments.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 italic">
+                                    <td colSpan={5} className="p-10 text-center text-sm text-gray-400 ">
                                         Belum ada SSRD terbit
                                     </td>
                                 </tr>
@@ -135,7 +135,7 @@ const DlhPaymentMonitoring = () => {
                                             </p>
                                         </td>
 
-                                        <td className="p-6">
+                                        {/* <td className="p-6">
                                             {p.points_used > 0 ? (
                                                 <div className="mt-2 space-y-1">
                                                     <p className="text-xs font-black text-amber-600">
@@ -150,7 +150,7 @@ const DlhPaymentMonitoring = () => {
                                                     0
                                                 </p>
                                             )}
-                                        </td>
+                                        </td> */}
 
                                         <td className="p-6 text-sm text-gray-600">
                                             {p.tgl_bayar}

@@ -47,7 +47,7 @@ const PenagihDashboard = () => {
             {/* --- 1. HEADER: GREETING & LOCATION --- */}
             <div className="px-4 pt-6 flex justify-between items-center">
                 <div className="text-left">
-                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-1 italic">Tugas Lapangan</h4>
+                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-1 ">Tugas Lapangan</h4>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                         Halo, {JSON.parse(localStorage.getItem('user'))?.username}
                     </h1>
@@ -68,13 +68,13 @@ const PenagihDashboard = () => {
                             </div>
                             <div className="text-right">
                                 <p className="text-[9px] font-black text-green-400 uppercase tracking-widest">Wilayah Tugas</p>
-                                <p className="text-xs font-bold uppercase italic">{data.wilayah}</p>
+                                <p className="text-xs font-bold uppercase ">{data.wilayah}</p>
                             </div>
                         </div>
 
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1 leading-none">Tunai Terkumpul (Hari Ini)</p>
-                            <h2 className="text-4xl font-black tracking-tighter italic text-white drop-shadow-lg">
+                            <h2 className="text-4xl font-black tracking-tighter  text-white drop-shadow-lg">
                                 {formatCurrency(data.summary.cash_today)}
                             </h2>
                         </div>
@@ -96,7 +96,7 @@ const PenagihDashboard = () => {
                     <Users className="text-blue-600" size={20} />
                     <div className="text-left">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total WR</p>
-                        <p className="text-xl font-black text-slate-800 italic">{data.summary.total_wr} <span className="text-[10px] font-bold text-slate-300">OBJEK</span></p>
+                        <p className="text-xl font-black text-slate-800 ">{data.summary.total_wr} <span className="text-[10px] font-bold text-slate-300">OBJEK</span></p>
                     </div>
                 </div>
                 <div
@@ -106,7 +106,7 @@ const PenagihDashboard = () => {
                     <AlertCircle className="text-red-500" size={20} />
                     <div className="text-left">
                         <p className="text-[9px] font-black text-red-400 uppercase tracking-widest leading-none mb-1">Tunggakan</p>
-                        <p className="text-xl font-black text-slate-800 italic leading-none">{data.summary.jumlah_tunggakan} <span className="text-[10px] font-bold text-slate-300 uppercase">Tagihan</span></p>
+                        <p className="text-xl font-black text-slate-800  leading-none">{data.summary.jumlah_tunggakan} <span className="text-[10px] font-bold text-slate-300 uppercase">Tagihan</span></p>
                         <p className="text-[10px] font-black text-red-600 mt-1">{formatCurrency(data.summary.total_tunggakan_idr)}</p>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ const PenagihDashboard = () => {
             {/* --- 4. RECENT ACTIVITY --- */}
             <div className="px-4 space-y-4">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm italic">
+                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm ">
                         <History className="text-green-700" size={18} /> Aktivitas Terakhir
                     </h3>
                     <button onClick={() => navigate('/penagih/riwayat')} className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline">Lihat Semua</button>
@@ -123,7 +123,7 @@ const PenagihDashboard = () => {
 
                 <div className="space-y-3">
                     {data.recentCollections.length === 0 ? (
-                        <div className="text-center py-10 opacity-30 italic uppercase font-black text-[10px] tracking-widest">Belum ada penagihan hari ini</div>
+                        <div className="text-center py-10 opacity-30  uppercase font-black text-[10px] tracking-widest">Belum ada penagihan hari ini</div>
                     ) : data.recentCollections.map((col) => (
                         <div key={col.id_ssrd} className="bg-white p-5 rounded-[2rem] border border-slate-50 shadow-sm flex items-center justify-between group active:scale-[0.98] transition-all">
                             <div className="flex items-center gap-4 text-left">
@@ -142,7 +142,7 @@ const PenagihDashboard = () => {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-black text-slate-800 tracking-tighter italic">{formatCurrency(col.amount_paid)}</p>
+                                <p className="text-sm font-black text-slate-800 tracking-tighter ">{formatCurrency(col.amount_paid)}</p>
                                 <p className="text-[8px] font-bold text-slate-300 uppercase">{new Date(col.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         </div>
@@ -172,7 +172,7 @@ const PenagihDashboard = () => {
             <div className="px-4 pt-4 pb-10">
                 <div className="bg-blue-50 border border-blue-100 p-6 rounded-[2.5rem] flex items-center gap-4">
                     <Zap size={24} className="text-blue-600 animate-pulse shrink-0" fill="currentColor" />
-                    <p className="text-[9px] font-bold text-blue-800 leading-relaxed uppercase italic">
+                    <p className="text-[9px] font-bold text-blue-800 leading-relaxed uppercase ">
                         Data disinkronkan otomatis ke server pusat. Pastikan GPS aktif untuk pelaporan titik lokasi penagihan.
                     </p>
                 </div>

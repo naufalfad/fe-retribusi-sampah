@@ -140,7 +140,7 @@ const DlhLayananMonitoring = () => {
                             ) : (
                                 requests.map((req) => (
                                     <tr key={req.id_pengajuan} className="hover:bg-blue-50/30 transition-all group">
-                                        <td className="p-8 font-mono text-xs font-bold text-slate-500 italic">#{req.id_pengajuan}</td>
+                                        <td className="p-8 font-mono text-xs font-bold text-slate-500 ">#{req.id_pengajuan}</td>
                                         <td className="p-8">
                                             <h4 className="font-black text-slate-800 text-sm uppercase leading-tight">{req.data_lama?.nama_objek}</h4>
                                             <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Pemilik: {req.Subjek?.nama_subjek}</p>
@@ -180,7 +180,7 @@ const DlhLayananMonitoring = () => {
                                     <FileText size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-black uppercase tracking-widest text-sm leading-none italic">Audit Comparison Workspace</h3>
+                                    <h3 className="font-black uppercase tracking-widest text-sm leading-none ">Audit Comparison Workspace</h3>
                                     <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase">Pengajuan ID: #{selectedReq.id_pengajuan}</p>
                                 </div>
                             </div>
@@ -222,7 +222,7 @@ const DlhLayananMonitoring = () => {
                                             ) : (
                                                 <div className="h-full flex flex-col items-center justify-center text-center py-10">
                                                     <AlertCircle size={48} className="text-red-500 mb-4" />
-                                                    <p className="text-sm font-black text-red-700 uppercase italic">Objek Akan Dinonaktifkan Secara Permanen</p>
+                                                    <p className="text-sm font-black text-red-700 uppercase ">Objek Akan Dinonaktifkan Secara Permanen</p>
                                                 </div>
                                             )}
                                         </div>
@@ -233,7 +233,7 @@ const DlhLayananMonitoring = () => {
                                         <h4 className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-2 flex items-center gap-2">
                                             <Info size={14} /> Alasan Pengajuan Wajib Retribusi
                                         </h4>
-                                        <p className="text-sm font-bold text-amber-900 leading-relaxed italic">"{selectedReq.alasan}"</p>
+                                        <p className="text-sm font-bold text-amber-900 leading-relaxed ">"{selectedReq.alasan}"</p>
                                     </div>
                                 </div>
 
@@ -277,14 +277,14 @@ const DlhLayananMonitoring = () => {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <p className="text-[10px] text-slate-400 italic">Tidak ada lampiran.</p>
+                                            <p className="text-[10px] text-slate-400 ">Tidak ada lampiran.</p>
                                         )}
                                     </div>
 
                                     {/* INPUT TINDAKAN DINAS */}
                                     {selectedReq.status === 'Pending' && (
                                         <div className="space-y-4 pt-4 border-t border-slate-100">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Tanggapan/Catatan Dinas</label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 ">Tanggapan/Catatan Dinas</label>
                                             <textarea
                                                 className="w-full p-4 bg-white border-2 border-slate-200 rounded-2xl outline-none focus:border-blue-600 text-xs font-bold"
                                                 placeholder="Berikan instruksi atau alasan jika ditolak..."
@@ -332,7 +332,7 @@ const DlhLayananMonitoring = () => {
 const CompareField = ({ label, value, isNew = false }) => (
     <div className="py-2 border-b border-gray-50 last:border-0">
         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
-        <p className={`text-xs font-black uppercase tracking-tight ${isNew ? 'text-blue-700 italic' : 'text-slate-800'}`}>
+        <p className={`text-xs font-black uppercase tracking-tight ${isNew ? 'text-blue-700 ' : 'text-slate-800'}`}>
             {value || '-'}
         </p>
     </div>

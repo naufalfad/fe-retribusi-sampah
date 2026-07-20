@@ -51,7 +51,7 @@ const BendaharaDashboard = () => {
             {/* --- 1. HEADER & REVENUE HERO --- */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div className="lg:col-span-4">
-                    <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-1 italic">
+                    <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-1 ">
                         Otoritas Bendahara Penerima
                     </h4>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
@@ -64,7 +64,7 @@ const BendaharaDashboard = () => {
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-2">Realisasi Bulan Ini ({new Date().toLocaleString('id-ID', { month: 'long' })})</p>
-                            <h2 className="text-4xl md:text-5xl font-black tracking-tighter italic text-white drop-shadow-md">
+                            <h2 className="text-4xl md:text-5xl font-black tracking-tighter  text-white drop-shadow-md">
                                 {formatCurrency(data.summary.realisasi_bulan_ini)}
                             </h2>
                             <div className="flex items-center gap-2 mt-4 text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
@@ -107,7 +107,7 @@ const BendaharaDashboard = () => {
                         <Wallet size={20} />
                     </div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Piutang (Unpaid)</p>
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">{formatCurrency(data.summary.total_piutang)}</h3>
+                    <h3 className="text-3xl font-black text-slate-900 tracking-tighter ">{formatCurrency(data.summary.total_piutang)}</h3>
                 </div>
 
                 {/* Performance Method */}
@@ -159,7 +159,7 @@ const BendaharaDashboard = () => {
                             {data.recentTransactions.map((tx) => (
                                 <tr key={tx.id_ssrd} className="hover:bg-indigo-50/30 transition-all group">
                                     <td className="px-8 py-5">
-                                        <p className="text-xs font-black text-indigo-600 font-mono tracking-tighter italic">{tx.no_ssrd}</p>
+                                        <p className="text-xs font-black text-indigo-600 font-mono tracking-tighter ">{tx.no_ssrd}</p>
                                     </td>
                                     <td className="px-8 py-5">
                                         <p className="text-xs font-black text-slate-800 uppercase tracking-tight leading-none">
@@ -173,7 +173,7 @@ const BendaharaDashboard = () => {
                                         </span>
                                     </td>
                                     <td className="px-8 py-5">
-                                        <p className="text-sm font-black text-emerald-600 italic tracking-tighter">
+                                        <p className="text-sm font-black text-emerald-600  tracking-tighter">
                                             {formatCurrency(tx.amount_paid)}
                                         </p>
                                     </td>

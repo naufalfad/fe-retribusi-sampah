@@ -75,7 +75,7 @@ const PengangkutMonitoring = () => {
                     <ArrowLeft size={20} />
                 </button>
                 <div>
-                    <h1 className="text-xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-xl font-black text-slate-800 tracking-tighter uppercase  leading-none">
                         Monitoring <span className="text-emerald-700">Rute</span>
                     </h1>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Cakupan Wilayah: Pakansari</p>
@@ -88,7 +88,7 @@ const PengangkutMonitoring = () => {
                     <div className="flex justify-between items-end">
                         <div>
                             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Progress Hari Ini</p>
-                            <h2 className="text-4xl font-black italic tracking-tighter">{progressPercent}% <span className="text-sm not-italic opacity-50 uppercase">Selesai</span></h2>
+                            <h2 className="text-4xl font-black  tracking-tighter">{progressPercent}% <span className="text-sm not- opacity-50 uppercase">Selesai</span></h2>
                         </div>
                         <div className="text-right">
                             <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">Sisa Tugas</p>
@@ -158,7 +158,7 @@ const PengangkutMonitoring = () => {
                                     {obj.is_collected ? <CheckCircle2 size={24} /> : <Circle size={24} strokeWidth={3} />}
                                 </div>
                                 <div className="text-left">
-                                    <h4 className="font-black text-slate-800 text-sm uppercase tracking-tight leading-none mb-1 italic">{obj.nama_objek}</h4>
+                                    <h4 className="font-black text-slate-800 text-sm uppercase tracking-tight leading-none mb-1 ">{obj.nama_objek}</h4>
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{obj.alamat}</span>
                                         <span className="h-1 w-1 bg-slate-200 rounded-full"></span>
@@ -172,7 +172,7 @@ const PengangkutMonitoring = () => {
                                     <Plus size={18} />
                                 </button>
                             ) : (
-                                <div className="flex items-center gap-1 text-[8px] font-black text-green-600 uppercase tracking-[0.2em] italic">
+                                <div className="flex items-center gap-1 text-[8px] font-black text-green-600 uppercase tracking-[0.2em] ">
                                     <CheckCircle2 size={12} /> Selesai
                                 </div>
                             )}
@@ -191,7 +191,7 @@ const PengangkutMonitoring = () => {
                     <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-600 shrink-0">
                         <Navigation size={24} />
                     </div>
-                    <p className="text-[10px] font-bold text-blue-700 leading-relaxed uppercase italic">
+                    <p className="text-[10px] font-bold text-blue-700 leading-relaxed uppercase ">
                         Klik pada objek yang <b>Belum Diangkut</b> untuk langsung menuju halaman input data volume pengangkutan.
                     </p>
                 </div>

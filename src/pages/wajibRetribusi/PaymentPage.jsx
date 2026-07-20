@@ -136,10 +136,10 @@ const PaymentPage = () => {
                     <ArrowLeft size={20} className="text-slate-600" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase  leading-none">
                         Checkout <span className="text-green-700">Pembayaran</span>
                     </h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 italic">Sistem Integrasi Midtrans Secure</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 ">Sistem Integrasi Midtrans Secure</p>
                 </div>
             </div>
 
@@ -150,13 +150,13 @@ const PaymentPage = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
                         <div>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Objek Retribusi</p>
-                            <h3 className="text-xl font-black text-slate-800 uppercase leading-none italic">{skrd.Objek?.nama_objek}</h3>
+                            <h3 className="text-xl font-black text-slate-800 uppercase leading-none ">{skrd.Objek?.nama_objek}</h3>
                             <p className="text-xs font-bold text-green-700 mt-1 uppercase">NPOR: {skrd.Objek?.npor_objek}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4 border-t pt-4">
                             <div>
                                 <p className="text-[9px] font-black text-slate-300 uppercase">Periode</p>
-                                <p className="text-xs font-bold text-slate-600 uppercase italic">{skrd.periode_bulan}/{skrd.periode_tahun}</p>
+                                <p className="text-xs font-bold text-slate-600 uppercase ">{skrd.periode_bulan}/{skrd.periode_tahun}</p>
                             </div>
                             <div>
                                 <p className="text-[9px] font-black text-slate-300 uppercase">Nomor Tagihan</p>
@@ -187,14 +187,14 @@ const PaymentPage = () => {
                             </div>
                             {usePoints && (
                                 <div className="bg-white/60 p-4 rounded-2xl border border-emerald-100 flex justify-between items-center">
-                                    <p className="text-[10px] font-bold text-emerald-800 uppercase italic">Potongan Otomatis:</p>
+                                    <p className="text-[10px] font-bold text-emerald-800 uppercase ">Potongan Otomatis:</p>
                                     <p className="text-lg font-black text-emerald-600 tracking-tighter">- Rp {billing.pointDiscount.toLocaleString('id-ID')}</p>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    <div className="p-6 bg-blue-50 border border-blue-100 rounded-3xl flex gap-4 italic">
+                    <div className="p-6 bg-blue-50 border border-blue-100 rounded-3xl flex gap-4 ">
                         <Info className="text-blue-600 shrink-0" size={20} />
                         <p className="text-[10px] text-blue-800 font-medium leading-relaxed uppercase tracking-tight">
                             Metode pembayaran akan muncul secara otomatis melalui jendela pop-up <b>Midtrans Secure Payment</b> setelah Anda menekan tombol konfirmasi.
@@ -214,7 +214,7 @@ const PaymentPage = () => {
                             </div>
 
                             {usePoints && (
-                                <div className="flex justify-between items-center text-sm font-bold text-emerald-400 uppercase italic">
+                                <div className="flex justify-between items-center text-sm font-bold text-emerald-400 uppercase ">
                                     <span>Poin Terpakai ({billing.pointsUsed})</span>
                                     <span>- Rp {billing.pointDiscount.toLocaleString('id-ID')}</span>
                                 </div>
@@ -227,7 +227,7 @@ const PaymentPage = () => {
 
                             <div className="pt-6 mt-6 border-t border-white/10">
                                 <p className="text-[10px] font-black text-green-400 uppercase tracking-widest text-center mb-1">Grand Total</p>
-                                <h2 className="text-5xl font-black text-center tracking-tighter italic text-white">
+                                <h2 className="text-5xl font-black text-center tracking-tighter  text-white">
                                     Rp {billing.grandTotal.toLocaleString('id-ID')}
                                 </h2>
                             </div>

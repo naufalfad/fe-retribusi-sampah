@@ -224,7 +224,7 @@ const AdminStaff = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-800 tracking-tighter uppercase leading-none">Otoritas Staff</h1>
-                    <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest italic">Pusat Kendali Akun REKAS</p>
+                    <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest ">Pusat Kendali Akun REKAS</p>
                 </div>
                 <button
                     onClick={() => openAddModal()}
@@ -509,7 +509,7 @@ const AdminStaff = () => {
 
                             <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex gap-4">
                                 <Info className="text-blue-600 shrink-0" size={20} />
-                                <p className="text-[10px] text-blue-800 font-medium leading-relaxed italic uppercase tracking-tighter">
+                                <p className="text-[10px] text-blue-800 font-medium leading-relaxed  uppercase tracking-tighter">
                                     Pastikan data sudah benar. Password ini akan digunakan staff untuk login pertama kali sebelum mereka mengubahnya secara mandiri.
                                 </p>
                             </div>
@@ -572,7 +572,7 @@ const AdminStaff = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex gap-3 italic text-[10px] text-amber-800">
+                            <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex gap-3  text-[10px] text-amber-800">
                                 <Info size={16} className="shrink-0" />
                                 <p>Hati-hati: Perubahan ini akan langsung memutuskan sesi login staff yang bersangkutan.</p>
                             </div>
@@ -620,7 +620,7 @@ const AdminStaff = () => {
                             <p className="text-[10px] font-bold text-gray-400 mt-1">{selectedStaff.email || 'No Email Registered'}</p>
                         </div>
 
-                        <p className="text-xs text-gray-400 mt-6 font-medium leading-relaxed italic">
+                        <p className="text-xs text-gray-400 mt-6 font-medium leading-relaxed ">
                             Tindakan ini bersifat <span className="text-red-600 font-bold uppercase">Permanen</span>. Seluruh data akses staff ini akan dicabut dan tidak dapat dipulihkan kembali.
                         </p>
 

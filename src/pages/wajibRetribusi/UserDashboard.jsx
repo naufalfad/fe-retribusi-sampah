@@ -139,7 +139,7 @@ const UserDashboard = () => {
                     <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-200 p-12 md:p-20 flex flex-col items-center text-center animate-in zoom-in duration-500">
                         <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-700 mb-6"><Building2 size={48} /></div>
                         <h3 className="text-2xl font-black text-gray-800 tracking-tight uppercase">Belum Ada Aset Terdaftar</h3>
-                        <p className="text-gray-500 max-w-sm mt-2 text-sm leading-relaxed font-medium italic font-sans">Anda belum memiliki nomor NPOR/Objek. Silakan ajukan pendaftaran untuk rumah atau ruko Anda.</p>
+                        <p className="text-gray-500 max-w-sm mt-2 text-sm leading-relaxed font-medium  font-sans">Anda belum memiliki nomor NPOR/Objek. Silakan ajukan pendaftaran untuk rumah atau ruko Anda.</p>
                         <div className="mt-10 flex flex-col md:flex-row gap-4">
                             <button onClick={() => navigate('/daftar')} className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 transition-all transform hover:scale-105 uppercase text-xs tracking-widest"><Plus size={20} /> Daftarkan NPOR Baru</button>
                         </div>
@@ -165,25 +165,25 @@ const UserDashboard = () => {
                             <div id="npwrd-card" className="w-[105.6mm] h-[73.98mm] bg-white rounded-xl shadow-2xl border border-gray-200 relative overflow-hidden text-black font-sans shrink-0">
                                 {/* Header Kartu */}
                                 <div className="bg-green-800 p-2 text-white flex items-center gap-2 border-b-2 border-yellow-500">
-                                    <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center text-[5px] font-bold uppercase text-black text-center leading-none px-0.5 italic">LOGO DLH</div>
+                                    <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center text-[5px] font-bold uppercase text-black text-center leading-none px-0.5 ">LOGO DLH</div>
                                     <div className="flex-1">
                                         <p className="text-[6px] font-bold uppercase leading-none">Pemerintah Kabupaten Bogor</p>
                                         <p className="text-[8px] font-black uppercase leading-tight tracking-tighter">Dinas Lingkungan Hidup</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[5px] font-bold opacity-80 uppercase leading-none italic">Kartu NPWRD</p>
+                                        <p className="text-[5px] font-bold opacity-80 uppercase leading-none ">Kartu NPWRD</p>
                                     </div>
                                 </div>
 
                                 {/* Body Kartu */}
                                 <div className="p-3">
-                                    <p className="text-[6px] font-bold text-green-800 uppercase tracking-widest text-center mb-2 border-b border-gray-100 pb-1 italic">Retribusi Pelayanan Persampahan/Kebersihan</p>
+                                    <p className="text-[6px] font-bold text-green-800 uppercase tracking-widest text-center mb-2 border-b border-gray-100 pb-1 ">Retribusi Pelayanan Persampahan/Kebersihan</p>
 
                                     <div className="grid grid-cols-[50px_5px_1fr] gap-x-1 gap-y-1.5 text-[7px] items-start">
-                                        <span className="font-bold opacity-60">NO. REGISTRASI</span> <span>:</span> <span className="font-black italic uppercase">{selectedAsset.no_registrasi}</span>
+                                        <span className="font-bold opacity-60">NO. REGISTRASI</span> <span>:</span> <span className="font-black  uppercase">{selectedAsset.no_registrasi}</span>
                                         <span className="font-bold opacity-60">NAMA</span> <span>:</span> <span className="font-black uppercase truncate">{selectedAsset.nama_objek}</span>
                                         <span className="font-bold opacity-60 uppercase leading-tight">ALAMAT</span> <span>:</span> <span className="font-bold text-[6.5px] leading-tight uppercase h-[18px] overflow-hidden">{selectedAsset.alamat}</span>
-                                        <span className="font-bold opacity-60">KATEGORI</span> <span>:</span> <span className="font-black text-green-700 italic uppercase">{selectedAsset.kategori}</span>
+                                        <span className="font-bold opacity-60">KATEGORI</span> <span>:</span> <span className="font-black text-green-700  uppercase">{selectedAsset.kategori}</span>
                                     </div>
 
                                     {/* NPWRD UTAMA */}
@@ -192,15 +192,15 @@ const UserDashboard = () => {
                                             <span className="text-[5px] font-bold text-gray-400 tracking-[0.2em] uppercase leading-none mb-0.5">NPWRD</span>
                                             <span className="text-[10px] font-mono font-black text-slate-800 tracking-widest">{selectedAsset.npwrd}</span>
                                         </div>
-                                        <div className="w-8 h-8 bg-white border border-gray-200 flex items-center justify-center font-bold text-[4px] opacity-40 uppercase italic text-center">QR<br />Code</div>
+                                        <div className="w-8 h-8 bg-white border border-gray-200 flex items-center justify-center font-bold text-[4px] opacity-40 uppercase  text-center">QR<br />Code</div>
                                     </div>
                                 </div>
 
                                 {/* Footer Kartu (Signature) */}
                                 <div className="absolute bottom-0 left-0 right-0 p-2 pt-0 flex justify-between items-end bg-gradient-to-t from-gray-50 to-transparent">
-                                    <div className="text-[5px] font-medium opacity-50 italic uppercase leading-none mb-1">REKAS DIGITAL CARD v.2</div>
+                                    <div className="text-[5px] font-medium opacity-50  uppercase leading-none mb-1">REKAS DIGITAL CARD v.2</div>
                                     <div className="text-center font-sans">
-                                        <p className="text-[4.5px] font-bold leading-none mb-0.5 uppercase italic opacity-40 italic underline decoration-dotted">Tertanda Digital Oleh:</p>
+                                        <p className="text-[4.5px] font-bold leading-none mb-0.5 uppercase  opacity-40  underline decoration-dotted">Tertanda Digital Oleh:</p>
                                         <p className="text-[5px] font-black uppercase leading-none">IWAN SETIAWAN</p>
                                         <p className="text-[4px] font-bold opacity-60 leading-none">Plt. Bupati Bogor</p>
                                     </div>
@@ -213,7 +213,7 @@ const UserDashboard = () => {
 
                         {/* Modal Footer */}
                         <div className="p-8 border-t bg-white flex flex-col md:flex-row gap-4 items-center justify-between px-10">
-                            <div className="text-xs font-medium text-gray-400 italic font-sans uppercase tracking-tighter">
+                            <div className="text-xs font-medium text-gray-400  font-sans uppercase tracking-tighter">
                                 * Kartu ini dapat digunakan sebagai identitas resmi retribusi pelayanan kebersihan di Kabupaten Bogor.
                             </div>
                             <div className="flex gap-3 w-full md:w-auto">
@@ -233,12 +233,12 @@ const UserDashboard = () => {
             <div className="bg-blue-600 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-xl shadow-blue-900/20">
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="space-y-2 text-center md:text-left">
-                        <h4 className="text-xl font-bold uppercase italic tracking-tighter">Butuh Bantuan Pendaftaran?</h4>
+                        <h4 className="text-xl font-bold uppercase  tracking-tighter">Butuh Bantuan Pendaftaran?</h4>
                         <p className="text-sm opacity-80 max-w-md leading-relaxed font-sans">
                             Jika Anda kesulitan mendaftar mandiri, silakan kunjungi kantor UPT wilayah terdekat dengan membawa KTP dan berkas domisili.
                         </p>
                     </div>
-                    <button className="bg-white text-blue-700 px-8 py-4 rounded-2xl font-black text-sm hover:bg-gray-100 transition-colors shadow-lg uppercase tracking-tighter italic">
+                    <button className="bg-white text-blue-700 px-8 py-4 rounded-2xl font-black text-sm hover:bg-gray-100 transition-colors shadow-lg uppercase tracking-tighter ">
                         Hubungi Customer Service
                     </button>
                 </div>

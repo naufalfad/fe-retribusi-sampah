@@ -90,7 +90,7 @@ const DlhListObjek = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-gray-800 tracking-tight uppercase">List Objek & Riwayat SKRD</h1>
-                    <p className="text-sm text-gray-500 font-medium italic">Manajemen penetapan tarif objek retribusi.</p>
+                    <p className="text-sm text-gray-500 font-medium ">Manajemen penetapan tarif objek retribusi.</p>
                 </div>
             </div>
 
@@ -143,7 +143,7 @@ const DlhListObjek = () => {
                                         </td>
                                         <td className="p-8 text-center">
                                             <p className="text-[11px] font-black text-gray-700 uppercase">{obj.kelurahan_objek}</p>
-                                            <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase italic">
+                                            <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase ">
                                                 <MapPin size={10} className="inline mr-1" /> {obj.kecamatan_objek}
                                             </p>
                                         </td>
@@ -172,7 +172,7 @@ const DlhListObjek = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="p-20 text-center text-gray-400 font-bold italic">
+                                    <td colSpan="4" className="p-20 text-center text-gray-400 font-bold ">
                                         {loading ? "Sedang memuat data..." : "Data objek tidak ditemukan."}
                                     </td>
                                 </tr>
@@ -206,7 +206,7 @@ const DlhListObjek = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-gray-800 uppercase leading-none">Riwayat Penetapan SKRD</h3>
-                                    <p className="text-xs text-gray-500 font-bold mt-1 uppercase italic tracking-tighter">Objek: {selectedData.nama_objek}</p>
+                                    <p className="text-xs text-gray-500 font-bold mt-1 uppercase  tracking-tighter">Objek: {selectedData.nama_objek}</p>
                                 </div>
                             </div>
                             <button onClick={() => setShowSkrdListModal(false)} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
@@ -254,7 +254,7 @@ const DlhListObjek = () => {
                                     return (
                                         <div className="py-20 text-center">
                                             <FileText className="mx-auto text-gray-200 mb-4" size={60} />
-                                            <p className="text-gray-400 italic font-black uppercase text-xs tracking-widest">Belum ada riwayat SKRD terbit.</p>
+                                            <p className="text-gray-400  font-black uppercase text-xs tracking-widest">Belum ada riwayat SKRD terbit.</p>
                                         </div>
                                     );
                                 }

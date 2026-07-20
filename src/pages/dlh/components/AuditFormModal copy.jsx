@@ -211,7 +211,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                         <div className="flex justify-between items-center">
                                             <div className="text-left">
                                                 <h4 className={`font-black uppercase text-xs ${isPotentiallyFraud ? 'text-red-700' : 'text-slate-800'}`}>{activeClass.nama_kelas}</h4>
-                                                <p className="text-[10px] text-slate-400 italic mt-1">{activeClass.deskripsi_kelas}</p>
+                                                <p className="text-[10px] text-slate-400  mt-1">{activeClass.deskripsi_kelas}</p>
                                             </div>
                                             <div className="text-right bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
                                                 <span className="text-[9px] font-black text-slate-400 uppercase block mb-1 tracking-widest">Tarif Pokok Baru</span>
@@ -251,7 +251,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                     errors={errors}
                                     type="date"
                                 />
-                                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 italic">
+                                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 ">
                                     <Info size={16} className="text-amber-600 shrink-0" />
                                     <p className="text-[10px] text-amber-800 font-bold leading-tight uppercase tracking-tighter">
                                         Data volume dihitung berdasarkan asumsi minimal kelas temuan dikalikan tarif standar pelayanan m³.
@@ -275,11 +275,11 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
 
                                             <div className="space-y-2 py-1">
                                                 <div className="flex justify-between text-[11px] font-bold">
-                                                    <span className="text-slate-500 italic">Tarif Seharusnya / Bln</span>
+                                                    <span className="text-slate-500 ">Tarif Seharusnya / Bln</span>
                                                     <span className="text-slate-900">Rp {billingSimulasi.tarifSeharusnya.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex justify-between text-[11px] font-bold">
-                                                    <span className="text-slate-500 italic">Tarif Terbayar / Bln</span>
+                                                    <span className="text-slate-500 ">Tarif Terbayar / Bln</span>
                                                     <span className="text-red-500">- Rp {billingSimulasi.tarifTerbayar.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex justify-between text-[11px] font-black border-t pt-2 border-dashed">
@@ -291,7 +291,7 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
                                                     <span className="text-amber-600">+ Rp {billingSimulasi.dendaSanksi.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex justify-between text-[11px] font-bold">
-                                                    <span className="text-slate-500 italic">Dasar Tarif ({billingSimulasi.namaPelayanan})</span>
+                                                    <span className="text-slate-500 ">Dasar Tarif ({billingSimulasi.namaPelayanan})</span>
                                                     <span className="text-slate-900">Rp {billingSimulasi.tarifSeharusnya.toLocaleString()}</span>
                                                 </div>
                                             </div>

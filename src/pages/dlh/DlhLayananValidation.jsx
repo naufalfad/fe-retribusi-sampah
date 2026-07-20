@@ -42,7 +42,7 @@ const DlhLayananValidation = () => {
                 </div>
                 <div className="flex gap-2 bg-blue-50 border border-blue-100 px-4 py-2 rounded-2xl items-center">
                     <AlertCircle size={18} className="text-blue-600" />
-                    <span className="text-[10px] font-bold text-blue-800 uppercase italic">Validasi berdasarkan SOP Perbup No. 7</span>
+                    <span className="text-[10px] font-bold text-blue-800 uppercase ">Validasi berdasarkan SOP Perbup No. 7</span>
                 </div>
             </div>
 
@@ -178,7 +178,7 @@ const DlhLayananValidation = () => {
                                 ) : (
                                     <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
                                         <label className="text-[10px] font-bold text-red-400 uppercase mb-2 block">Alasan Penonaktifan</label>
-                                        <p className="font-bold text-red-800 leading-relaxed italic">"{selectedRequest.alasan}"</p>
+                                        <p className="font-bold text-red-800 leading-relaxed ">"{selectedRequest.alasan}"</p>
                                         <div className="mt-4 flex items-center gap-2 text-[10px] text-red-600 font-bold uppercase">
                                             <AlertCircle size={14} /> Memerlukan Validasi Saldo Tunggakan
                                         </div>

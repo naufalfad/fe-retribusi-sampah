@@ -315,7 +315,7 @@ const PanelOrchestrator = ({
                                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider leading-none">
                                     Tarif Pokok
                                 </span>
-                                <span className="text-[11px] font-mono font-black text-slate-700 mt-1.5 italic">
+                                <span className="text-[11px] font-mono font-black text-slate-700 mt-1.5 ">
                                     Rp {(Number(selectedObject.tarif_pokok_objek) || 0).toLocaleString()}
                                 </span>
                             </div>

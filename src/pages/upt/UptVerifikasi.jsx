@@ -139,7 +139,7 @@ const UptVerifikasi = () => {
                             {/* SECTION 1: IDENTITAS (SESUAI FORM PENDAFTARAN) */}
                             <section>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black italic">1</span>
+                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ">1</span>
                                     <h3 className="text-xs font-black text-gray-800 uppercase tracking-widest">Identitas {selectedData.jenis === 'PRIBADI' ? 'Pemohon' : 'Badan & Pengelola'}</h3>
                                 </div>
                                 <div className="bg-gray-50 p-6 rounded-[2rem] grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
@@ -166,7 +166,7 @@ const UptVerifikasi = () => {
                             {/* SECTION 2: ALAMAT LOKASI RETRIBUSI */}
                             <section>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black italic">2</span>
+                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ">2</span>
                                     <h3 className="text-xs font-black text-gray-800 uppercase tracking-widest">Alamat Lokasi Retribusi</h3>
                                 </div>
                                 <div className="bg-gray-50 p-6 rounded-[2rem] grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 border border-gray-100">
@@ -188,7 +188,7 @@ const UptVerifikasi = () => {
                             {/* SECTION 3: INFORMASI TEKNIS */}
                             <section>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black italic">3</span>
+                                    <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ">3</span>
                                     <h3 className="text-xs font-black text-gray-800 uppercase tracking-widest">Informasi Teknis Bangunan</h3>
                                 </div>
                                 <div className="bg-amber-50/50 border border-amber-100 p-6 rounded-[2rem] flex items-center gap-6">
@@ -235,7 +235,7 @@ const UptVerifikasi = () => {
                                         onChange={(e) => setNpwrdInput(e.target.value)}
                                         className="w-full p-5 bg-white/10 border-2 border-green-500/30 rounded-2xl outline-none focus:border-green-400 text-2xl font-mono tracking-[0.3em] text-white placeholder:text-white/20"
                                     />
-                                    <p className="text-[10px] text-green-400/70 mt-4 italic font-medium">
+                                    <p className="text-[10px] text-green-400/70 mt-4  font-medium">
                                         * Pastikan format NPWRD sudah sesuai dengan pengkodean wilayah UPT setempat.
                                     </p>
                                 </div>

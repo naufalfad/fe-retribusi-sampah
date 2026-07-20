@@ -207,7 +207,7 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
                                 <div className="relative z-10">
                                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1">Total Ketetapan (SKRD)</p>
                                     <h2 className="text-3xl font-black tracking-tighter">Rp {totalRetribusi.toLocaleString('id-ID')}</h2>
-                                    <p className="text-[10px] mt-2 opacity-70 italic font-medium">Tagihan untuk {isPribadi ? numMonths : 1} bulan</p>
+                                    <p className="text-[10px] mt-2 opacity-70  font-medium">Tagihan untuk {isPribadi ? numMonths : 1} bulan</p>
                                 </div>
                                 <Calculator className="absolute -right-4 -bottom-4 opacity-10" size={100} />
                             </div>
@@ -262,7 +262,7 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
                                     ) : (
                                         <div className="p-10 bg-gray-50 rounded-2xl border border-dashed border-gray-200 text-center">
                                             <FileText className="mx-auto text-gray-300 mb-2" size={24} />
-                                            <p className="text-[9px] font-bold text-gray-400 uppercase italic">Tidak ada lampiran dokumen</p>
+                                            <p className="text-[9px] font-bold text-gray-400 uppercase ">Tidak ada lampiran dokumen</p>
                                         </div>
                                     )}
                                 </div>
@@ -277,7 +277,7 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
                                     </div>
                                     <div className="text-left">
                                         <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest leading-none mb-1">Status Kepatuhan Pilah</p>
-                                        <h4 className="text-lg font-black text-slate-800 uppercase italic">Eco-Friendly Member</h4>
+                                        <h4 className="text-lg font-black text-slate-800 uppercase ">Eco-Friendly Member</h4>
                                     </div>
                                 </div>
                                 <div className="text-right">

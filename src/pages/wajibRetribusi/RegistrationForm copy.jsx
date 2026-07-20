@@ -174,7 +174,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                                     register={register} errors={errors}
                                 />
                             </div>
-                            <p className="text-[10px] text-green-600 font-medium italic">*Pastikan Email Akun terdaftar agar objek muncul di dashboard Wajib Retribusi.</p>
+                            <p className="text-[10px] text-green-600 font-medium ">*Pastikan Email Akun terdaftar agar objek muncul di dashboard Wajib Retribusi.</p>
                         </div>
 
                         {/* Section 1: Identitas Utama */}
@@ -459,7 +459,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                         <button type="submit" className={`w-full py-5 rounded-2xl font-black text-white shadow-xl transition-all flex items-center justify-center gap-3 ${isStaff ? 'bg-gray-900 hover:bg-black' : 'bg-green-700 hover:bg-green-800'}`}>
                             <Send size={20} /> {isStaff ? 'Simpan & Tautkan Aset' : 'Ajukan Pendaftaran'}
                         </button>
-                        <p className="text-center text-xs text-gray-400 mt-4 italic">
+                        <p className="text-center text-xs text-gray-400 mt-4 ">
                             *Dengan menekan tombol kirim, Anda setuju bahwa data yang diisi adalah benar sesuai dengan ketentuan yang berlaku.
                         </p>
                     </div>

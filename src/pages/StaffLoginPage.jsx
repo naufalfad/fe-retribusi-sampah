@@ -119,7 +119,7 @@ const StaffLoginPage = () => {
                     </form>
                 </div>
 
-                <p className="text-center mt-8 text-xs text-gray-300 font-medium italic drop-shadow-sm">
+                <p className="text-center mt-8 text-xs text-gray-300 font-medium  drop-shadow-sm">
                     &copy; 2026 Dinas Lingkungan Hidup Kabupaten Bogor <br />
                     Keamanan data adalah prioritas kami.
                 </p>

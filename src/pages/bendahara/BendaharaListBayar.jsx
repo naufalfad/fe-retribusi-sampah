@@ -115,7 +115,7 @@ const BendaharaListBayar = () => {
             {/* --- HEADER --- */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-2">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase  leading-none">
                         Riwayat <span className="text-indigo-600">Pelunasan</span> SSRD
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest leading-none">
@@ -175,7 +175,7 @@ const BendaharaListBayar = () => {
                                 </tr>
                             ) : history.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="p-20 text-center text-slate-400 uppercase font-black text-xs tracking-widest italic">Tidak ada riwayat pelunasan</td>
+                                    <td colSpan="5" className="p-20 text-center text-slate-400 uppercase font-black text-xs tracking-widest ">Tidak ada riwayat pelunasan</td>
                                 </tr>
                             ) : (
                                 history.map((item) => (
@@ -197,7 +197,7 @@ const BendaharaListBayar = () => {
                                                     <h4 className="font-black text-slate-800 text-sm uppercase leading-tight tracking-tight">
                                                         {item.Skrd?.Objek?.nama_objek || 'N/A'}
                                                     </h4>
-                                                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5 italic">
+                                                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5 ">
                                                         NPOR: {item.Skrd?.Objek?.npor_objek}
                                                     </p>
                                                 </div>
@@ -217,7 +217,7 @@ const BendaharaListBayar = () => {
                                             </p>
                                         </td>
                                         <td className="p-8">
-                                            <p className="text-sm font-black text-emerald-600 italic tracking-tighter">
+                                            <p className="text-sm font-black text-emerald-600  tracking-tighter">
                                                 Rp {Number(item.amount_paid).toLocaleString('id-ID')}
                                             </p>
                                             <span className="text-[8px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded uppercase tracking-widest border border-emerald-100">Verified</span>
@@ -287,7 +287,7 @@ const BendaharaListBayar = () => {
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-white/20 rounded-2xl"><Printer size={24} /></div>
                                 <div>
-                                    <h3 className="text-xl font-black uppercase tracking-tighter leading-none italic">Report Generator</h3>
+                                    <h3 className="text-xl font-black uppercase tracking-tighter leading-none ">Report Generator</h3>
                                     <p className="text-[10px] font-bold opacity-60 uppercase mt-1 tracking-widest">Pusat Laporan Penerimaan Retribusi</p>
                                 </div>
                             </div>
@@ -407,7 +407,7 @@ const BendaharaListBayar = () => {
                                                 </select>
                                                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
                                             </div>
-                                            <p className="text-[9px] text-slate-400 italic ml-1">* Data diambil berdasarkan klasifikasi tarif pada tabel kelas.</p>
+                                            <p className="text-[9px] text-slate-400  ml-1">* Data diambil berdasarkan klasifikasi tarif pada tabel kelas.</p>
                                         </div>
                                     )}
                                 </div>

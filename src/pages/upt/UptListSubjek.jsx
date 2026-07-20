@@ -125,7 +125,7 @@ const UptListSubjek = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-6 text-xs font-bold text-gray-500 uppercase italic">
+                                        <td className="p-6 text-xs font-bold text-gray-500 uppercase ">
                                             {wr.kategori_subjek}
                                         </td>
                                         <td className="p-6 text-center">
@@ -159,7 +159,7 @@ const UptListSubjek = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="p-20 text-center text-gray-400 italic font-bold">
+                                    <td colSpan="6" className="p-20 text-center text-gray-400  font-bold">
                                         Data tidak ditemukan.
                                     </td>
                                 </tr>
@@ -201,7 +201,7 @@ const UptListSubjek = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-gray-800 uppercase leading-none">Daftar Objek Terdaftar</h3>
-                                    <p className="text-xs text-gray-500 font-bold mt-1 uppercase italic">{selectedWR.nama_subjek}</p>
+                                    <p className="text-xs text-gray-500 font-bold mt-1 uppercase ">{selectedWR.nama_subjek}</p>
                                 </div>
                             </div>
                             <button onClick={() => setShowModal(false)} className="p-2 text-gray-400 hover:text-red-500">
@@ -231,7 +231,7 @@ const UptListSubjek = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="py-12 text-center text-gray-400 italic font-bold uppercase text-xs">Belum ada objek terdaftar.</div>
+                                <div className="py-12 text-center text-gray-400  font-bold uppercase text-xs">Belum ada objek terdaftar.</div>
                             )}
                         </div>
 

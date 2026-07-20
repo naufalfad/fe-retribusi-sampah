@@ -49,7 +49,7 @@ const UptDashboard = () => {
             {/* --- 1. WELCOME & QUICK ACTION --- */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
-                    <h4 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-1 italic">
+                    <h4 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-1 ">
                         {greeting}, Petugas Pelayanan
                     </h4>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
@@ -167,7 +167,7 @@ const UptDashboard = () => {
 
                         <div className="mt-10 p-6 bg-blue-50 rounded-[2rem] border border-blue-100 relative overflow-hidden group">
                             <Navigation className="absolute -right-4 -bottom-4 text-blue-600/10 group-hover:scale-110 transition-transform" size={100} />
-                            <p className="relative z-10 text-[10px] font-bold text-blue-700 leading-relaxed uppercase italic">
+                            <p className="relative z-10 text-[10px] font-bold text-blue-700 leading-relaxed uppercase ">
                                 Seluruh data koordinat diproses menggunakan engine <b>PostGIS 4326</b> untuk akurasi pemetaan wilayah kerja.
                             </p>
                         </div>
@@ -189,7 +189,7 @@ const KpiCard = ({ label, val, sub, icon: Icon, color }) => (
                 <Icon size={20} />
             </div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-            <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic leading-none">{val}</h3>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tighter  leading-none">{val}</h3>
             <p className="text-[9px] font-bold text-slate-300 uppercase mt-2">{sub}</p>
         </div>
     </div>

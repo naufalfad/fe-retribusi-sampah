@@ -73,7 +73,7 @@ const DinasPemeriksaan = () => {
                     <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                         Verifikasi <span className="text-red-600">Audit</span> Lapangan
                     </h1>
-                    <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest italic leading-none">
+                    <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest  leading-none">
                         Pengawasan & Penyesuaian Klasifikasi Objek Retribusi
                     </p>
                 </div>
@@ -126,7 +126,7 @@ const DinasPemeriksaan = () => {
                             ) : objekList.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="p-20 text-center">
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Data objek tidak ditemukan.</p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest ">Data objek tidak ditemukan.</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -166,7 +166,7 @@ const DinasPemeriksaan = () => {
                                             <p className="text-[10px] font-black text-slate-500 uppercase leading-tight">
                                                 {obj.kelurahan_objek}
                                             </p>
-                                            <div className="flex items-center justify-center gap-1 mt-1 text-[9px] font-bold text-slate-400 uppercase italic">
+                                            <div className="flex items-center justify-center gap-1 mt-1 text-[9px] font-bold text-slate-400 uppercase ">
                                                 <MapPin size={10} /> {obj.kecamatan_objek}
                                             </div>
                                         </td>

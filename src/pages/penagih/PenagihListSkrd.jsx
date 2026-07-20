@@ -68,7 +68,7 @@ const PenagihListSkrd = () => {
                     <ArrowLeft size={20} className="text-gray-600" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none italic">
+                    <h1 className="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none ">
                         Cari <span className="text-green-700">Penagihan</span>
                     </h1>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sektor: {JSON.parse(localStorage.getItem('user'))?.kelurahan}</p>
@@ -99,10 +99,10 @@ const PenagihListSkrd = () => {
                 ) : skrdList.length > 0 ? (
                     skrdList.map((item) => (
                         <div key={item.id_skrd} className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col gap-4 relative overflow-hidden group active:scale-[0.98] transition-all">
-                            <div className="absolute top-0 right-0 bg-red-500 text-white px-6 py-1.5 rounded-bl-3xl text-[9px] font-black uppercase tracking-widest italic">Belum Lunas</div>
+                            <div className="absolute top-0 right-0 bg-red-500 text-white px-6 py-1.5 rounded-bl-3xl text-[9px] font-black uppercase tracking-widest ">Belum Lunas</div>
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black text-green-700 uppercase tracking-widest">{item.no_skrd}</p>
-                                <h4 className="text-lg font-black text-gray-800 uppercase tracking-tight italic leading-none">{item.Objek?.Subjek?.nama_subjek}</h4>
+                                <h4 className="text-lg font-black text-gray-800 uppercase tracking-tight  leading-none">{item.Objek?.Subjek?.nama_subjek}</h4>
                                 <div className="flex items-center gap-2 mt-2">
                                     <MapPin size={12} className="text-slate-300" />
                                     <p className="text-[10px] font-bold text-gray-400 uppercase">{item.Objek?.alamat_objek}</p>
@@ -111,7 +111,7 @@ const PenagihListSkrd = () => {
                             <div className="flex items-center justify-between bg-slate-900 p-5 rounded-[2rem] text-white">
                                 <div>
                                     <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1 leading-none">Total Tagihan</p>
-                                    <p className="text-xl font-black text-green-400 italic tracking-tighter">Rp {parseInt(item.total_bayar).toLocaleString('id-ID')}</p>
+                                    <p className="text-xl font-black text-green-400  tracking-tighter">Rp {parseInt(item.total_bayar).toLocaleString('id-ID')}</p>
                                 </div>
                                 <button
                                     onClick={() => handleOpenPayment(item)}

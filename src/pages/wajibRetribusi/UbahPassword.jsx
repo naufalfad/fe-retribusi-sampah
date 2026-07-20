@@ -59,7 +59,7 @@ const UbahPassword = () => {
                     <ArrowLeft size={20} className="text-slate-600" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase  leading-none">
                         Keamanan <span className="text-green-700">Akun</span>
                     </h1>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Perbarui Kata Sandi Anda secara Berkala</p>
@@ -134,7 +134,7 @@ const UbahPassword = () => {
                         <Info className="text-blue-600 shrink-0" size={20} />
                         <div className="text-left">
                             <h5 className="text-[10px] font-black text-blue-800 uppercase tracking-widest leading-none mb-1">Tips Keamanan</h5>
-                            <p className="text-[10px] text-blue-700 leading-relaxed font-medium italic">
+                            <p className="text-[10px] text-blue-700 leading-relaxed font-medium ">
                                 Gunakan kombinasi huruf besar, kecil, angka, dan simbol untuk password yang lebih kuat. Jangan bagikan password Anda kepada siapapun termasuk petugas.
                             </p>
                         </div>

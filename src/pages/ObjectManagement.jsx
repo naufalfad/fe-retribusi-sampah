@@ -112,7 +112,7 @@ const ObjectManagement = () => {
                 <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none">
                     Manajemen <span className="text-green-700">Objek</span>
                 </h1>
-                <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest italic">Otoritas Perubahan & Penonaktifan Aset REKAS</p>
+                <p className="text-gray-500 font-medium text-sm mt-1 uppercase tracking-widest ">Otoritas Perubahan & Penonaktifan Aset REKAS</p>
             </div>
 
             {/* LIVE SEARCH BOX */}
@@ -123,7 +123,7 @@ const ObjectManagement = () => {
 
                 <div className="relative z-20 max-w-2xl mx-auto text-center space-y-6">
                     <div className="space-y-2">
-                        <h2 className="text-xl font-bold italic tracking-tight uppercase text-green-400">Identifikasi Aset</h2>
+                        <h2 className="text-xl font-bold  tracking-tight uppercase text-green-400">Identifikasi Aset</h2>
                         <p className="text-xs text-slate-400 uppercase tracking-widest">Ketik NPOR atau Nama Objek untuk Memulai</p>
                     </div>
 
@@ -178,7 +178,7 @@ const ObjectManagement = () => {
                         <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
                             <p className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-4">Aset Terpilih</p>
                             <h3 className="text-2xl font-black text-slate-800 leading-tight mb-1 uppercase tracking-tighter">{selectedObject.nama_objek}</h3>
-                            <p className="text-xs font-bold text-slate-400 font-mono italic">{selectedObject.npor_objek}</p>
+                            <p className="text-xs font-bold text-slate-400 font-mono ">{selectedObject.npor_objek}</p>
                             <div className="mt-8 pt-6 border-t border-slate-50 space-y-4">
                                 <div className="flex items-start gap-3">
                                     <User className="text-slate-300 mt-0.5" size={16} />

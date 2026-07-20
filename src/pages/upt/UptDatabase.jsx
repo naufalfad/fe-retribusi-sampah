@@ -72,7 +72,7 @@ const UptDatabase = () => {
             {/* HEADER */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase  leading-none">
                         Database <span className="text-green-700">Wajib Retribusi</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-1 uppercase tracking-widest">Arsip Data Terverifikasi Wilayah UPT</p>
@@ -122,7 +122,7 @@ const UptDatabase = () => {
                                 </tr>
                             ) : subjekList.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="p-20 text-center text-slate-400 uppercase font-black text-xs tracking-widest italic">Data tidak ditemukan</td>
+                                    <td colSpan="5" className="p-20 text-center text-slate-400 uppercase font-black text-xs tracking-widest ">Data tidak ditemukan</td>
                                 </tr>
                             ) : (
                                 subjekList.map((wr) => (
@@ -134,7 +134,7 @@ const UptDatabase = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-black text-slate-800 text-sm uppercase leading-tight tracking-tight">{wr.nama_subjek}</p>
-                                                    <p className="text-[10px] font-bold text-green-700 font-mono tracking-tighter mt-1 italic">
+                                                    <p className="text-[10px] font-bold text-green-700 font-mono tracking-tighter mt-1 ">
                                                         {wr.npwrd_subjek || 'PENDING_GENERATION'}
                                                     </p>
                                                 </div>

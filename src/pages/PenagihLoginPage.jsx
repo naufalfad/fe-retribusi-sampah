@@ -60,7 +60,7 @@ const PenagihLoginPage = () => {
                         <MapPin size={40} className="text-green-700 animate-bounce" />
                     </div>
                     <h1 className="text-4xl font-black text-white uppercase tracking-tighter drop-shadow-xl">
-                        REKAS <span className="text-green-400 italic">MOBILE</span>
+                        REKAS <span className="text-green-400 ">MOBILE</span>
                     </h1>
                     <p className="text-sm text-green-100 font-bold uppercase tracking-[0.2em] opacity-80">
                         Petugas Lapangan

@@ -56,7 +56,7 @@ const AdminDashboard = () => {
             {/* --- 1. WELCOME & SYSTEM HEALTH --- */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div>
-                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-[0.3em] mb-1 italic">{greeting}, Administrator</h4>
+                    <h4 className="text-[10px] font-black text-green-700 uppercase tracking-[0.3em] mb-1 ">{greeting}, Administrator</h4>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                         Control <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-emerald-500">Center</span>
                     </h1>
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
                         </div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{s.label}</p>
                         <div className="flex items-baseline gap-2">
-                            <p className="text-4xl font-black text-slate-900 italic tracking-tighter">{s.val}</p>
+                            <p className="text-4xl font-black text-slate-900  tracking-tighter">{s.val}</p>
                             <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Live Data</span>
                         </div>
                     </div>
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-black uppercase tracking-widest">
                                 <Zap size={12} fill="currentColor" /> System Customizer
                             </div>
-                            <h3 className="text-3xl font-black italic tracking-tighter leading-none uppercase">
+                            <h3 className="text-3xl font-black  tracking-tighter leading-none uppercase">
                                 Personalisasi <br /> Atribut Dokumen
                             </h3>
                             <p className="text-sm text-slate-400 font-medium leading-relaxed">
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Health Check</p>
-                                <h4 className="text-2xl font-black text-slate-900 tracking-tighter">100% <span className="text-xs font-bold text-slate-300 font-sans tracking-normal italic">Optimized</span></h4>
+                                <h4 className="text-2xl font-black text-slate-900 tracking-tighter">100% <span className="text-xs font-bold text-slate-300 font-sans tracking-normal ">Optimized</span></h4>
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
                                             <p className="text-xs font-black text-slate-800 uppercase tracking-tight leading-tight group-hover:text-green-700 transition-colors">
                                                 {log.aksi.replace(/_/g, ' ')}
                                             </p>
-                                            <p className="text-[10px] text-slate-400 font-medium mt-1 italic line-clamp-1">{log.deskripsi}</p>
+                                            <p className="text-[10px] text-slate-400 font-medium mt-1  line-clamp-1">{log.deskripsi}</p>
                                         </div>
                                     </div>
                                 ))}

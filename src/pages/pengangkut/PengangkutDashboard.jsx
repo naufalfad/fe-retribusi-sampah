@@ -57,14 +57,14 @@ const PengangkutDashboard = () => {
     const recentActivities = history.slice(0, 3);
 
     const stats = [
-        {
-            label: 'Poin Hari Ini',
-            val: totalPoinHariIni.toLocaleString('id-ID'),
-            sub: `${jumlahAktivitas} aktivitas`,
-            icon: <Star />,
-            color: 'text-amber-500',
-            bg: 'bg-amber-50'
-        },
+        // {
+        //     label: 'Poin Hari Ini',
+        //     val: totalPoinHariIni.toLocaleString('id-ID'),
+        //     sub: `${jumlahAktivitas} aktivitas`,
+        //     icon: <Star />,
+        //     color: 'text-amber-500',
+        //     bg: 'bg-amber-50'
+        // },
         {
             label: 'Total Aktivitas',
             val: history.length,
@@ -81,7 +81,7 @@ const PengangkutDashboard = () => {
             {/* --- 1. HEADER: GREETING & ARMADA --- */}
             <div className="pt-6 flex justify-between items-start">
                 <div>
-                    <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.3em] mb-1 italic">
+                    <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.3em] mb-1 ">
                         {greeting}, Heroes!
                     </h4>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">
@@ -112,7 +112,7 @@ const PengangkutDashboard = () => {
                             <Truck className="text-emerald-400" size={28} />
                         </div>
                         <div className="text-right">
-                            <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1 italic">Status Armada</p>
+                            <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1 ">Status Armada</p>
                             <div className="flex items-center gap-2 justify-end">
                                 <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
                                 <p className="text-xs font-black uppercase">On-Duty</p>
@@ -122,7 +122,7 @@ const PengangkutDashboard = () => {
 
                     <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-1">ID Petugas</p>
-                        <h2 className="text-4xl font-black tracking-tighter italic text-white drop-shadow-md">
+                        <h2 className="text-4xl font-black tracking-tighter  text-white drop-shadow-md">
                             {user?.kelurahan}-<span className="text-emerald-500">{user?.id_petugas}</span>
                         </h2>
                         <div className="flex items-center gap-2 mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -166,7 +166,7 @@ const PengangkutDashboard = () => {
                         </div>
                         <div className="text-left flex-1">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{s.label}</p>
-                            <h4 className="text-2xl font-black text-slate-900 tracking-tighter italic leading-none">{s.val}</h4>
+                            <h4 className="text-2xl font-black text-slate-900 tracking-tighter  leading-none">{s.val}</h4>
                             <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase flex items-center gap-1">
                                 <Zap size={10} className="text-amber-500" fill="currentColor" /> {s.sub}
                             </p>
@@ -181,7 +181,7 @@ const PengangkutDashboard = () => {
             {/* --- 5. RECENT ACTIVITY LIST --- */}
             <div className="space-y-4 pt-4 text-left">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm italic">
+                    <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2 text-sm ">
                         <History className="text-emerald-600" size={18} /> Aktivitas Terakhir
                     </h3>
                     <button onClick={() => navigate('/pengangkut/riwayat')} className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Lihat Laporan</button>
@@ -227,7 +227,7 @@ const PengangkutDashboard = () => {
             <div className="pt-6">
                 <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2.5rem] flex items-center gap-4 relative overflow-hidden">
                     <Zap size={40} className="text-emerald-600/10 absolute -left-2 -bottom-2 rotate-12" fill="currentColor" />
-                    <p className="text-[10px] font-bold text-emerald-800 leading-relaxed uppercase italic text-center w-full">
+                    <p className="text-[10px] font-bold text-emerald-800 leading-relaxed uppercase  text-center w-full">
                         "Setiap sampah yang Anda pilah adalah <span className="text-emerald-600 font-black underline">Investasi Masa Depan</span> bagi Kabupaten Bogor."
                     </p>
                 </div>

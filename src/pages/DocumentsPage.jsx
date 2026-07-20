@@ -99,7 +99,7 @@ const DocumentsPage = ({ isAdmin = false }) => {
                         <div className="p-2 bg-green-700 text-white rounded-xl shadow-lg">
                             <Scale size={20} />
                         </div>
-                        <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic">
+                        <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase ">
                             Regulasi <span className="text-green-700">REKAS</span>
                         </h1>
                     </div>
@@ -162,7 +162,7 @@ const DocumentsPage = ({ isAdmin = false }) => {
                                 </button>
                             )}
                         </div>
-                        <p className="text-[11px] text-gray-500 font-medium italic line-clamp-2 px-1">"{reg.deskripsi || 'Tidak ada deskripsi.'}"</p>
+                        <p className="text-[11px] text-gray-500 font-medium  line-clamp-2 px-1">"{reg.deskripsi || 'Tidak ada deskripsi.'}"</p>
                         <div className="flex gap-2 pt-2">
                             <button
                                 onClick={() => window.open(getFullUrl(reg.dokumen_peraturan), '_blank')}

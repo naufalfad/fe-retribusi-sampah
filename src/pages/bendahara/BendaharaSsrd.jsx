@@ -10,6 +10,17 @@ import api, { BASE_URL } from '../../api/axios';
 import StatusBadge from '../../components/common/StatusBadge';
 import SsrdPreviewModal from '../dlh/components/SsrdPreviewModal';
 
+const toTitik = (val) => {
+    if (!val && val !== 0) return "";
+    let stringValue = val.toString().replace(/\D/g, "");
+    return stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const toAngka = (val) => {
+    if (!val) return 0;
+    return parseInt(val.toString().replace(/\./g, ""), 10) || 0;
+};
+
 const BendaharaSsrd = () => {
     // --- STATES ---
     const [activeTab, setActiveTab] = useState('pending'); // 'pending' atau 'verified'
@@ -61,7 +72,7 @@ const BendaharaSsrd = () => {
     // --- 2. HANDLERS ---
     const handleOpenAudit = (data) => {
         setSelectedData(data);
-        setNominalRealBank(data.amount_paid); // Default isi dengan nominal inputan awal
+        setNominalRealBank(toTitik(data.amount_paid)); // Default isi dengan nominal inputan awal (dalam format titik)
         setAuditAction(null);
         setShowAuditModal(true);
     };
@@ -75,7 +86,7 @@ const BendaharaSsrd = () => {
             const payload = {
                 id_ssrd: selectedData.id_ssrd,
                 action: auditAction,
-                nominal_real: auditAction === 'reject' && rejectReason === 'Kurang Bayar' ? parseFloat(nominalRealBank) : selectedData.amount_paid,
+                nominal_real: auditAction === 'reject' && rejectReason === 'Kurang Bayar' ? toAngka(nominalRealBank) : selectedData.amount_paid,
                 alasan_tolak: auditAction === 'reject' ? rejectReason : null,
                 catatan: notes
             };
@@ -104,7 +115,7 @@ const BendaharaSsrd = () => {
             {/* --- HEADER --- */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none italic">
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tighter uppercase leading-none ">
                         Audit <span className="text-indigo-600">Rekonsiliasi</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-sm mt-1 uppercase tracking-widest leading-none">
@@ -165,7 +176,7 @@ const BendaharaSsrd = () => {
                                     </td>
                                     <td className="p-8">
                                         <p className="text-[10px] font-bold text-indigo-600 font-mono tracking-tighter uppercase">{item.Skrd?.no_skrd}</p>
-                                        <p className="text-xs font-black text-slate-500 mt-1 uppercase tracking-tighter italic">Tagihan: Rp {Number(item.Skrd?.total_bayar).toLocaleString()}</p>
+                                        <p className="text-xs font-black text-slate-500 mt-1 uppercase tracking-tighter ">Tagihan: Rp {Number(item.Skrd?.total_bayar).toLocaleString()}</p>
                                     </td>
                                     <td className="p-8">
                                         <div className={`w-fit px-4 py-2 rounded-xl border-2 flex items-center gap-3 ${Number(item.amount_paid) < Number(item.Skrd?.total_bayar) ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'}`}>
@@ -231,7 +242,7 @@ const BendaharaSsrd = () => {
                                     <FileSearch size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none italic">Workspace Audit Transaksi</h3>
+                                    <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none ">Workspace Audit Transaksi</h3>
                                     <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-widest">Validasi Data SKRD vs Laporan Setoran Lapangan</p>
                                 </div>
                             </div>
@@ -258,7 +269,7 @@ const BendaharaSsrd = () => {
                                         </div>
                                         <div className="pt-6 border-t border-slate-100">
                                             <p className="text-[9px] font-black text-slate-400 uppercase leading-none mb-1">Total Tagihan Pokok</p>
-                                            <p className="text-3xl font-black text-slate-900 tracking-tighter italic">Rp {Number(selectedData.Skrd?.total_bayar).toLocaleString('id-ID')}</p>
+                                            <p className="text-3xl font-black text-slate-900 tracking-tighter ">Rp {Number(selectedData.Skrd?.total_bayar).toLocaleString('id-ID')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -309,15 +320,15 @@ const BendaharaSsrd = () => {
                                                 <div className="p-6 bg-red-50 rounded-2xl border-2 border-red-100 space-y-2">
                                                     <label className="text-[10px] font-black text-red-600 uppercase tracking-widest leading-none">Uang Real Diterima Di Bank (Rp)</label>
                                                     <div className="flex items-center gap-3">
-                                                        <span className="text-xl font-black text-red-300 italic">Rp</span>
+                                                        <span className="text-xl font-black text-red-300 ">Rp</span>
                                                         <input
-                                                            type="number"
+                                                            type="text"
                                                             value={nominalRealBank}
-                                                            onChange={(e) => setNominalRealBank(e.target.value)}
+                                                            onChange={(e) => setNominalRealBank(toTitik(e.target.value))}
                                                             className="bg-transparent w-full text-3xl font-black text-red-700 outline-none p-0 tracking-tighter"
                                                         />
                                                     </div>
-                                                    <p className="text-[9px] text-red-400 font-bold italic mt-2 uppercase">* Sistem akan otomatis menerbitkan SKRDKB (Kurang Bayar) senilai selisih.</p>
+                                                    <p className="text-[9px] text-red-400 font-bold  mt-2 uppercase">* Sistem akan otomatis menerbitkan SKRDKB (Kurang Bayar) senilai selisih.</p>
                                                 </div>
                                             )}
                                         </div>
