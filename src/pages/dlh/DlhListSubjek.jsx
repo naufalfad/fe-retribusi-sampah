@@ -23,6 +23,7 @@ const DlhListSubjek = () => {
         current_page: 1,
         total_pages: 1
     });
+    const [isPrinting, setIsPrinting] = useState(false);
 
     // 1. Fungsi Fetch Data dari API
     const fetchSubjek = async (page = 1, searchQuery = '') => {
@@ -70,6 +71,8 @@ const DlhListSubjek = () => {
 
         if (!confirmPrint) return;
 
+        setIsPrinting(true);
+
         try {
             const response = await api.get(`/subjek/pdf/${id_subjek}`, {
                 responseType: 'blob'
@@ -83,6 +86,8 @@ const DlhListSubjek = () => {
         } catch (err) {
             alert("Gagal memproses cetak kartu. Silakan cek koneksi API.");
             console.error(err);
+        } finally {
+            setIsPrinting(false);
         }
     };
 
@@ -325,6 +330,24 @@ const DlhListSubjek = () => {
                                     <Printer size={18} /> Cetak Kartu
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MODAL LOADING CETAK KARTU */}
+            {isPrinting && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl space-y-6 animate-in zoom-in-95 duration-300">
+                        <div className="relative w-20 h-20 mx-auto flex items-center justify-center bg-green-50 rounded-full text-green-700">
+                            <Printer size={36} className="animate-bounce" />
+                            <div className="absolute inset-0 border-4 border-t-green-600 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight leading-none">Mencetak Kartu</h3>
+                            <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                                Sistem sedang men-generate dokumen kartu NPWRD resmi beserta reset kata sandi baru. Mohon tunggu beberapa saat.
+                            </p>
                         </div>
                     </div>
                 </div>

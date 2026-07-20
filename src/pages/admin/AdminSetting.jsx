@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     Save, Upload, Building2, BadgeCheck,
     FileText, Globe, MapPin, Loader2,
-    CheckCircle2, RefreshCcw, Landmark, Eye
+    CheckCircle2, RefreshCcw, Landmark, Eye, Trash2
 } from 'lucide-react';
 import api, { BASE_URL } from '../../api/axios';
 import SkrdPreviewModal from '../dlh/components/SkrdPreviewModal';
@@ -21,6 +21,8 @@ const AdminSettings = () => {
     const [ttdFile, setTtdFile] = useState(null);
     const [templateId, setTemplateId] = useState(null);
     const [isCleaning, setIsCleaning] = useState(false);
+    const [logoDeleted, setLogoDeleted] = useState(false);
+    const [ttdDeleted, setTtdDeleted] = useState(false);
 
     // State form sesuai dengan field di database Anda
     const [formData, setFormData] = useState({
@@ -110,6 +112,7 @@ const AdminSettings = () => {
         const file = e.target.files[0];
         if (file) {
             setLogoFile(file);
+            setLogoDeleted(false);
             const reader = new FileReader();
             reader.onloadend = () => setLogoPreview(reader.result);
             reader.readAsDataURL(file);
@@ -120,10 +123,23 @@ const AdminSettings = () => {
         const file = e.target.files[0];
         if (file) {
             setTtdFile(file);
+            setTtdDeleted(false);
             const reader = new FileReader();
             reader.onloadend = () => setTtdPreview(reader.result);
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleDeleteLogo = () => {
+        setLogoPreview(null);
+        setLogoFile(null);
+        setLogoDeleted(true);
+    };
+
+    const handleDeleteTtd = () => {
+        setTtdPreview(null);
+        setTtdFile(null);
+        setTtdDeleted(true);
     };
 
     const handleSave = async () => {
@@ -141,6 +157,9 @@ const AdminSettings = () => {
         dataSubmit.append('jabatan_pejabat', formData.pejabat_jabatan);
         dataSubmit.append('format_skrd', formData.prefix_skrd);
         dataSubmit.append('format_ssrd', formData.prefix_ssrd);
+
+        dataSubmit.append('remove_logo', logoDeleted ? 'true' : 'false');
+        dataSubmit.append('remove_ttd', ttdDeleted ? 'true' : 'false');
 
         // Tambahkan file logo jika ada perubahan
         if (logoFile) {
@@ -257,7 +276,7 @@ const AdminSettings = () => {
                                 {/* UPLOAD TTD PEJABAT */}
                                 <div className="md:col-span-4 flex flex-col items-center justify-center">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Upload Tanda Tangan</label>
-                                    <div className="relative w-full h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 group overflow-hidden flex items-center justify-center p-4 hover:border-blue-300 transition-all">
+                                    <div className="relative w-full h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 group overflow-hidden flex items-center justify-center p-4 hover:border-blue-300 transition-all mb-3">
                                         {ttdPreview ? (
                                             <img src={ttdPreview} alt="TTD" className="w-full h-full object-contain mix-blend-multiply" />
                                         ) : (
@@ -274,7 +293,16 @@ const AdminSettings = () => {
                                             <input type="file" className="hidden" accept="image/*" onChange={handleTtdChange} />
                                         </label>
                                     </div>
-                                    <p className="text-[8px] text-gray-400 mt-3  text-center leading-relaxed">
+                                    {ttdPreview && (
+                                        <button
+                                            type="button"
+                                            onClick={handleDeleteTtd}
+                                            className="text-red-600 hover:text-red-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 justify-center transition-colors mb-3"
+                                        >
+                                            <Trash2 size={12} /> Hapus TTD
+                                        </button>
+                                    )}
+                                    <p className="text-[8px] text-gray-400 text-center leading-relaxed">
                                         * Gunakan format PNG tanpa background <br /> untuk hasil cetak terbaik.
                                     </p>
                                 </div>
@@ -347,7 +375,7 @@ const AdminSettings = () => {
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm text-center group">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-8 leading-none">Upload Logo</label>
-                        <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center bg-gray-50 rounded-[2.5rem] border-4 border-dashed border-gray-100 overflow-hidden p-6 group-hover:border-green-200 transition-all">
+                        <div className="relative w-40 h-40 mx-auto mb-6 flex items-center justify-center bg-gray-50 rounded-[2.5rem] border-4 border-dashed border-gray-100 overflow-hidden p-6 group-hover:border-green-200 transition-all">
                             {logoPreview ? (
                                 <img src={logoPreview} alt="Logo" className="w-full h-full object-contain" />
                             ) : (
@@ -359,6 +387,15 @@ const AdminSettings = () => {
                                 <input type="file" className="hidden" accept="image/*" onChange={handleLogoChange} />
                             </label>
                         </div>
+                        {logoPreview && (
+                            <button
+                                type="button"
+                                onClick={handleDeleteLogo}
+                                className="mb-6 text-red-600 hover:text-red-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 justify-center mx-auto transition-colors"
+                            >
+                                <Trash2 size={12} /> Hapus Logo
+                            </button>
+                        )}
                         <p className="text-[9px] text-gray-400  px-6 mb-2">Logo ini muncul pada KOP surat resmi.</p>
                     </div>
 
