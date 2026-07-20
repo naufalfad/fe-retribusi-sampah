@@ -12,6 +12,10 @@ body,
   width: 100%;
 }
 
+body {
+  @apply font-sans;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
@@ -79,4 +83,20 @@ input[type=number] {
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #d1d5db;
+}
+
+/* FORCE SHARP CORNERS (Geolimbah Style) */
+*, ::before, ::after {
+  border-radius: 0px !important;
+}
+
+/* Pengecualian untuk elemen bulat/lingkaran */
+.rounded-full,
+[class*="rounded-full"],
+.target-outer,
+.target-inner,
+.target-center,
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border-radius: 9999px !important;
 }

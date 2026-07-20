@@ -61,7 +61,7 @@ const UserDashboard = () => {
                     <p className="text-sm text-green-700 font-bold mb-1 uppercase tracking-widest">Selamat Datang di REKAS,</p>
                     <h2 className="text-3xl font-black text-gray-800 tracking-tighter uppercase">{user?.nama_subjek || 'User'}</h2>
                     <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm font-sans">
-                        <span className="font-medium uppercase">NPWRD: {user?.npwrd_subjek || 'User'}</span>
+                        <span className="font-medium uppercase">{user?.npwrd_subjek || 'User'}</span>
                         <span className="h-1 w-1 bg-gray-300 rounded-full"></span>
                         <span className="font-medium">Member sejak 2026</span>
                     </div>

@@ -8,7 +8,8 @@ import {
     ListChecks, ListIcon, ListCollapse, Users,
     Settings, ShieldAlert, ListOrdered, BookOpen,
     Edit3, Map, User,
-    Key
+    Key,
+    Globe
 } from 'lucide-react';
 
 // --- Sub-component: Sidebar Item ---
@@ -78,7 +79,7 @@ const MainLayout = ({ children }) => {
     }, [location.pathname]);
 
     const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff',
-        '/petugas-lapangan', '/landing-page', '/status-pendaftaran'];
+        '/petugas-lapangan', '/landing-page', '/status-pendaftaran', '/dlh/peta-monitoring'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuConfig = {
@@ -107,6 +108,7 @@ const MainLayout = ({ children }) => {
             { icon: UserCircle, label: 'Pemeriksaan', path: '/dlh/pemeriksaan' },
             { icon: CreditCard, label: 'Validasi Bayar', path: '/dlh/validasi-bayar' },
             { icon: ClipboardList, label: 'Pengajuan Layanan', path: '/dlh/layanan-monitoring' },
+            { icon: Globe, label: 'Peta Monitoring', path: '/dlh/peta-monitoring' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
@@ -117,10 +119,10 @@ const MainLayout = ({ children }) => {
         admin: [
             { icon: LayoutDashboard, label: 'Dashboard Admin', path: '/admin/dashboard' },
             { icon: Users, label: 'Manajemen Staff', path: '/admin/staff' },
-            { icon: Star, label: 'Pengaturan Poin', path: '/admin/poin' },
             { icon: Settings, label: 'Pengaturan Sistem', path: '/admin/settings' },
             { icon: Edit3, label: 'Manajemen Objek', path: '/admin/manajemen-objek' },
             { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
+            { icon: Globe, label: 'Peta Monitoring', path: '/dlh/peta-monitoring' },
         ],
         penagih: [
             { icon: LayoutDashboard, label: 'Tugas Lapangan', path: '/penagih/dashboard' },

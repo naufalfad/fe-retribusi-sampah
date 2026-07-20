@@ -25,7 +25,7 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const schema = z.object({
-    nama_objek: z.string().min(3, "Nama obyek harus diisi"),
+    nama_objek: z.string().min(3, "Nama objek harus diisi"),
     alamat_jalan: z.string().min(5, "Alamat jalan diperlukan"),
     rt_rw: z.string().min(1, "RT/RW diperlukan"),
     id_provinsi: z.string().min(1, "Pilih Provinsi"),
@@ -256,12 +256,12 @@ const FormTambahObjek = ({ isStaff = false }) => {
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                         {/* Section 1: Alamat */}
-                        <div className="md:col-span-2 border-b pb-2"><h3 className="font-bold text-gray-800 flex items-center gap-2"><MapPin size={18} className="text-green-700" /> 1. Alamat & Kontak Obyek</h3></div>
+                        <div className="md:col-span-2 border-b pb-2"><h3 className="font-bold text-gray-800 flex items-center gap-2"><MapPin size={18} className="text-green-700" /> 1. Alamat & Kontak Objek</h3></div>
 
                         {/* <div className="md:col-span-2">
-                            <FormInput label="Nama Obyek" name="nama_objek" register={register} errors={errors} placeholder="Contoh: Rumah Tinggal Bpk. Ahmad" />
+                            <FormInput label="Nama Objek" name="nama_objek" register={register} errors={errors} placeholder="Contoh: Rumah Tinggal Bpk. Ahmad" />
                         </div> */}
-                        <FormInput label="Nama Obyek" name="nama_objek" register={register} errors={errors} placeholder="Contoh: Rumah Tinggal Bpk. Ahmad / Toko Ahmad" />
+                        <FormInput label="Nama Objek" name="nama_objek" register={register} errors={errors} placeholder="Contoh: Rumah Tinggal Bpk. Ahmad / Toko Ahmad" />
                         <FormInput label="Jalan / No. Rumah" name="alamat_jalan" register={register} errors={errors} />
                         <FormInput label="Nomor Telepon / WA" name="telepon" register={register} errors={errors} />
                         <FormInput label="RT / RW" name="rt_rw" register={register} errors={errors} />

@@ -192,7 +192,7 @@ const PengangkutMonitoring = () => {
                         <Navigation size={24} />
                     </div>
                     <p className="text-[10px] font-bold text-blue-700 leading-relaxed uppercase italic">
-                        Klik pada objek yang <b>Belum Diangkut</b> untuk langsung menuju halaman input poin reward pemilahan sampah.
+                        Klik pada objek yang <b>Belum Diangkut</b> untuk langsung menuju halaman input data volume pengangkutan.
                     </p>
                 </div>
             </div>

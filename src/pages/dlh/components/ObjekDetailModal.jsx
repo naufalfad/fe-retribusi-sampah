@@ -268,23 +268,26 @@ const ObjekDetailModal = ({ data, onClose, onSuccess }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white rounded-2xl shadow-sm">
-                                    <Award className="text-emerald-600" size={24} />
+                        {/* Status Kepatuhan Pilah & Saldo Poin - FITUR POIN DINONAKTIFKAN */}
+                        {false && (
+                            <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-white rounded-2xl shadow-sm">
+                                        <Award className="text-emerald-600" size={24} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest leading-none mb-1">Status Kepatuhan Pilah</p>
+                                        <h4 className="text-lg font-black text-slate-800 uppercase italic">Eco-Friendly Member</h4>
+                                    </div>
                                 </div>
-                                <div className="text-left">
-                                    <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest leading-none mb-1">Status Kepatuhan Pilah</p>
-                                    <h4 className="text-lg font-black text-slate-800 uppercase italic">Eco-Friendly Member</h4>
+                                <div className="text-right">
+                                    <p className="text-[9px] font-black text-slate-400 uppercase">Saldo Poin Aktif</p>
+                                    <p className="text-2xl font-black text-emerald-700 leading-none">
+                                        {data.PoinObjek?.saldo_poin || 0} <small className="text-xs">PTS</small>
+                                    </p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-[9px] font-black text-slate-400 uppercase">Saldo Poin Aktif</p>
-                                <p className="text-2xl font-black text-emerald-700 leading-none">
-                                    {data.PoinObjek?.saldo_poin || 0} <small className="text-xs">PTS</small>
-                                </p>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 

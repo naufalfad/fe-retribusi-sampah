@@ -80,7 +80,7 @@ const PengangkutInputPoin = () => {
                 details
             });
 
-            alert(`Berhasil! +${res.data.total_poin} poin`);
+            alert("Data pengangkutan berhasil disimpan!");
             setVolumes({});
             navigate('/pengangkut/monitoring');
 
@@ -104,7 +104,7 @@ const PengangkutInputPoin = () => {
                     <ArrowLeft size={20} className="text-slate-600" />
                 </button>
                 <h1 className="text-xl font-black text-slate-800 uppercase italic leading-none">
-                    Input <span className="text-emerald-700">Poin Pilah</span>
+                    Input <span className="text-emerald-700">Volume Pengangkutan</span>
                 </h1>
             </div>
             <div className="space-y-6 animate-in slide-in-from-bottom-5">
@@ -140,9 +140,7 @@ const PengangkutInputPoin = () => {
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                             {cat.nama_kategori}
                                         </p>
-                                        <p className="text-[9px] text-slate-300 font-bold">
-                                            {cat.poin_per_m3} poin / {cat.satuan || 'm³'}
-                                        </p>
+                                        {/* FITUR POIN DINONAKTIFKAN */}
                                     </div>
                                 </div>
 
@@ -160,19 +158,7 @@ const PengangkutInputPoin = () => {
                     )}
                 </div>
 
-                {/* Real-time Point Preview */}
-                <div className="bg-emerald-700 p-8 rounded-[3rem] text-white shadow-2xl shadow-emerald-900/20 relative overflow-hidden">
-                    <div className="relative z-10 flex justify-between items-center">
-                        <div>
-                            <p className="text-[10px] font-black text-emerald-200 uppercase tracking-widest mb-1 leading-none italic">Akumulasi Poin Reward</p>
-                            <h2 className="text-5xl font-black tracking-tighter italic">+{totalPoin} <span className="text-xl uppercase not-italic">Poin</span></h2>
-                        </div>
-                        <div className="p-4 bg-white/10 rounded-full animate-bounce shadow-xl border border-white/20">
-                            <Star size={32} fill="currentColor" className="text-amber-400" />
-                        </div>
-                    </div>
-                    <Calculator size={150} className="absolute -right-10 -bottom-10 opacity-10" />
-                </div>
+                {/* Real-time Point Preview - FITUR POIN DINONAKTIFKAN */}
 
                 {/* Tombol Simpan */}
                 <button

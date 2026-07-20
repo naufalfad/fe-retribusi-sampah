@@ -106,7 +106,6 @@ const SsrdList = () => {
                             <tr>
                                 <th className="p-6">Objek Retribusi</th>
                                 <th className="p-6">No. SKRD / Nominal</th>
-                                <th className="p-6">Poin Digunakan</th>
                                 <th className="p-6">Tgl Bayar</th>
                                 <th className="p-6">Status</th>
                                 <th className="p-6 text-center">Aksi</th>
@@ -145,22 +144,7 @@ const SsrdList = () => {
                                             </p>
                                         </td>
 
-                                        <td className="p-6">
-                                            {p.points_used > 0 ? (
-                                                <div className="mt-2 space-y-1">
-                                                    <p className="text-xs font-black text-amber-600">
-                                                        - {p.points_used.toLocaleString()} Poin
-                                                    </p>
-                                                    <p className="text-xs text-slate-400 font-bold">
-                                                        ≈ Rp {p.point_value.toLocaleString()}
-                                                    </p>
-                                                </div>
-                                            ) : (
-                                                <p className="text-xs font-black text-slate-400">
-                                                    0
-                                                </p>
-                                            )}
-                                        </td>
+                                        {/* FITUR POIN DINONAKTIFKAN */}
 
                                         <td className="p-6 text-sm text-gray-600">
                                             {p.tgl_bayar}

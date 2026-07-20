@@ -183,10 +183,10 @@ const AuditFormModal = ({ objek, onClose, onSuccess }) => {
 
                             <div className="md:col-span-2 border-b pb-2 flex items-center gap-2">
                                 <MapPin size={18} className="text-red-600" />
-                                <h3 className="font-black text-xs uppercase tracking-widest text-gray-800">1. Alamat & Kontak Obyek (Revisi)</h3>
+                                <h3 className="font-black text-xs uppercase tracking-widest text-gray-800">1. Alamat & Kontak Objek (Revisi)</h3>
                             </div>
 
-                            <FormInput label="Nama Obyek" name="nama_objek" register={register} errors={errors} />
+                            <FormInput label="Nama Objek" name="nama_objek" register={register} errors={errors} />
                             <FormInput label="Jalan / No. Rumah" name="alamat_jalan" register={register} errors={errors} />
                             <FormInput label="RT / RW" name="rt_rw" register={register} errors={errors} />
                             <FormInput label="Nomor Telepon / WA" name="telepon" register={register} errors={errors} />

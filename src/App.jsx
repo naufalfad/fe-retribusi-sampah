@@ -48,6 +48,7 @@ import UbahPassword from './pages/wajibRetribusi/UbahPassword';
 import DlhLayananMonitoring from './pages/dlh/DlhLayananMonitoring';
 import SsrdList from './pages/wajibRetribusi/SsrdList';
 import StatusPendaftaranSubjek from './pages/StatusPendaftaranSubjek';
+import DlhGisMonitoring from './pages/dlh/DlhGisMonitoring';
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
             <Route path="/dlh/peraturan" element={<DocumentsPage isAdmin={false} />} />
             <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
             <Route path="/dlh/layanan-monitoring" element={<DlhLayananMonitoring />} />
+            <Route path="/dlh/peta-monitoring" element={<DlhGisMonitoring />} />
           </Route>
 
           {/* Halaman Bendahara */}

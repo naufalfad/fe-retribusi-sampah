@@ -165,32 +165,34 @@ const PaymentPage = () => {
                         </div>
                     </div>
 
-                    {/* REDEEM POINT BOX */}
-                    <div className={`p-8 rounded-[2.5rem] border-2 transition-all group ${usePoints ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-100'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-4">
-                                <div className={`p-4 rounded-2xl transition-colors ${usePoints ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}>
-                                    <Star size={24} fill={usePoints ? 'currentColor' : 'none'} />
+                    {/* REDEEM POINT BOX (FITUR POIN DINONAKTIFKAN) */}
+                    {false && (
+                        <div className={`p-8 rounded-[2.5rem] border-2 transition-all group ${usePoints ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-100'}`}>
+                            <div className="flex justify-between items-center mb-4">
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-4 rounded-2xl transition-colors ${usePoints ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}>
+                                        <Star size={24} fill={usePoints ? 'currentColor' : 'none'} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest leading-none">Gunakan Poin Reward</h4>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Saldo: <span className="text-emerald-600">{skrd.Objek?.PoinObjek?.saldo_poin || 0} PTS</span></p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest leading-none">Gunakan Poin Reward</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Saldo: <span className="text-emerald-600">{skrd.Objek?.PoinObjek?.saldo_poin || 0} PTS</span></p>
-                                </div>
+                                <button
+                                    onClick={() => setUsePoints(!usePoints)}
+                                    className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${usePoints ? 'bg-slate-900 text-white' : 'bg-white text-slate-400 border border-slate-200 shadow-sm'}`}
+                                >
+                                    {usePoints ? 'Batalkan' : 'Pakai Poin'}
+                                </button>
                             </div>
-                            <button
-                                onClick={() => setUsePoints(!usePoints)}
-                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${usePoints ? 'bg-slate-900 text-white' : 'bg-white text-slate-400 border border-slate-200 shadow-sm'}`}
-                            >
-                                {usePoints ? 'Batalkan' : 'Pakai Poin'}
-                            </button>
+                            {usePoints && (
+                                <div className="bg-white/60 p-4 rounded-2xl border border-emerald-100 flex justify-between items-center">
+                                    <p className="text-[10px] font-bold text-emerald-800 uppercase italic">Potongan Otomatis:</p>
+                                    <p className="text-lg font-black text-emerald-600 tracking-tighter">- Rp {billing.pointDiscount.toLocaleString('id-ID')}</p>
+                                </div>
+                            )}
                         </div>
-                        {usePoints && (
-                            <div className="bg-white/60 p-4 rounded-2xl border border-emerald-100 flex justify-between items-center">
-                                <p className="text-[10px] font-bold text-emerald-800 uppercase italic">Potongan Otomatis:</p>
-                                <p className="text-lg font-black text-emerald-600 tracking-tighter">- Rp {billing.pointDiscount.toLocaleString('id-ID')}</p>
-                            </div>
-                        )}
-                    </div>
+                    )}
 
                     <div className="p-6 bg-blue-50 border border-blue-100 rounded-3xl flex gap-4 italic">
                         <Info className="text-blue-600 shrink-0" size={20} />

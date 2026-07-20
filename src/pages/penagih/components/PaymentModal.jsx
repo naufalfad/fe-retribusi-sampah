@@ -159,32 +159,9 @@ const PaymentModal = ({ isOpen, onClose, selectedSkrd, onSuccess }) => {
                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Tagihan Pokok</p>
                             <p className="text-xl font-black text-slate-800 italic">Rp {toTitik(calculation.totalBill)}</p>
                         </div>
-                        <div className="text-right">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Potongan Poin</p>
-                            <p className="text-sm font-black text-amber-600">-{toTitik(calculation.discount)}</p>
-                        </div>
                     </div>
 
-                    {/* Redeem Poin */}
-                    <div className={`p-6 rounded-[2rem] border-2 transition-all ${usePoints ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className={`p-3 rounded-2xl ${usePoints ? 'bg-amber-500 text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}>
-                                    <Star size={20} fill={usePoints ? 'currentColor' : 'none'} />
-                                </div>
-                                <div>
-                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Poin Reward</h4>
-                                    <p className="text-sm font-black text-slate-800">{userPoints.toLocaleString()} <small className="text-[9px] opacity-40 uppercase">Pts</small></p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setUsePoints(!usePoints)}
-                                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${usePoints ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-100 text-slate-400'}`}
-                            >
-                                {usePoints ? 'Batalkan' : 'Pakai Poin'}
-                            </button>
-                        </div>
-                    </div>
+                    {/* Redeem Poin - FITUR POIN DINONAKTIFKAN */}
 
                     {/* Metode Pembayaran - Grid diubah jadi 2 kolom */}
                     <div className="space-y-4">

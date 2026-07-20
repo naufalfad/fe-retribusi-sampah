@@ -134,7 +134,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                     </h2>
                     <p className="text-sm opacity-70 mt-1">
                         {isStaff ? 'Otoritas pendaftaran aset untuk akun Wajib Retribusi' :
-                            'Daftarkan obyek retribusi ke akun Anda'}
+                            'Daftarkan objek retribusi ke akun Anda'}
                     </p>
                 </div>
 
@@ -174,7 +174,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                                     register={register} errors={errors}
                                 />
                             </div>
-                            <p className="text-[10px] text-green-600 font-medium italic">*Pastikan Email Akun terdaftar agar obyek muncul di dashboard Wajib Retribusi.</p>
+                            <p className="text-[10px] text-green-600 font-medium italic">*Pastikan Email Akun terdaftar agar objek muncul di dashboard Wajib Retribusi.</p>
                         </div>
 
                         {/* Section 1: Identitas Utama */}
@@ -289,7 +289,7 @@ const RegistrationForm = ({ isStaff = false }) => {
                         <div className="md:col-span-2 border-b pb-2 pt-4">
                             <h3 className="font-bold text-gray-800 flex items-center gap-2">
                                 <span className="bg-green-700 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
-                                Alamat Obyek
+                                Alamat Objek
                             </h3>
                         </div>
 
@@ -310,22 +310,22 @@ const RegistrationForm = ({ isStaff = false }) => {
 
                         <FormInput
                             label="Jalan / No. Rumah"
-                            name="alamatObyek"
+                            name="alamatObjek"
                             register={register} errors={errors} />
 
                         <FormInput
                             label="Nomor Telepon / WA"
-                            name="teleponObyek"
+                            name="teleponObjek"
                             register={register} errors={errors} />
 
                         <FormInput
                             label="RT / RW"
-                            name="rt_rwObyek"
+                            name="rt_rwObjek"
                             register={register} errors={errors} />
 
                         <FormSelect
                             label="Kabupaten"
-                            name="kabupatenObyek"
+                            name="kabupatenObjek"
                             register={register}
                             errors={errors}
                             options={listKabupaten}
@@ -333,7 +333,7 @@ const RegistrationForm = ({ isStaff = false }) => {
 
                         <FormSelect
                             label="Kecamatan"
-                            name="kecamatanObyek"
+                            name="kecamatanObjek"
                             register={register}
                             errors={errors}
                             options={listKecamatan}
@@ -341,7 +341,7 @@ const RegistrationForm = ({ isStaff = false }) => {
 
                         <FormSelect
                             label="Desa / Kelurahan"
-                            name="kelurahanObyek"
+                            name="kelurahanObjek"
                             register={register}
                             errors={errors}
                             options={listKelurahan}
@@ -349,7 +349,7 @@ const RegistrationForm = ({ isStaff = false }) => {
 
                         <FormSelect
                             label="Kode Pos"
-                            name="kodeposObyek"
+                            name="kodeposObjek"
                             register={register}
                             errors={errors}
                             options={listKodePos}
