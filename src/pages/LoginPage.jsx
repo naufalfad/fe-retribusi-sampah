@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { LogIn, UserPlus, ShieldCheck, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
 
 const LoginPage = () => {
@@ -30,6 +30,7 @@ const LoginPage = () => {
             // simpan token & user
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('subjek', JSON.stringify(res.data.user));
+            localStorage.setItem('user', JSON.stringify(res.data.user));
 
             navigate('/dashboard');
         } catch (err) {
@@ -47,6 +48,16 @@ const LoginPage = () => {
         >
             {/* Overlay untuk memastikan konten tetap terbaca (Gunakan warna hijau gelap transparan agar senada) */}
             <div className="absolute inset-0 bg-green-950/60 backdrop-blur-[2px]"></div>
+
+            {/* Tombol Back ke Landing Page */}
+            <button
+                type="button"
+                onClick={() => navigate('/landing-page')}
+                className="absolute top-5 left-5 md:top-8 md:left-8 z-20 inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 text-xs sm:text-sm font-bold shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
+            >
+                <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+                <span>Kembali ke Beranda</span>
+            </button>
 
             <div className="max-w-5xl w-full flex flex-col md:flex-row items-center gap-12 md:gap-24 relative z-10">
 
@@ -144,7 +155,16 @@ const LoginPage = () => {
                                 </button>
                             </form>
 
-                            <div className="mt-8 text-center">
+                            <div className="mt-8 text-center space-y-3">
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate('/landing-page')}
+                                        className="text-xs font-bold text-gray-400 hover:text-green-700 inline-flex items-center gap-1.5 transition-colors"
+                                    >
+                                        <ArrowLeft size={14} /> Kembali ke Landing Page
+                                    </button>
+                                </div>
                                 <p className="text-sm text-gray-400">
                                     Butuh bantuan teknis? <br className="md:hidden" />
                                     <a href="#" className="text-green-700 font-bold hover:underline">Hubungi Admin</a>

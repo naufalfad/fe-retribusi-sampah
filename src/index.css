@@ -28,38 +28,36 @@ body {
   @apply bg-gray-400 rounded-full hover:bg-gray-500;
 }
 
-.custom-target-icon {
-  background: transparent;
-  border: none;
+.custom-target-icon,
+.custom-interactive-target,
+.custom-objek-marker-pin,
+.custom-marker-cluster {
+  background: transparent !important;
+  border: none !important;
 }
 
 .target-wrapper {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 }
 
-.target-outer {
-  position: absolute;
-  inset: 0;
-  border: 2px solid #ffffff;
-  /* green-700 */
-  border-radius: 50%;
+.target-black .target-outer,
+.target-black .target-inner {
+  border-color: #000000 !important;
 }
 
-
-.target-inner {
-  position: absolute;
-  inset: 7px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
+.target-black .target-center {
+  background: #000000 !important;
 }
 
-.target-center {
-  position: absolute;
-  inset: 13px;
-  background: #ffffff;
-  border-radius: 50%;
+.target-white .target-outer,
+.target-white .target-inner {
+  border-color: #ffffff !important;
+}
+
+.target-white .target-center {
+  background: #ffffff !important;
 }
 
 input::-webkit-outer-spin-button,

@@ -122,6 +122,7 @@ function App() {
             <Route path="/admin/form-preview" element={<AdminFormPreview />} />
             <Route path="/admin/logs" element={<AdminLogs />} />
             <Route path="/admin/manajemen-objek" element={<ObjectManagement />} />
+            <Route path="/admin/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
             <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
             <Route path="/admin/poin" element={<AdminPoinSettings />} />
           </Route>

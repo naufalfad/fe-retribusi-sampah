@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ArrowRight, MapPin, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, ArrowRight, MapPin, Loader2, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import api from '../api/axios'; // Pastikan path import benar
 
 const PenagihLoginPage = () => {
@@ -53,6 +53,16 @@ const PenagihLoginPage = () => {
             style={{ backgroundImage: "url('/kebun-raya.png')" }} // Sesuaikan dengan image folder public Anda
         >
             <div className="absolute inset-0 bg-gradient-to-tr from-green-950/90 via-green-900/70 to-emerald-800/50 backdrop-blur-[3px]"></div>
+
+            {/* Tombol Back ke Landing Page */}
+            <button
+                type="button"
+                onClick={() => navigate('/landing-page')}
+                className="absolute top-5 left-5 md:top-8 md:left-8 z-20 inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 text-xs sm:text-sm font-bold shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
+            >
+                <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+                <span>Kembali ke Beranda</span>
+            </button>
 
             <div className="max-w-md w-full relative z-10">
                 <div className="text-center mb-10">
@@ -133,6 +143,17 @@ const PenagihLoginPage = () => {
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-6 pt-4 border-t border-gray-100 text-center">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/landing-page')}
+                            className="inline-flex items-center justify-center gap-2 text-xs font-black text-gray-400 hover:text-green-700 transition-colors uppercase tracking-widest"
+                        >
+                            <ArrowLeft size={14} />
+                            Kembali ke Landing Page
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

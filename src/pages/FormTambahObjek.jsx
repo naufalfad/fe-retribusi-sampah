@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import FormInput from '../components/ui/FormInput';
 import {
     Building2, User, Upload, Send, ChevronLeft, Search,
-    Info, AlertCircle, MapPin, Loader2, FileText, X
+    Info, AlertCircle, MapPin, Loader2, FileText, X, ChevronDown, CheckCircle2,
+    Maximize2, Minimize2, Crosshair, Navigation, Compass, Layers, Check
 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -24,15 +25,48 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const BOGOR_COORDS = [-6.4797, 106.8249];
+
+const MapController = ({ center, zoom }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (center && center[0] && center[1] && !isNaN(center[0]) && !isNaN(center[1])) {
+            map.setView(center, zoom || map.getZoom());
+        }
+    }, [center, zoom, map]);
+    return null;
+};
+
+const MapInvalidateOnMount = () => {
+    const map = useMap();
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            map.invalidateSize();
+        }, 200);
+        return () => clearTimeout(timer);
+    }, [map]);
+    return null;
+};
+
+const FullscreenLocationPicker = ({ setSelectedPos }) => {
+    useMapEvents({
+        click(e) {
+            const { lat, lng } = e.latlng;
+            setSelectedPos([lat, lng]);
+        },
+    });
+    return null;
+};
+
 const schema = z.object({
     nama_objek: z.string().min(3, "Nama objek harus diisi"),
     alamat_jalan: z.string().min(5, "Alamat jalan diperlukan"),
     rt_rw: z.string().min(1, "RT/RW diperlukan"),
-    id_provinsi: z.string().min(1, "Pilih Provinsi"),
-    id_kabupaten: z.string().min(1, "Pilih Kabupaten"),
-    id_kecamatan: z.string().min(1, "Pilih Kecamatan"),
-    id_kelurahan: z.string().min(1, "Pilih Kelurahan/Desa"),
-    kodepos: z.string().min(1, "Kode Pos otomatis terisi"),
+    id_provinsi: z.any().refine(val => val !== undefined && val !== null && String(val).trim() !== '', "Pilih Provinsi"),
+    id_kabupaten: z.any().refine(val => val !== undefined && val !== null && String(val).trim() !== '', "Pilih Kabupaten"),
+    id_kecamatan: z.any().refine(val => val !== undefined && val !== null && String(val).trim() !== '', "Pilih Kecamatan"),
+    id_kelurahan: z.any().refine(val => val !== undefined && val !== null && String(val).trim() !== '', "Pilih Kelurahan/Desa"),
+    kodepos: z.any().refine(val => val !== undefined && val !== null && String(val).trim() !== '', "Kode Pos otomatis terisi"),
     telepon: z.string().min(10, "Nomor telepon minimal 10 digit"),
     kelas_retribusi: z.string().min(1, "Pilih kelas retribusi"),
     latitude: z.string().min(1, "Latitude diperlukan"),
@@ -51,39 +85,250 @@ const LocationPicker = ({ setPosition, setValue }) => {
     return null;
 };
 
+// Helper parsing JWT token yang tahan error format
+const parseJwt = (token) => {
+    try {
+        if (!token) return null;
+        const parts = token.split('.');
+        if (parts.length < 2) return null;
+        const base64Url = parts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            window.atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch {
+        return null;
+    }
+};
+
 const FormTambahObjek = ({ isStaff = false }) => {
-    const { id_subjek } = useParams();
+    const { id_subjek: paramIdSubjek } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
+
+    // Ambil data user yang sedang login dari berbagai sumber (token, subjek, user)
+    const currentUser = useMemo(() => {
+        let userObj = {};
+
+        // 1. Coba dari token JWT (paling akurat dari backend)
+        try {
+            const token = localStorage.getItem('token');
+            const decoded = parseJwt(token);
+            if (decoded && typeof decoded === 'object') {
+                userObj = { ...decoded };
+            }
+        } catch (e) { }
+
+        // 2. Gabungkan dengan localStorage 'subjek'
+        try {
+            const rawSubjek = localStorage.getItem('subjek');
+            if (rawSubjek && rawSubjek !== 'undefined' && rawSubjek !== 'null') {
+                const parsed = JSON.parse(rawSubjek);
+                if (parsed && typeof parsed === 'object') {
+                    userObj = { ...userObj, ...parsed };
+                }
+            }
+        } catch (e) { }
+
+        // 3. Gabungkan dengan localStorage 'user'
+        try {
+            const rawUser = localStorage.getItem('user');
+            if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+                const parsed = JSON.parse(rawUser);
+                if (parsed && typeof parsed === 'object') {
+                    if (parsed.id_subjek || parsed.role === 'User' || !userObj.id_subjek) {
+                        userObj = { ...userObj, ...parsed };
+                    }
+                }
+            }
+        } catch (e) { }
+
+        return userObj;
+    }, []);
+
+    // State untuk data subjek yang ter-resolve
+    const [subjekInfo, setSubjekInfo] = useState(null);
+    const [resolvedSubjekId, setResolvedSubjekId] = useState(() => {
+        if (paramIdSubjek) return paramIdSubjek;
+        if (location.state?.id_subjek) return location.state.id_subjek;
+        return currentUser.id_subjek || currentUser.id || null;
+    });
+
+    const id_subjek = isStaff ? paramIdSubjek : (resolvedSubjekId || paramIdSubjek || currentUser.id_subjek || currentUser.id);
+
+    // Ambil detail Subjek untuk memastikan nama & NPWRD yang didaftarkan
+    useEffect(() => {
+        const fetchSubjekData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token && !paramIdSubjek) return;
+
+            // Jika staff dengan paramIdSubjek
+            if (isStaff && paramIdSubjek) {
+                try {
+                    const res = await api.get(`/subjek/detail/${paramIdSubjek}`);
+                    if (res.data?.success && res.data.data) {
+                        setSubjekInfo(res.data.data);
+                    }
+                } catch (e) {
+                    console.error("Gagal ambil detail subjek staff:", e);
+                }
+                return;
+            }
+
+            // Jika user/wajib retribusi:
+            try {
+                const targetEndpoint = id_subjek ? `/subjek/detail/${id_subjek}` : '/subjek/me';
+                const res = await api.get(targetEndpoint);
+                if (res.data?.success && res.data.data) {
+                    const data = res.data.data;
+                    setSubjekInfo(data);
+                    if (data.id_subjek) {
+                        setResolvedSubjekId(data.id_subjek);
+                        localStorage.setItem('subjek', JSON.stringify(data));
+                        localStorage.setItem('user', JSON.stringify({ ...data, role: 'User' }));
+                    }
+                }
+            } catch (err) {
+                // Fallback kedua: coba /subjek/me jika targetEndpoint tadi gagal
+                try {
+                    const resMe = await api.get('/subjek/me');
+                    if (resMe.data?.success && resMe.data.data) {
+                        const dataMe = resMe.data.data;
+                        setSubjekInfo(dataMe);
+                        if (dataMe.id_subjek) {
+                            setResolvedSubjekId(dataMe.id_subjek);
+                            localStorage.setItem('subjek', JSON.stringify(dataMe));
+                            localStorage.setItem('user', JSON.stringify({ ...dataMe, role: 'User' }));
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Gagal fetch subjek me:", e);
+                }
+            }
+        };
+
+        fetchSubjekData();
+    }, [isStaff, paramIdSubjek, id_subjek]);
+
     const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
         defaultValues: { latitude: "", longitude: "" }
     });
-    const targetIcon = L.divIcon({
-        className: "custom-target-icon",
-        html: `
-        <div class="target-wrapper">
-            <div class="target-outer"></div>
-            <div class="target-inner"></div>
-            <div class="target-center"></div>
-        </div>
-    `,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-    });
-
     // --- STATES ---
     const [type, setType] = useState('pribadi'); // 'pribadi' (Rumah Tinggal) atau 'badan' (Non Rumah Tinggal)
     const [kelasData, setKelasData] = useState([]); // Semua data dari API
     const [filteredKelas, setFilteredKelas] = useState([]); // Data yang sudah difilter berdasarkan tipe
-    const [mapPosition, setMapPosition] = useState([-6.4797, 106.8249]);
+    const [mapPosition, setMapPosition] = useState(BOGOR_COORDS);
     const [mapType, setMapType] = useState('satellite');
+
+    // Target titik koordinat interaktif:
+    // Jika layer roadmap (latar putih), target berwarna HITAM (#000000)
+    // Jika layer satelit (latar gelap), target berwarna PUTIH (#ffffff)
+    const targetIcon = useMemo(() => {
+        const isRoadmap = mapType === 'roadmap';
+        const color = isRoadmap ? '#000000' : '#ffffff';
+        const shadowFilter = isRoadmap
+            ? 'drop-shadow(0 0 3px rgba(255,255,255,0.95)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+            : 'drop-shadow(0 0 3px rgba(0,0,0,0.95)) drop-shadow(0 2px 4px rgba(0,0,0,0.8))';
+
+        return L.divIcon({
+            className: `custom-interactive-target ${isRoadmap ? 'target-black' : 'target-white'}`,
+            html: `
+            <div class="target-wrapper" style="filter: ${shadowFilter}; width: 36px; height: 36px; position: relative;">
+                <!-- Crosshairs / Garis Bidik Silang -->
+                <div style="position: absolute; top: 0; bottom: 0; left: 17px; width: 2px; background: ${color}; opacity: 0.9;"></div>
+                <div style="position: absolute; left: 0; right: 0; top: 17px; height: 2px; background: ${color}; opacity: 0.9;"></div>
+                
+                <!-- Lingkaran Luar -->
+                <div class="target-outer" style="position: absolute; inset: 2px; border: 2.5px solid ${color}; border-radius: 50%;"></div>
+                
+                <!-- Lingkaran Tengah -->
+                <div class="target-inner" style="position: absolute; inset: 9px; border: 2px solid ${color}; border-radius: 50%;"></div>
+                
+                <!-- Titik Pusat -->
+                <div class="target-center" style="position: absolute; inset: 15px; background: ${color}; border-radius: 50%;"></div>
+            </div>
+            `,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+        });
+    }, [mapType]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingKelas, setIsFetchingKelas] = useState(true);
     const [allKelurahan, setAllKelurahan] = useState([]); // Master data
     const [filteredKelurahan, setFilteredKelurahan] = useState([]); // Data hasil filter
+    const [selectedKelData, setSelectedKelData] = useState(null); // Data kelurahan yang dipilih saat ini
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchLabel, setSearchLabel] = useState(""); // Teks yang tampil di input
+
+    // --- STATES FULLSCREEN MAP ---
+    const [isFullscreenMapOpen, setIsFullscreenMapOpen] = useState(false);
+    const [fullscreenCenter, setFullscreenCenter] = useState(BOGOR_COORDS);
+    const [fullscreenZoom, setFullscreenZoom] = useState(12);
+    const [fullscreenSelectedPos, setFullscreenSelectedPos] = useState(null);
+
+    // Kunci scroll body saat peta full screen aktif
+    useEffect(() => {
+        if (isFullscreenMapOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isFullscreenMapOpen]);
+
+    const activeKelData = selectedKelData || allKelurahan.find(k => String(k.id) === String(watch('id_kelurahan')));
+
+    // Buka peta full screen dengan titik center berdasarkan kelurahan yang dipilih,
+    // atau Kabupaten Bogor jika belum memilih kelurahan
+    const handleOpenFullscreen = () => {
+        if (activeKelData?.lokasi?.coordinates && activeKelData.lokasi.coordinates.length === 2) {
+            const [lng, lat] = activeKelData.lokasi.coordinates;
+            if (!isNaN(lat) && !isNaN(lng)) {
+                setFullscreenCenter([Number(lat), Number(lng)]);
+                setFullscreenZoom(15);
+            } else {
+                setFullscreenCenter(BOGOR_COORDS);
+                setFullscreenZoom(12);
+            }
+        } else {
+            setFullscreenCenter(BOGOR_COORDS);
+            setFullscreenZoom(12);
+        }
+
+        // Cek apakah sudah ada koordinat yang dipilih sebelumnya
+        const curLat = parseFloat(watch('latitude'));
+        const curLng = parseFloat(watch('longitude'));
+        if (!isNaN(curLat) && !isNaN(curLng) && curLat !== 0 && curLng !== 0) {
+            setFullscreenSelectedPos([curLat, curLng]);
+        } else if (activeKelData?.lokasi?.coordinates) {
+            const [lng, lat] = activeKelData.lokasi.coordinates;
+            setFullscreenSelectedPos([Number(lat), Number(lng)]);
+        } else {
+            setFullscreenSelectedPos(null);
+        }
+
+        setIsFullscreenMapOpen(true);
+    };
+
+    // Terapkan hasil pemilihan titik dari full screen ke formulir
+    const handleApplyFullscreenCoords = (targetCoords) => {
+        const coords = targetCoords || fullscreenSelectedPos || fullscreenCenter;
+        if (coords && coords[0] && coords[1]) {
+            const [lat, lng] = coords;
+            setMapPosition([lat, lng]);
+            setValue('latitude', lat.toString(), { shouldValidate: true });
+            setValue('longitude', lng.toString(), { shouldValidate: true });
+        }
+        setIsFullscreenMapOpen(false);
+    };
 
     const selectedKelId = watch('id_kelurahan');
 
@@ -106,9 +351,16 @@ const FormTambahObjek = ({ isStaff = false }) => {
         setIsDropdownOpen(true);
 
         try {
-            const res = await api.get(`/wilayah/search-kelurahan?q=${val}`);
+            const res = await api.get(`/wilayah/search-kelurahan?q=${encodeURIComponent(val)}`);
             if (res.data.success) {
                 setFilteredKelurahan(res.data.data);
+                // Merge hasil pencarian ke allKelurahan agar data tidak pernah hilang
+                setAllKelurahan(prev => {
+                    const map = new Map();
+                    prev.forEach(item => map.set(String(item.id), item));
+                    res.data.data.forEach(item => map.set(String(item.id), item));
+                    return Array.from(map.values());
+                });
             }
         } catch (err) {
             console.error(err);
@@ -117,28 +369,35 @@ const FormTambahObjek = ({ isStaff = false }) => {
 
     // 3. Logic saat item dipilih
     const handleSelectKelurahan = (kel) => {
-        // Set field ID ke React Hook Form
-        setValue('id_kelurahan', kel.id, { shouldValidate: true });
-        setValue('id_kecamatan', kel.RefKecamatan?.id);
-        setValue('id_kabupaten', kel.RefKecamatan?.RefKabupaten?.id);
-        setValue('id_provinsi', kel.RefKecamatan?.RefKabupaten?.RefProvinsi?.id);
-        setValue('kodepos', kel.kode_pos);
+        // Set field ID ke React Hook Form sebagai string
+        setValue('id_kelurahan', String(kel.id || ''), { shouldValidate: true });
+        setValue('id_kecamatan', String(kel.RefKecamatan?.id || ''), { shouldValidate: true });
+        setValue('id_kabupaten', String(kel.RefKecamatan?.RefKabupaten?.id || ''), { shouldValidate: true });
+        setValue('id_provinsi', String(kel.RefKecamatan?.RefKabupaten?.RefProvinsi?.id || ''), { shouldValidate: true });
+        setValue('kodepos', String(kel.kode_pos || ''), { shouldValidate: true });
+
+        // Simpan referensi lengkap objek kelurahan terpilih
+        setSelectedKelData(kel);
+
+        // Pastikan masuk ke allKelurahan
+        setAllKelurahan(prev => {
+            if (prev.some(k => String(k.id) === String(kel.id))) return prev;
+            return [...prev, kel];
+        });
 
         // Set Label yang tampil
-        setSearchLabel(kel.name);
+        setSearchLabel(`${kel.name} (Kec. ${kel.RefKecamatan?.name || '-'})`);
 
         // Update Map
         if (kel.lokasi && kel.lokasi.coordinates) {
             const [lng, lat] = kel.lokasi.coordinates;
             setMapPosition([lat, lng]);
-            setValue('latitude', lat.toString());
-            setValue('longitude', lng.toString());
+            setValue('latitude', lat.toString(), { shouldValidate: true });
+            setValue('longitude', lng.toString(), { shouldValidate: true });
         }
 
         setIsDropdownOpen(false);
     };
-
-    const activeKelData = allKelurahan.find(k => k.id === selectedKelId);
 
     // --- 1. FETCH DATA KELAS DARI API ---
     useEffect(() => {
@@ -191,7 +450,22 @@ const FormTambahObjek = ({ isStaff = false }) => {
     };
 
     const onSubmit = async (data) => {
-        if (!id_subjek) return alert("ID Subjek tidak valid");
+        const token = localStorage.getItem('token');
+        const effectiveSubjekId = isStaff ? paramIdSubjek : (id_subjek || resolvedSubjekId || currentUser.id_subjek || paramIdSubjek);
+
+        // Jika form dibuka oleh staff: wajib ada parameter subjek
+        if (isStaff && !effectiveSubjekId) {
+            alert("ID Subjek tidak valid. Silakan pilih Wajib Retribusi terlebih dahulu dari daftar Subjek.");
+            navigate(-1);
+            return;
+        }
+
+        // Jika pendaftaran oleh user: pastikan sesi login ada (token atau id_subjek)
+        if (!isStaff && !token && !effectiveSubjekId) {
+            alert("Sesi login Wajib Retribusi tidak ditemukan. Silakan login kembali.");
+            navigate('/login');
+            return;
+        }
 
         setIsLoading(true);
         const formData = new FormData();
@@ -203,25 +477,38 @@ const FormTambahObjek = ({ isStaff = false }) => {
         formData.append('telepon_objek', data.telepon);
         formData.append('koordinat_objek', `${data.latitude},${data.longitude}`);
 
-        const selectedKel = allKelurahan.find(k => k.id === data.id_kelurahan);
-        formData.append('provinsi_objek', selectedKel?.RefKecamatan?.RefKabupaten?.RefProvinsi?.name || '');
-        formData.append('kabupaten_objek', selectedKel?.RefKecamatan?.RefKabupaten?.name || '');
+        const selectedKel = selectedKelData || allKelurahan.find(k => String(k.id) === String(data.id_kelurahan));
+        formData.append('provinsi_objek', selectedKel?.RefKecamatan?.RefKabupaten?.RefProvinsi?.name || 'Jawa Barat');
+        formData.append('kabupaten_objek', selectedKel?.RefKecamatan?.RefKabupaten?.name || 'KAB. BOGOR');
         formData.append('kecamatan_objek', selectedKel?.RefKecamatan?.name || '');
         formData.append('kelurahan_objek', selectedKel?.name || '');
-        formData.append('kode_pos_objek', data.kodepos);
+        formData.append('kode_pos_objek', data.kodepos || selectedKel?.kode_pos || '');
 
         selectedFiles.forEach(file => {
             formData.append('dokumen_objek', file);
         });
 
         try {
-            const response = await api.post(`/objek/tambah-objek/${id_subjek}`, formData, {
+            // Jika ada ID subjek spesifik, gunakan route berparameter
+            // Jika user mendaftar tanpa parameter ID, gunakan route /tambah-objek (backend akan membaca req.user.id_subjek)
+            const endpoint = effectiveSubjekId ? `/objek/tambah-objek/${effectiveSubjekId}` : '/objek/tambah-objek';
+            const response = await api.post(endpoint, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            alert(response.data.message);
-            navigate(isStaff ? navigate(-1) : '/dashboard');
+            alert(response.data.message || "Objek berhasil ditambahkan");
+            if (isStaff) {
+                navigate(-1);
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
-            alert(error.response?.data?.message || "Gagal menambah objek");
+            console.error("Gagal menambah objek:", error);
+            if (error.response?.status === 401) {
+                alert("Sesi login telah berakhir. Silakan login kembali.");
+                navigate('/login');
+            } else {
+                alert(error.response?.data?.message || "Gagal menambah objek");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -229,7 +516,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
 
     return (
         <div className="max-w-4xl mx-auto pt-6 pb-12 px-4">
-            <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 font-bold hover:text-green-700 mb-6 group">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 font-bold hover:text-green-700 mb-6 group cursor-pointer">
                 <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                 Kembali
             </button>
@@ -237,18 +524,62 @@ const FormTambahObjek = ({ isStaff = false }) => {
             <div className="bg-white shadow-xl rounded-[2.5rem] overflow-hidden border border-gray-100">
                 <div className={`${isStaff ? 'bg-gray-900' : 'bg-green-700'} p-8 text-white text-center`}>
                     <h2 className="text-2xl font-bold uppercase tracking-widest">
-                        {isStaff ? 'Penetapan Objek Baru (NPOR)' : 'Permohonan NPOR baru'}
+                        {isStaff ? 'Penetapan Objek Baru (NPOR)' : 'Permohonan NPOR Baru'}
                     </h2>
+                    <p className="text-xs text-white/80 mt-1 uppercase tracking-wider">
+                        {isStaff ? 'Formulir Pendaftaran Objek oleh Petugas' : 'Daftarkan Lokasi/Properti Wajib Retribusi'}
+                    </p>
                 </div>
+
+                {/* Subjek Info Banner */}
+                {isStaff ? (
+                    subjekInfo ? (
+                        <div className="bg-slate-50 border border-slate-200 p-4 mx-6 mt-6 rounded-2xl flex items-center justify-between text-left">
+                            <div>
+                                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                                    Menetapkan Objek Untuk Subjek:
+                                </span>
+                                <h4 className="text-sm font-bold text-slate-800">{subjekInfo.nama_subjek}</h4>
+                                <p className="text-xs font-mono text-emerald-700 font-bold">NPWRD: {subjekInfo.npwrd_subjek}</p>
+                            </div>
+                            <span className="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold">
+                                ID Subjek: #{id_subjek}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="bg-slate-50 border border-slate-200 p-4 mx-6 mt-6 rounded-2xl text-left text-xs text-slate-700 font-bold">
+                            Penetapan Objek untuk ID Subjek: #{id_subjek || 'Tidak Ditentukan'}
+                        </div>
+                    )
+                ) : (
+                    (subjekInfo?.nama_subjek || currentUser.nama_subjek) && (
+                        <div className="bg-emerald-50/50 border border-emerald-100 p-4 mx-6 mt-6 rounded-2xl flex items-center justify-between text-left">
+                            <div>
+                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700">
+                                    Pemohon (Akun Anda):
+                                </span>
+                                <h4 className="text-sm font-bold text-slate-800">
+                                    {subjekInfo?.nama_subjek || currentUser.nama_subjek}
+                                </h4>
+                                <p className="text-xs font-mono text-slate-600 font-bold">
+                                    NPWRD: {subjekInfo?.npwrd_subjek || currentUser.npwrd_subjek || '-'}
+                                </p>
+                            </div>
+                            <span className="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold flex items-center gap-1">
+                                <CheckCircle2 size={13} /> Terverifikasi
+                            </span>
+                        </div>
+                    )
+                )}
 
                 {/* Tipe Kategori */}
                 <div className="flex p-2 bg-gray-100 m-6 rounded-xl">
                     <button type="button" onClick={() => setType('pribadi')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all ${type === 'pribadi' ? 'bg-white shadow-md text-green-700 font-bold' : 'text-gray-500'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all cursor-pointer ${type === 'pribadi' ? 'bg-white shadow-md text-green-700 font-bold' : 'text-gray-500'}`}>
                         <User size={18} /> Rumah Tinggal
                     </button>
                     <button type="button" onClick={() => setType('badan')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all ${type === 'badan' ? 'bg-white shadow-md text-green-700 font-bold' : 'text-gray-500'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all cursor-pointer ${type === 'badan' ? 'bg-white shadow-md text-green-700 font-bold' : 'text-gray-500'}`}>
                         <Building2 size={18} /> Non Rumah Tinggal
                     </button>
                 </div>
@@ -278,7 +609,7 @@ const FormTambahObjek = ({ isStaff = false }) => {
 
                                 <input
                                     type="text"
-                                    placeholder="Klik untuk pilih atau ketik nama desa..."
+                                    placeholder="Ketik nama Desa atau Kecamatan (cth: Ciawi, Cibinong, Babakan Madang)..."
                                     value={searchLabel}
                                     onChange={handleSearch}
                                     onFocus={() => setIsDropdownOpen(true)}
@@ -446,23 +777,99 @@ const FormTambahObjek = ({ isStaff = false }) => {
                             )}
                         </div>
 
-                        {/* MAP & KOORDINAT */}
-                        <div className="md:col-span-2 space-y-3 pt-4">
-                            <div className="md:col-span-2 border-b pb-2"><h3 className="font-bold text-gray-800 flex items-center gap-2"><MapPin size={18} className="text-green-700" /> 3. Titik Koordinat (Klik pada peta)</h3></div>
-                            <div className="relative h-80 w-full rounded-3xl overflow-hidden border-2 border-gray-100 z-0">
-                                <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
-                                    <button type="button" onClick={() => setMapType('roadmap')} className={`p-2 rounded-xl text-[10px] font-bold shadow-lg ${mapType === 'roadmap' ? 'bg-green-700 text-white' : 'bg-white text-gray-600'}`}>Roadmap</button>
-                                    <button type="button" onClick={() => setMapType('satellite')} className={`p-2 rounded-xl text-[10px] font-bold shadow-lg ${mapType === 'satellite' ? 'bg-green-700 text-white' : 'bg-white text-gray-600'}`}>Satelit</button>
-                                </div>
-                                <MapContainer center={mapPosition} zoom={13} style={{ height: '100%', width: '100%' }}>
-                                    <TileLayer url={mapType === 'roadmap' ? "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" : "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"} />
-                                    <Marker position={mapPosition} icon={targetIcon} />
-                                    <LocationPicker setPosition={setMapPosition} setValue={setValue} />
-                                </MapContainer>
+                        {/* 3. TITIK KOORDINAT (HANYA TOMBOL BUKA FULLSCREEN) */}
+                        <div className="md:col-span-2 space-y-4 pt-4">
+                            <div className="border-b pb-2">
+                                <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                                    <MapPin size={18} className="text-green-700" /> 3. Titik Koordinat Objek
+                                </h3>
+                                <p className="text-[11px] text-gray-400 mt-0.5">
+                                    Penentuan titik lokasi bangunan/properti wajib dilakukan melalui peta interaktif layar penuh.
+                                </p>
                             </div>
+
+                            {/* KARTU STATUS KOORDINAT & TOMBOL BUKA FULLSCREEN MAP */}
+                            <div className={`p-6 rounded-3xl border-2 transition-all ${(watch('latitude') && watch('longitude'))
+                                ? 'bg-emerald-50/50 border-emerald-200'
+                                : (errors.latitude || errors.longitude)
+                                    ? 'bg-red-50/40 border-red-200'
+                                    : 'bg-gray-50 border-gray-100 hover:border-green-300'
+                                }`}>
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                                    <div className="flex items-start gap-4">
+                                        <div className={`p-3.5 rounded-2xl shrink-0 ${(watch('latitude') && watch('longitude'))
+                                            ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                            : 'bg-white text-gray-400 border border-gray-200 shadow-sm'
+                                            }`}>
+                                            <MapPin size={26} className={(watch('latitude') && watch('longitude')) ? 'animate-bounce' : ''} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <h4 className="text-sm font-black uppercase tracking-wider text-gray-800">
+                                                    {(watch('latitude') && watch('longitude')) ? 'Titik Koordinat Telah Ditentukan' : 'Titik Koordinat Belum Dipilih'}
+                                                </h4>
+                                                <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${(watch('latitude') && watch('longitude'))
+                                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                                    : 'bg-amber-100 text-amber-800 border border-amber-200'
+                                                    }`}>
+                                                    {(watch('latitude') && watch('longitude')) ? 'Terverifikasi' : 'Wajib Diisi'}
+                                                </span>
+                                            </div>
+
+                                            {(watch('latitude') && watch('longitude')) ? (
+                                                <div className="mt-2 space-y-1">
+                                                    <div className="flex items-center gap-2 font-mono text-xs font-bold text-slate-700 flex-wrap">
+                                                        <span className="bg-white px-2.5 py-1 rounded-lg border border-emerald-100 text-emerald-800 shadow-sm">
+                                                            Lat: {watch('latitude')}
+                                                        </span>
+                                                        <span>,</span>
+                                                        <span className="bg-white px-2.5 py-1 rounded-lg border border-emerald-100 text-emerald-800 shadow-sm">
+                                                            Lng: {watch('longitude')}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[11px] text-gray-500 font-medium pt-1">
+                                                        {activeKelData ? (
+                                                            <span>Pusat acuan: <b className="text-gray-800">Kel. {activeKelData.name}</b> (Kec. {activeKelData.RefKecamatan?.name || '-'})</span>
+                                                        ) : (
+                                                            <span>Pusat acuan: <b className="text-gray-800">Kabupaten Bogor</b></span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <p className="text-xs text-gray-500 mt-1 max-w-md leading-relaxed font-medium">
+                                                    Silakan klik tombol di samping untuk membuka peta layar penuh dan menandai titik bangunan objek retribusi Anda secara leluasa dan presisi.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* TOMBOL BUKA PETA FULLSCREEN */}
+                                    <button
+                                        type="button"
+                                        onClick={handleOpenFullscreen}
+                                        className={`w-full sm:w-auto px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-wider text-white shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer shrink-0 ${(watch('latitude') && watch('longitude'))
+                                            ? 'bg-gray-900 hover:bg-black shadow-slate-900/20'
+                                            : 'bg-green-700 hover:bg-green-800 shadow-green-900/20'
+                                            }`}
+                                    >
+                                        <Maximize2 size={18} />
+                                        <span>{(watch('latitude') && watch('longitude')) ? 'Ubah Titik di Peta Fullscreen' : 'Buka Peta Fullscreen'}</span>
+                                    </button>
+                                </div>
+
+                                {/* Pesan Error jika user langsung submit tanpa memilih titik */}
+                                {(errors.latitude || errors.longitude) && !(watch('latitude') && watch('longitude')) && (
+                                    <div className="mt-4 pt-3 border-t border-red-200 text-xs text-red-600 font-bold flex items-center gap-2 animate-in fade-in">
+                                        <AlertCircle size={15} />
+                                        <span>Titik koordinat wajib dipilih melalui peta fullscreen sebelum formulir dikirim.</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Form Input Latitude & Longitude (Read-only info) */}
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="Latitude" name="latitude" register={register} errors={errors} readOnly />
-                                <FormInput label="Longitude" name="longitude" register={register} errors={errors} readOnly />
+                                <FormInput label="Latitude" name="latitude" register={register} errors={errors} readOnly placeholder="Otomatis dari peta fullscreen" />
+                                <FormInput label="Longitude" name="longitude" register={register} errors={errors} readOnly placeholder="Otomatis dari peta fullscreen" />
                             </div>
                         </div>
 
@@ -539,6 +946,222 @@ const FormTambahObjek = ({ isStaff = false }) => {
                     </div>
                 </form>
             </div>
+
+            {/* MODAL PETA FULL SCREEN DENGAN TITIK CENTER OTOMATIS */}
+            {isFullscreenMapOpen && (
+                <div className="fixed inset-0 z-[9999] bg-slate-950 flex flex-col overflow-hidden animate-in fade-in duration-200">
+                    {/* HEADER MODAL */}
+                    <div className="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 z-10 shadow-2xl">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-green-500/20 text-green-400 border border-green-500/30 flex items-center justify-center shrink-0">
+                                <MapPin size={22} />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-base font-black text-white uppercase tracking-tight">
+                                        Peta Pemilihan Titik Objek
+                                    </h3>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                                        Layar Penuh
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-400 font-medium">
+                                    {activeKelData ? (
+                                        <span className="text-emerald-400 font-bold">
+                                            Pusat: Kel. {activeKelData.name}, Kec. {activeKelData.RefKecamatan?.name || '-'}
+                                        </span>
+                                    ) : (
+                                        <span className="text-amber-400 font-bold">
+                                            Pusat: Kabupaten Bogor (Kelurahan belum dipilih)
+                                        </span>
+                                    )}
+                                    {' • '}
+                                    <span className="text-slate-400">Klik di mana saja pada peta untuk menandai titik</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* KOORDINAT PILL & AKSI CEPAT */}
+                        <div className="flex items-center gap-3 flex-wrap">
+                            {fullscreenSelectedPos ? (
+                                <div className="flex items-center gap-2.5 bg-slate-800/90 border border-slate-700/80 px-4 py-2 rounded-2xl font-mono text-xs shadow-inner">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="text-slate-300 font-bold">
+                                        Lat: <span className="text-emerald-400">{Number(fullscreenSelectedPos[0]).toFixed(6)}</span>
+                                    </span>
+                                    <span className="text-slate-600">•</span>
+                                    <span className="text-slate-300 font-bold">
+                                        Lng: <span className="text-emerald-400">{Number(fullscreenSelectedPos[1]).toFixed(6)}</span>
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="text-xs text-slate-400 italic bg-slate-800 px-3.5 py-2 rounded-2xl border border-slate-700">
+                                    Klik peta untuk menandai titik
+                                </div>
+                            )}
+
+                            <button
+                                type="button"
+                                onClick={() => handleApplyFullscreenCoords()}
+                                disabled={!fullscreenSelectedPos}
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider text-white bg-green-600 hover:bg-green-700 active:scale-95 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-lg shadow-green-900/30 cursor-pointer"
+                            >
+                                <CheckCircle2 size={16} />
+                                <span>Terapkan Titik Ini</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setIsFullscreenMapOpen(false)}
+                                className="p-2.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700 transition-all cursor-pointer"
+                                title="Tutup Peta Layar Penuh"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* KONTEN PETA FULL SCREEN */}
+                    <div className="flex-1 relative w-full h-full bg-slate-950">
+                        {/* KONTROL FLOATING DI DALAM PETA */}
+                        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+                            {/* Layer Selector dengan indikator warna target */}
+                            <div className="bg-slate-900/95 backdrop-blur-md p-2 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-1.5">
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest px-1">Latar & Warna Target:</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setMapType('roadmap')}
+                                    className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between gap-2.5 cursor-pointer ${mapType === 'roadmap'
+                                        ? 'bg-white text-slate-900 shadow-md font-extrabold'
+                                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                                        }`}
+                                >
+                                    <span>Roadmap</span>
+                                    <span className="w-3 h-3 rounded-full bg-black border border-white/60 shadow-sm" title="Target Berwarna Hitam"></span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setMapType('satellite')}
+                                    className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between gap-2.5 cursor-pointer ${mapType === 'satellite'
+                                        ? 'bg-green-600 text-white shadow-md font-extrabold'
+                                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                                        }`}
+                                >
+                                    <span>Satelit</span>
+                                    <span className="w-3 h-3 rounded-full bg-white border border-black/60 shadow-sm" title="Target Berwarna Putih"></span>
+                                </button>
+                            </div>
+
+                            {/* Tombol Re-center */}
+                            <div className="bg-slate-900/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-1">
+                                {activeKelData?.lokasi?.coordinates && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const [lng, lat] = activeKelData.lokasi.coordinates;
+                                            setFullscreenCenter([Number(lat), Number(lng)]);
+                                            setFullscreenZoom(16);
+                                        }}
+                                        className="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition-all cursor-pointer"
+                                        title="Pusatkan peta ke Kelurahan yang dipilih"
+                                    >
+                                        <Crosshair size={14} className="text-emerald-400 shrink-0" />
+                                        <span>Ke Pusat Kelurahan</span>
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setFullscreenCenter(BOGOR_COORDS);
+                                        setFullscreenZoom(12);
+                                    }}
+                                    className="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition-all cursor-pointer"
+                                    title="Pusatkan peta ke Kabupaten Bogor"
+                                >
+                                    <Compass size={14} className="text-blue-400 shrink-0" />
+                                    <span>Ke Kab. Bogor</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (navigator.geolocation) {
+                                            navigator.geolocation.getCurrentPosition(
+                                                (pos) => {
+                                                    const userLat = pos.coords.latitude;
+                                                    const userLng = pos.coords.longitude;
+                                                    setFullscreenCenter([userLat, userLng]);
+                                                    setFullscreenZoom(16);
+                                                    setFullscreenSelectedPos([userLat, userLng]);
+                                                },
+                                                (err) => {
+                                                    alert("Gagal membaca lokasi saat ini: " + err.message);
+                                                }
+                                            );
+                                        } else {
+                                            alert("Browser Anda tidak mendukung geolokasi.");
+                                        }
+                                    }}
+                                    className="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition-all cursor-pointer"
+                                    title="Pusatkan ke lokasi GPS perangkat Anda"
+                                >
+                                    <Navigation size={14} className="text-amber-400 shrink-0" />
+                                    <span>Lokasi Saya (GPS)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* BANNER INSTRUKSI DI BAWAH PETA */}
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none max-w-xl w-full px-4">
+                            <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700/80 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto">
+                                <div className="p-2.5 bg-green-500/20 text-green-400 rounded-xl shrink-0">
+                                    <MapPin size={20} />
+                                </div>
+                                <div className="flex-1 text-left overflow-hidden">
+                                    <p className="text-xs font-bold text-slate-200 truncate">
+                                        {fullscreenSelectedPos
+                                            ? `Titik terpilih: [${fullscreenSelectedPos[0].toFixed(6)}, ${fullscreenSelectedPos[1].toFixed(6)}]`
+                                            : "Klik di mana saja pada peta untuk menandai titik objek"}
+                                    </p>
+                                    <p className="text-[10px] text-slate-400 font-medium">
+                                        Geser, perbesar peta satelit, lalu klik titik bangunan properti Anda secara presisi.
+                                    </p>
+                                </div>
+                                {fullscreenSelectedPos && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleApplyFullscreenCoords()}
+                                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md active:scale-95 transition-all cursor-pointer shrink-0"
+                                    >
+                                        Terapkan
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* MAP CONTAINER LEAFLET */}
+                        <MapContainer
+                            center={fullscreenCenter}
+                            zoom={fullscreenZoom}
+                            style={{ height: '100%', width: '100%' }}
+                        >
+                            <MapInvalidateOnMount />
+                            <MapController center={fullscreenCenter} zoom={fullscreenZoom} />
+                            <TileLayer
+                                url={mapType === 'roadmap'
+                                    ? "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                                    : "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+                                }
+                            />
+                            {fullscreenSelectedPos && (
+                                <Marker position={fullscreenSelectedPos} icon={targetIcon} />
+                            )}
+                            <FullscreenLocationPicker
+                                setSelectedPos={setFullscreenSelectedPos}
+                            />
+                        </MapContainer>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -556,8 +1179,5 @@ const FormSelect = ({ label, name, register, errors, options }) => (
         {errors[name] && <span className="text-[10px] text-red-500 font-bold ml-1">{errors[name].message}</span>}
     </div>
 );
-
-// Impor ChevronDown yang tertinggal
-import { ChevronDown } from 'lucide-react';
 
 export default FormTambahObjek;

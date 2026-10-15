@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ShieldCheck, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, ShieldCheck, ArrowRight, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
 
 const StaffLoginPage = () => {
@@ -49,6 +49,16 @@ const StaffLoginPage = () => {
             style={{ backgroundImage: "url('/kebun-raya.png')" }}
         >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+
+            {/* Tombol Back ke Landing Page */}
+            <button
+                type="button"
+                onClick={() => navigate('/landing-page')}
+                className="absolute top-5 left-5 md:top-8 md:left-8 z-20 inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 text-xs sm:text-sm font-bold shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 group"
+            >
+                <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+                <span>Kembali ke Beranda</span>
+            </button>
 
             <div className="max-w-md w-full relative z-10">
                 <div className="text-center mb-8">
@@ -117,6 +127,17 @@ const StaffLoginPage = () => {
                             {!loading && <ArrowRight size={18} />}
                         </button>
                     </form>
+
+                    <div className="mt-6 pt-4 border-t border-gray-100 text-center">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/landing-page')}
+                            className="inline-flex items-center justify-center gap-2 text-xs font-bold text-gray-400 hover:text-green-700 transition-colors uppercase tracking-wider"
+                        >
+                            <ArrowLeft size={14} />
+                            Kembali ke Landing Page
+                        </button>
+                    </div>
                 </div>
 
                 <p className="text-center mt-8 text-xs text-gray-300 font-medium  drop-shadow-sm">

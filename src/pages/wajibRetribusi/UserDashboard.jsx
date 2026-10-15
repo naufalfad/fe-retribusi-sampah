@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, Building2, Home, MapPin, Search, FileText,
-    AlertCircle, Printer, X, Download, ShieldCheck
+    AlertCircle, Printer, X, Download, ShieldCheck,
+    CreditCard, CheckCircle2, Wallet
 } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 import api from '../../api/axios';
+import UserPaymentModal from '../../components/payment/UserPaymentModal';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
 
-    // State untuk Modal Kartu
+    // State untuk Modal Kartu & Pembayaran
     const [user, setUser] = useState(null);
     const [showCard, setShowCard] = useState(false);
     const [assets, setAssets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+    const [selectedPaymentAsset, setSelectedPaymentAsset] = useState(null);
+    const [alertSuccess, setAlertSuccess] = useState('');
 
     assets.map((asset) => ({
         id: asset.id_objek,
@@ -25,28 +30,72 @@ const UserDashboard = () => {
         status: asset.status_objek
     }))
 
+    const fetchData = async () => {
+        try {
+            const res = await api.get('/objek/objek-saya');
+            setAssets(res.data.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await api.get('/objek/objek-saya');
-
-                setAssets(res.data.data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, []);
 
     useEffect(() => {
-        const savedUser = JSON.parse(localStorage.getItem('subjek'));
+        const fetchUserData = async () => {
+            let foundUser = null;
+            try {
+                const rawSubjek = localStorage.getItem('subjek');
+                if (rawSubjek && rawSubjek !== 'undefined' && rawSubjek !== 'null') {
+                    foundUser = JSON.parse(rawSubjek);
+                }
+            } catch (e) {}
 
-        if (savedUser) {
-            setUser(savedUser);
-        }
+            if (!foundUser) {
+                try {
+                    const rawUser = localStorage.getItem('user');
+                    if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+                        foundUser = JSON.parse(rawUser);
+                    }
+                } catch (e) {}
+            }
+
+            if (!foundUser) {
+                try {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        const parts = token.split('.');
+                        if (parts[1]) {
+                            const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+                            const payload = JSON.parse(window.atob(base64));
+                            if (payload) foundUser = payload;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            if (foundUser) {
+                setUser(foundUser);
+            }
+
+            // Sync dengan /subjek/me dari server
+            try {
+                const res = await api.get('/subjek/me');
+                if (res.data?.success && res.data.data) {
+                    setUser(res.data.data);
+                    localStorage.setItem('subjek', JSON.stringify(res.data.data));
+                    localStorage.setItem('user', JSON.stringify({ ...res.data.data, role: 'User' }));
+                }
+            } catch (e) {
+                // diam jika gagal
+            }
+        };
+
+        fetchUserData();
     }, []);
 
     if (loading) {
@@ -66,13 +115,34 @@ const UserDashboard = () => {
                         <span className="font-medium">Member sejak 2026</span>
                     </div>
                 </div>
-                <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest">
-                    Profil Akun
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => navigate('/pembayaran')}
+                        className="bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-900/20 active:scale-95"
+                    >
+                        <CreditCard size={16} /> Bayar Online
+                    </button>
+                    <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest">
+                        Profil Akun
+                    </button>
+                </div>
                 <div className="absolute right-0 top-0 p-10 opacity-5 pointer-events-none text-green-900">
                     <ShieldCheck size={150} />
                 </div>
             </div>
+
+            {/* ALERT NOTIFIKASI SUKSES */}
+            {alertSuccess && (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center justify-between text-xs font-bold animate-in fade-in">
+                    <div className="flex items-center gap-2">
+                        <CheckCircle2 size={18} className="text-emerald-600" />
+                        <span>{alertSuccess}</span>
+                    </div>
+                    <button onClick={() => setAlertSuccess('')} className="text-emerald-500 hover:text-emerald-800 p-1">
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
 
             {/* MAIN CONTENT AREA */}
             <div className="space-y-6 font-sans">
@@ -81,7 +151,7 @@ const UserDashboard = () => {
                         <Building2 className="text-green-700" size={24} /> Daftar Aset Objek
                     </h3>
                     {assets.length > 0 && (
-                        <button onClick={() => navigate('/daftar')} className="flex items-center gap-2 text-green-700 font-bold hover:underline text-sm uppercase tracking-tighter">
+                        <button onClick={() => navigate('/daftar', { state: { id_subjek: user?.id_subjek } })} className="flex items-center gap-2 text-green-700 font-bold hover:underline text-sm uppercase tracking-tighter">
                             <Plus size={18} /> Tambah Objek Baru
                         </button>
                     )}
@@ -89,51 +159,96 @@ const UserDashboard = () => {
 
                 {assets.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {assets.map((asset) => (
-                            <div key={asset.id_objek} className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col">
-                                <div className="p-8 flex-grow">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className={`p-4 rounded-2xl ${asset.kategori_objek === 'Rumah Tinggal' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
-                                            {asset.kategori_objek === 'Rumah Tinggal' ? <Home size={24} /> : <Building2 size={24} />}
+                        {assets.map((asset) => {
+                            const unpaidList = asset.Skrds?.filter(s => s.status === 'unpaid') || [];
+                            const unpaidCount = unpaidList.length;
+                            const totalUnpaid = unpaidList.reduce((acc, curr) => acc + parseFloat(curr.total_bayar || 0), 0);
+
+                            return (
+                                <div key={asset.id_objek} className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col">
+                                    <div className="p-8 flex-grow">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className={`p-4 rounded-2xl ${asset.kategori_objek === 'Rumah Tinggal' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
+                                                {asset.kategori_objek === 'Rumah Tinggal' ? <Home size={24} /> : <Building2 size={24} />}
+                                            </div>
+                                            <span
+                                                className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${asset.status_objek?.toLowerCase() === 'aktif'
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-red-100 text-red-700'
+                                                    }`}
+                                            >
+                                                {asset.status_objek}
+                                            </span>
                                         </div>
-                                        <span
-                                            className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${asset.status_objek?.toLowerCase() === 'aktif'
-                                                ? 'bg-green-100 text-green-700'
-                                                : 'bg-red-100 text-red-700'
-                                                }`}
-                                        >
-                                            {asset.status_objek}
-                                        </span>
-                                    </div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 leading-none">NPOR ID</p>
-                                    <h4 className="text-lg font-mono font-bold text-green-800 mb-4">{asset.npor_objek}</h4>
-                                    <div className="space-y-4 pt-4 border-t border-gray-50">
-                                        <div>
-                                            <p className="text-sm font-black text-gray-800 leading-tight uppercase">{asset.nama_objek}</p>
-                                            <div className="flex items-center gap-2 text-gray-400 mt-1">
-                                                <MapPin size={14} className="shrink-0" />
-                                                <p className="text-xs truncate font-medium">{asset.alamat_objek}</p>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 leading-none">NPOR ID</p>
+                                        <h4 className="text-lg font-mono font-bold text-green-800 mb-4">{asset.npor_objek}</h4>
+                                        <div className="space-y-4 pt-4 border-t border-gray-50">
+                                            <div>
+                                                <p className="text-sm font-black text-gray-800 leading-tight uppercase">{asset.nama_objek}</p>
+                                                <div className="flex items-center gap-2 text-gray-400 mt-1">
+                                                    <MapPin size={14} className="shrink-0" />
+                                                    <p className="text-xs truncate font-medium">{asset.alamat_objek}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* STATUS TAGIHAN PER OBJEK */}
+                                            <div className="pt-2">
+                                                {unpaidCount > 0 ? (
+                                                    <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-between">
+                                                        <div className="flex items-center gap-2 text-amber-800">
+                                                            <AlertCircle size={16} className="text-amber-600 shrink-0" />
+                                                            <div>
+                                                                <p className="text-[10px] font-black uppercase tracking-wider leading-none">
+                                                                    {unpaidCount} Tagihan Aktif
+                                                                </p>
+                                                                <p className="text-xs font-black text-amber-900 mt-0.5">
+                                                                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalUnpaid)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-amber-200/60 text-amber-900 rounded-md">
+                                                            Belum Bayar
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="bg-emerald-50 border border-emerald-200/60 rounded-2xl p-3 flex items-center gap-2 text-emerald-800">
+                                                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                                                        <p className="text-[11px] font-black uppercase tracking-wider">
+                                                            Semua Tagihan Lunas
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Aksi Card diubah menjadi Cetak */}
-                                <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
-                                    <button onClick={() => navigate('/skrd')} className="flex-1 bg-white hover:bg-green-700 hover:text-white border border-gray-200 text-gray-700 py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm uppercase tracking-tighter">
-                                        <FileText size={14} /> Tagihan
-                                    </button>
-                                    {/* GANTI ARROW MENJADI PRINTER */}
-                                    {/* <button
-                                        onClick={() => handleOpenCard(asset)}
-                                        className="p-3 bg-gray-800 text-white rounded-2xl hover:bg-green-700 transition-all flex items-center justify-center shadow-lg active:scale-95 group-hover:rotate-6"
-                                        title="Cetak Kartu NPWRD"
-                                    >
-                                        <Printer size={18} />
-                                    </button> */}
+                                    {/* Aksi Card: Modul Pembayaran Online Midtrans & Detail Tagihan */}
+                                    <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedPaymentAsset(asset);
+                                                setPaymentModalOpen(true);
+                                            }}
+                                            className={`flex-1 py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 uppercase tracking-tighter shadow-sm active:scale-95 ${
+                                                unpaidCount > 0
+                                                    ? 'bg-green-700 hover:bg-green-800 text-white shadow-green-900/20'
+                                                    : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                                            }`}
+                                        >
+                                            <CreditCard size={15} />
+                                            {unpaidCount > 0 ? 'Bayar Online' : 'Info Bayar'}
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/skrd')}
+                                            className="bg-white hover:bg-slate-100 border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center shadow-sm"
+                                            title="Lihat Daftar Tagihan SKRD"
+                                        >
+                                            <FileText size={15} />
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="bg-white rounded-[3rem] border-2 border-dashed border-gray-200 p-12 md:p-20 flex flex-col items-center text-center animate-in zoom-in duration-500">
@@ -141,7 +256,7 @@ const UserDashboard = () => {
                         <h3 className="text-2xl font-black text-gray-800 tracking-tight uppercase">Belum Ada Aset Terdaftar</h3>
                         <p className="text-gray-500 max-w-sm mt-2 text-sm leading-relaxed font-medium  font-sans">Anda belum memiliki nomor NPOR/Objek. Silakan ajukan pendaftaran untuk rumah atau ruko Anda.</p>
                         <div className="mt-10 flex flex-col md:flex-row gap-4">
-                            <button onClick={() => navigate('/daftar')} className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 transition-all transform hover:scale-105 uppercase text-xs tracking-widest"><Plus size={20} /> Daftarkan NPOR Baru</button>
+                            <button onClick={() => navigate('/daftar', { state: { id_subjek: user?.id_subjek } })} className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/20 flex items-center justify-center gap-3 transition-all transform hover:scale-105 uppercase text-xs tracking-widest"><Plus size={20} /> Daftarkan NPOR Baru</button>
                         </div>
                     </div>
                 )}
@@ -246,6 +361,20 @@ const UserDashboard = () => {
                     <Building2 size={200} />
                 </div>
             </div>
+
+            {/* MODAL PEMBAYARAN ONLINE DENGAN MIDTRANS */}
+            <UserPaymentModal
+                isOpen={paymentModalOpen}
+                onClose={() => {
+                    setPaymentModalOpen(false);
+                    setSelectedPaymentAsset(null);
+                }}
+                objectData={selectedPaymentAsset}
+                onSuccess={(msg) => {
+                    setAlertSuccess(msg);
+                    fetchData();
+                }}
+            />
         </div>
     );
 };

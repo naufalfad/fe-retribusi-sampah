@@ -85,6 +85,7 @@ const MainLayout = ({ children }) => {
     const menuConfig = {
         user: [
             { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+            { icon: CreditCard, label: 'Pembayaran Online', path: '/pembayaran' },
             { icon: FileText, label: 'Tagihan SKRD', path: '/skrd' },
             { icon: ClipboardList, label: 'Bukti SSRD', path: '/ssrd' },
             { icon: UserCircle, label: 'Layanan', path: '/layanan' },
