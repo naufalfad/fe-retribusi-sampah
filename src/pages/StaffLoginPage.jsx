@@ -46,7 +46,7 @@ const StaffLoginPage = () => {
     return (
         <div
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/kebun-raya.png')" }}
+            style={{ backgroundImage: "url('/gunung-kencana.jpg')" }}
         >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 

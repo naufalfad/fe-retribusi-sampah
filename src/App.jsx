@@ -49,6 +49,7 @@ import DlhLayananMonitoring from './pages/dlh/DlhLayananMonitoring';
 import SsrdList from './pages/wajibRetribusi/SsrdList';
 import StatusPendaftaranSubjek from './pages/StatusPendaftaranSubjek';
 import DlhGisMonitoring from './pages/dlh/DlhGisMonitoring';
+import DlhTempatSampah from './pages/dlh/DlhTempatSampah';
 
 function App() {
   return (
@@ -103,6 +104,7 @@ function App() {
             <Route path="/dlh/pemeriksaan" element={<DlhPemeriksaan />} />
             <Route path="/dlh/layanan-monitoring" element={<DlhLayananMonitoring />} />
             <Route path="/dlh/peta-monitoring" element={<DlhGisMonitoring />} />
+            <Route path="/dlh/fasilitas-sampah" element={<DlhTempatSampah />} />
           </Route>
 
           {/* Halaman Bendahara */}
@@ -125,6 +127,7 @@ function App() {
             <Route path="/admin/daftar-objek/:id_subjek" element={<FormTambahObjek isStaff={true} />} />
             <Route path="/admin/peraturan" element={<DocumentsPage isAdmin={true} />} />
             <Route path="/admin/poin" element={<AdminPoinSettings />} />
+            <Route path="/admin/fasilitas-sampah" element={<DlhTempatSampah />} />
           </Route>
 
           {/* Halaman Penagih */}
@@ -143,9 +146,10 @@ function App() {
             <Route path="/pengangkut/riwayat" element={<PengangkutRiwayat />} />
           </Route>
 
-          {/* Redirect otomatis ke login jika rute tidak dikenal */}
+          {/* Landing Page Publik */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/landing-page" element={<LandingPage />} />
-          <Route path="*" element={<Navigate to="/landing-page" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </MainLayout>
     </Router>

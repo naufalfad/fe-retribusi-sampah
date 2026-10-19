@@ -1,11 +1,17 @@
 import React from 'react';
-import { Map as MapIcon, Sun, Layers, Info } from 'lucide-react';
+import { Map as MapIcon, Sun, Moon, Layers, Info } from 'lucide-react';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
 
 export default function BasemapPanel() {
     const { activeBaseMap, setActiveBaseMap } = useGisUIStore();
 
     const baseMaps = [
+        {
+            id: 'dark',
+            label: 'Dark Canvas',
+            icon: Moon,
+            desc: 'Kanvas Gelap (Mode Optimal AQI & Hotspots)',
+        },
         {
             id: 'esri',
             label: 'Esri World Imagery',

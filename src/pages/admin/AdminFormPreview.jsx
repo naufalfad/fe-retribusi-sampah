@@ -320,21 +320,31 @@ const AdminFormPreview = () => {
                             </tbody>
                         </table>
 
-                        {/* TANGGAL INFO */}
+                        {/* TANGGAL & TRANSAKSI INFO (4 BARIS) */}
                         <table className="w-full border-collapse border-x border-b border-black">
                             <tbody>
                                 <tr>
-                                    <td className="w-40 p-2 border-r border-black">Tanggal Diterima Uang</td>
+                                    <td className="w-48 p-2 border-r border-black font-semibold">Waktu Pembayaran</td>
                                     <td className="w-4 p-2">:</td>
-                                    <td className="p-2 font-bold">30 Januari 2026</td>
+                                    <td className="p-2 font-bold">30 Januari 2026, 14:35:10 WIB</td>
                                 </tr>
                                 <tr className="border-t border-black">
-                                    <td className="p-2 border-r border-black">Nomor SKRD</td>
+                                    <td className="p-2 border-r border-black font-semibold">Metode Pembayaran</td>
+                                    <td className="p-2">:</td>
+                                    <td className="p-2 font-bold">BCA Virtual Account</td>
+                                </tr>
+                                <tr className="border-t border-black">
+                                    <td className="p-2 border-r border-black font-semibold">ID Transaksi</td>
+                                    <td className="p-2">:</td>
+                                    <td className="p-2 font-mono font-bold text-slate-800">4c2e646f-236b-4e89-8b8a-86717a02ecda</td>
+                                </tr>
+                                <tr className="border-t border-black">
+                                    <td className="p-2 border-r border-black font-semibold">Nomor SKRD Acuan</td>
                                     <td className="p-2">:</td>
                                     <td className="p-2">
-                                        <div className="flex justify-between font-bold  uppercase">
-                                            <span>SKRD/2024/09/X9N0Z</span>
-                                            <span>Tanggal Setor : 30 Januari 2026</span>
+                                        <div className="flex justify-between font-bold uppercase">
+                                            <span>SKRD/2026/01/X9N0Z</span>
+                                            <span className="text-[10px] text-gray-500 font-normal italic lowercase">status: lunas</span>
                                         </div>
                                     </td>
                                 </tr>

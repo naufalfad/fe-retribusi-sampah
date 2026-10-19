@@ -28,6 +28,17 @@ import GisSidebar from './components/gis/GisSidebar';
 import PanelOrchestrator from './components/gis/PanelOrchestrator';
 import MapHUD from './components/gis/MapHUD';
 import ObjekMarkerLayer from './components/gis/layers/ObjekMarkerLayer';
+import TempatSampahMarkerLayer from './components/gis/layers/TempatSampahMarkerLayer';
+
+// Modul Layer Kualitas Lingkungan & Bencana (Persis GEOLIMBAH)
+import AqiSurfaceLayer from './components/gis/layers/AqiSurfaceLayer';
+import WindFlowLayer from './components/gis/layers/WindFlowLayer';
+import RiverLayer from './components/gis/layers/RiverLayer';
+import WaterSampleMarkerLayer from './components/gis/layers/WaterSampleMarkerLayer';
+import WildfireLayer from './components/gis/layers/WildfireLayer';
+import VolcanicAshLayer from './components/gis/layers/VolcanicAshLayer';
+import AqiHorizontalLegend from './components/gis/AqiHorizontalLegend';
+import RiverHorizontalLegend from './components/gis/RiverHorizontalLegend';
 
 // Controller Eksternal untuk Pemusatan Kamera Peta secara Reaktif
 function ExternalMapController() {
@@ -87,6 +98,7 @@ export default function DlhGisMonitoring() {
     const [currentZoom, setCurrentZoom] = useState(12);
 
     const {
+        activeLayers,
         activeBaseMap,
         mapOpacity,
         maskOpacity,
@@ -172,6 +184,9 @@ export default function DlhGisMonitoring() {
     // Pemilihan URL Tile Basemap
     const getTileUrl = () => {
         switch (activeBaseMap) {
+            case 'dark':
+                // Esri World Dark Gray Canvas: 100% Free, Official ArcGIS, No Key Required
+                return 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
             case 'satellite':
                 return 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
             case 'street':
@@ -212,7 +227,7 @@ export default function DlhGisMonitoring() {
                     <TileLayer
                         key={activeBaseMap}
                         url={getTileUrl()}
-                        attribution='&copy; Google Maps / OpenStreetMap / Carto'
+                        attribution='&copy; Google Maps / OpenStreetMap'
                     />
 
                     {/* INVERTED BOUNDARY MASKING (Area Luar Kabupaten Bogor) */}
@@ -285,8 +300,29 @@ export default function DlhGisMonitoring() {
                         </Circle>
                     )}
 
+                    {/* LAYER KUALITAS AIR: ALIRAN SUNGAI & STASIUN SAMPEL AIR */}
+                    <RiverLayer />
+                    <WaterSampleMarkerLayer />
+
+                    {/* LAYER KEBAKARAN HUTAN / TITIK API AKTIF (NASA GIBS & FIRMS) */}
+                    <WildfireLayer />
+
+                    {/* LAYER EMISI GAS SO2 & ABU VULKANIK (NASA GIBS) */}
+                    <VolcanicAshLayer />
+
+                    {/* LAYER KUALITAS UDARA: HEATMAP PERMUKAAN AQI & VEKTOR ANGIN */}
+                    {activeLayers.includes('layer-aqi') && (
+                        <>
+                            <AqiSurfaceLayer objekList={objekList} mapOpacity={mapOpacity} />
+                            <WindFlowLayer objekList={objekList} />
+                        </>
+                    )}
+
                     {/* LAYER OBJEK RETRIBUSI (LOD & CLUSTERING) */}
                     <ObjekMarkerLayer objekList={objekList} currentZoom={currentZoom} />
+
+                    {/* LAYER FASILITAS TEMPAT SAMPAH (BANK SAMPAH, TPS, TPST, TPA) */}
+                    <TempatSampahMarkerLayer />
                 </MapContainer>
             </div>
 
@@ -309,6 +345,12 @@ export default function DlhGisMonitoring() {
                 LAYER 4: MAP HUD & CONTROLS (KANAN BAWAH)
             ====================================================================== */}
             <MapHUD />
+
+            {/* =====================================================================
+                LAYER 5: HORIZONTAL ENVIRONMENTAL LEGENDS (CENTER BOTTOM)
+            ====================================================================== */}
+            <AqiHorizontalLegend />
+            <RiverHorizontalLegend />
 
             {/* =====================================================================
                 LAYER 5: LOADING OVERLAY

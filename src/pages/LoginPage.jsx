@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, ShieldCheck, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { LogIn, UserPlus, ShieldCheck, Eye, EyeOff, ArrowLeft, Lock, Receipt } from 'lucide-react';
 import api from '../api/axios';
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const [npwrd, setNpwrd] = useState('');
+    const location = useLocation();
+
+    // Prefill data dari Landing Page (jika diarahkan dari Widget Cek Tagihan Cepat)
+    const prefillNpwrd = location.state?.prefillNpwrd || location.state?.prefillId || '';
+    const billNotice = location.state?.billNotice || null;
+    const redirectTo = location.state?.redirectTo || null;
+    const passState = location.state?.passState || null;
+
+    const [npwrd, setNpwrd] = useState(prefillNpwrd);
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +40,11 @@ const LoginPage = () => {
             localStorage.setItem('subjek', JSON.stringify(res.data.user));
             localStorage.setItem('user', JSON.stringify(res.data.user));
 
-            navigate('/dashboard');
+            if (redirectTo) {
+                navigate(redirectTo, { state: passState });
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             alert(err.response?.data?.message || 'Login gagal');
         } finally {
@@ -40,11 +52,12 @@ const LoginPage = () => {
         }
     };
 
+
     return (
         // Wrapper utama dengan Background Image dari folder public
         <div
             className="min-h-screen flex items-center justify-center px-4 py-12 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/kebun-raya.png')" }}
+            style={{ backgroundImage: "url('/gunung-kencana.jpg')" }}
         >
             {/* Overlay untuk memastikan konten tetap terbaca (Gunakan warna hijau gelap transparan agar senada) */}
             <div className="absolute inset-0 bg-green-950/60 backdrop-blur-[2px]"></div>
@@ -108,6 +121,23 @@ const LoginPage = () => {
                                     <p className="text-sm text-gray-500 font-medium">Inputkan NPWRD dan Password Anda</p>
                                 </div>
                             </div>
+
+                            {billNotice && (
+                                <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-start gap-3 text-left shadow-sm">
+                                    <div className="p-2 bg-emerald-700 text-white rounded-xl shrink-0 mt-0.5">
+                                        <Receipt size={16} />
+                                    </div>
+                                    <div>
+                                        <div className="text-xs font-black text-emerald-950">Otorisasi Pembayaran Tagihan</div>
+                                        <p className="text-[11px] text-emerald-800 mt-0.5 leading-relaxed">
+                                            Melanjutkan pembayaran SKRD <span className="font-mono font-bold text-emerald-900">{billNotice.no_skrd}</span> sebesar <span className="font-bold text-emerald-950">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(billNotice.total_bayar)}</span>.
+                                        </p>
+                                        <p className="text-[10px] text-emerald-700 font-medium mt-1.5 flex items-center gap-1">
+                                            <Lock size={12} className="text-emerald-600" /> Kredensial & SSRD akan tersimpan di database akun Anda.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
 
                             <form onSubmit={handleLogin} className="space-y-6">
                                 <div>

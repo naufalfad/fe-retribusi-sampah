@@ -6,6 +6,7 @@ import { useGisUIStore } from '../../../../store/useGisUIStore';
 import LayerPanel from './panels/LayerPanel';
 import ObjekPanel from './panels/ObjekPanel';
 import DetailPanel from './panels/DetailPanel';
+import TempatSampahDetailPanel from './panels/TempatSampahDetailPanel';
 import BasemapPanel from './panels/BasemapPanel';
 import StatistikPanel from './panels/StatistikPanel';
 import TentangPanel from './panels/TentangPanel';
@@ -16,7 +17,7 @@ export default function PanelOrchestrator({ objekList = [] }) {
     if (!activePanels || activePanels.length === 0) return null;
 
     const getPanelWidth = (type) => {
-        if (type === 'detil-objek') return 380;
+        if (type === 'detil-objek' || type === 'detil-tempat-sampah') return 390;
         return 360;
     };
 
@@ -28,6 +29,8 @@ export default function PanelOrchestrator({ objekList = [] }) {
                 return 'KATALOG OBJEK';
             case 'detil-objek':
                 return 'DETAIL OBJEK RETRIBUSI';
+            case 'detil-tempat-sampah':
+                return 'DETAIL FASILITAS SAMPAH';
             case 'basemap-gallery':
                 return 'PETA DASAR';
             case 'statistik':
@@ -47,6 +50,8 @@ export default function PanelOrchestrator({ objekList = [] }) {
                 return <ObjekPanel objekList={objekList} />;
             case 'detil-objek':
                 return <DetailPanel data={data} />;
+            case 'detil-tempat-sampah':
+                return <TempatSampahDetailPanel data={data} />;
             case 'basemap-gallery':
                 return <BasemapPanel />;
             case 'statistik':
@@ -61,14 +66,14 @@ export default function PanelOrchestrator({ objekList = [] }) {
     return (
         <div className="absolute top-16 bottom-0 left-16 z-30 pointer-events-auto flex items-start">
             {activePanels.map((panel, index) => {
-                const isFloating = panel.type === 'detil-objek';
+                const isFloating = panel.type === 'detil-objek' || panel.type === 'detil-tempat-sampah';
                 const currentWidth = getPanelWidth(panel.type);
 
                 // Hitung offset docked
                 let dockedOffset = 0;
                 for (let i = 0; i < index; i++) {
                     const p = activePanels[i];
-                    if (p.type !== 'detil-objek') {
+                    if (p.type !== 'detil-objek' && p.type !== 'detil-tempat-sampah') {
                         dockedOffset += getPanelWidth(p.type);
                     }
                 }
@@ -76,7 +81,7 @@ export default function PanelOrchestrator({ objekList = [] }) {
                 // Hitung posisi floating jika ada panel docked
                 let totalDockedWidth = 0;
                 activePanels.forEach((p) => {
-                    if (p.type !== 'detil-objek') {
+                    if (p.type !== 'detil-objek' && p.type !== 'detil-tempat-sampah') {
                         totalDockedWidth += getPanelWidth(p.type);
                     }
                 });
@@ -117,7 +122,11 @@ export default function PanelOrchestrator({ objekList = [] }) {
                                 <span className="text-[10px] font-bold text-emerald-700 leading-none uppercase tracking-wider">
                                     {getPanelCategoryLabel(panel.type)}
                                 </span>
-                                {panel.data?.nama_objek ? (
+                                {panel.data?.nama_tempat ? (
+                                    <h3 className="text-xs font-bold text-slate-800 truncate max-w-[240px] tracking-tight mt-1 leading-none">
+                                        {panel.data.nama_tempat}
+                                    </h3>
+                                ) : panel.data?.nama_objek ? (
                                     <h3 className="text-xs font-bold text-slate-800 truncate max-w-[240px] tracking-tight mt-1 leading-none">
                                         {panel.data.nama_objek}
                                     </h3>

@@ -9,7 +9,8 @@ import {
     Settings, ShieldAlert, ListOrdered, BookOpen,
     Edit3, Map, User,
     Key,
-    Globe
+    Globe,
+    Recycle
 } from 'lucide-react';
 
 // --- Sub-component: Sidebar Item ---
@@ -78,8 +79,8 @@ const MainLayout = ({ children }) => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
-    const hideSidebarPaths = ['/signUp', '/login', '/daftar', '/staff',
-        '/petugas-lapangan', '/landing-page', '/status-pendaftaran', '/dlh/peta-monitoring'];
+    const hideSidebarPaths = ['/', '/landing-page', '/signUp', '/login', '/daftar', '/staff',
+        '/petugas-lapangan', '/status-pendaftaran', '/dlh/peta-monitoring'];
     const isAuthPage = hideSidebarPaths.includes(location.pathname);
 
     const menuConfig = {
@@ -110,6 +111,7 @@ const MainLayout = ({ children }) => {
             { icon: CreditCard, label: 'Validasi Bayar', path: '/dlh/validasi-bayar' },
             { icon: ClipboardList, label: 'Pengajuan Layanan', path: '/dlh/layanan-monitoring' },
             { icon: Globe, label: 'Peta Monitoring', path: '/dlh/peta-monitoring' },
+            { icon: Recycle, label: 'Fasilitas Sampah', path: '/dlh/fasilitas-sampah' },
         ],
         bendahara: [
             { icon: LayoutDashboard, label: 'Dashboard Bendahara', path: '/bendahara/dashboard' },
@@ -124,6 +126,7 @@ const MainLayout = ({ children }) => {
             { icon: Edit3, label: 'Manajemen Objek', path: '/admin/manajemen-objek' },
             { icon: ShieldAlert, label: 'Log Aktivitas', path: '/admin/logs' },
             { icon: Globe, label: 'Peta Monitoring', path: '/dlh/peta-monitoring' },
+            { icon: Recycle, label: 'Fasilitas Sampah', path: '/admin/fasilitas-sampah' },
         ],
         penagih: [
             { icon: LayoutDashboard, label: 'Tugas Lapangan', path: '/penagih/dashboard' },

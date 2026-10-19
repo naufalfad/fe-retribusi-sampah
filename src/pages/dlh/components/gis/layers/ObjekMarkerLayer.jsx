@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Marker, Polygon, Tooltip, useMap } from 'react-leaflet';
+import { Marker, Tooltip, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
@@ -38,29 +38,39 @@ const createObjekMarkerIcon = (kategori, hasUnpaid, isSelected) => {
 
     return L.divIcon({
         html: `
-            <div style="position: relative; width: 32px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer;" class="${scaleClass} transition-transform duration-200">
+            <div style="position: relative; width: 38px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer;" class="${scaleClass} transition-transform duration-200">
                 ${hasUnpaid ? `
-                    <!-- Radar Alarm Penunggak EWS -->
-                    <div style="position: absolute; left: 1px; top: 0px; width: 30px; height: 30px; border-radius: 9999px; background: rgba(225, 29, 72, 0.45); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;"></div>
+                    <!-- Radar Alarm Penunggak EWS di Layer Belakang -->
+                    <div style="position: absolute; left: 4px; top: 2px; width: 30px; height: 30px; border-radius: 9999px; background: rgba(225, 29, 72, 0.45); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;"></div>
                 ` : ''}
 
-                <!-- SVG Pin Body & Icon -->
-                <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.55)) drop-shadow(0 1px 2px rgba(0,0,0,0.4)); overflow: visible;">
+                <!-- SVG Utama yang menyatukan Badan Pin, Icon Rumah/Gedung, dan Tanda Seru di dalamnya -->
+                <svg width="44" height="44" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); overflow: visible; position: relative; z-index: 1;">
+                    
+                    {/* 1. Badan Pin */}
                     <path d="M16 42 C11.5 33.5 2.5 23 2.5 15 A 13.5 13.5 0 1 1 29.5 15 C 29.5 23 20.5 33.5 16 42 Z" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
-                    <g transform="translate(7, 6)">
+                    
+                    {/* 2. Icon Rumah/Gedung */}
+                    <g transform="translate(7, 5)">
                         ${iconSvg}
                     </g>
+
+                    ${hasUnpaid ? `
+                        {/* 3. Badge Tanda Seru EWS DI LAYER PALING ATAS (Murni SVG) */}
+                        <g transform="translate(18, -3)">
+                            <circle cx="7" cy="7" r="7" fill="#e11d48" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="7" y="10" fill="#ffffff" font-size="9" font-weight="900" font-family="sans-serif" text-anchor="middle">!</text>
+                        </g>
+                    ` : ''}
+
+                    ${isSelected ? `
+                        {/* 4. Badge Seleksi Aktif DI LAYER PALING ATAS */}
+                        <g transform="translate(-2, -3)">
+                            <circle cx="7" cy="7" r="7" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="7" y="10" fill="#ffffff" font-size="8" font-weight="900" font-family="sans-serif" text-anchor="middle">✓</text>
+                        </g>
+                    ` : ''}
                 </svg>
-
-                ${hasUnpaid ? `
-                    <!-- Badge Tanda Seru EWS -->
-                    <div style="position: absolute; right: -2px; top: -3px; width: 14px; height: 14px; border-radius: 9999px; background: #e11d48; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 10;">!</div>
-                ` : ''}
-
-                ${isSelected ? `
-                    <!-- Badge Seleksi Aktif -->
-                    <div style="position: absolute; left: -2px; top: -3px; width: 14px; height: 14px; border-radius: 9999px; background: #f59e0b; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 10;">✓</div>
-                ` : ''}
             </div>
         `,
         className: 'custom-objek-marker-pin bg-transparent border-none',
@@ -107,7 +117,7 @@ export default function ObjekMarkerLayer({ objekList = [], currentZoom = 12 }) {
         mapOpacity,
     } = useGisUIStore();
 
-    // Olah objek dan hitung bounding box poligon
+    // Olah data objek retribusi
     const processedObjects = useMemo(() => {
         return objekList
             .map((obj) => {
@@ -128,20 +138,10 @@ export default function ObjekMarkerLayer({ objekList = [], currentZoom = 12 }) {
                 if (!isNonRumah && !isRumahActive) return null;
                 if (isNunggakOnly && !hasUnpaid) return null;
 
-                // Offset untuk polygon tapak bangunan (Level of Detail saat zoom >= 16)
-                const offset = 0.0006;
-                const polygon = [
-                    [lat - offset, lng - offset],
-                    [lat + offset, lng - offset],
-                    [lat + offset, lng + offset],
-                    [lat - offset, lng + offset],
-                ];
-
                 return {
                     ...obj,
                     lat,
                     lng,
-                    polygon,
                     isNonRumah,
                     hasUnpaid,
                 };
@@ -162,79 +162,36 @@ export default function ObjekMarkerLayer({ objekList = [], currentZoom = 12 }) {
     };
 
     return (
-        <React.Fragment>
-            {/* LEVEL OF DETAIL (LOD):
-                Jika zoom >= 16, render tapak poligon bangunan DAN marker icon pin rumah/gedung presisi.
-                Jika zoom < 16, render marker cluster group untuk performa tinggi dengan icon rumah/gedung.
-            */}
-            {currentZoom >= 16 ? (
-                processedObjects.map((obj) => {
-                    const isSelected = selectedObjectId === obj.id_objek;
-                    const fillColor = obj.isNonRumah ? '#2563eb' : '#059669';
+        <MarkerClusterGroup
+            chunkedLoading
+            iconCreateFunction={createClusterCustomIcon}
+            maxClusterRadius={55}
+            disableClusteringAtZoom={17}
+            spiderfyOnMaxZoom={true}
+            showCoverageOnHover={false}
+        >
+            {processedObjects.map((obj) => {
+                const isSelected = selectedObjectId === obj.id_objek;
 
-                    return (
-                        <React.Fragment key={`group-${obj.id_objek}`}>
-                            <Polygon
-                                positions={obj.polygon}
-                                pathOptions={{
-                                    color: isSelected ? '#fbbf24' : obj.hasUnpaid ? '#e11d48' : fillColor,
-                                    fillColor: obj.hasUnpaid ? '#e11d48' : fillColor,
-                                    fillOpacity: isSelected ? 0.45 : (0.25 * mapOpacity) / 100,
-                                    weight: isSelected ? 3 : 1.5,
-                                    dashArray: obj.hasUnpaid ? '4, 4' : undefined,
-                                }}
-                                eventHandlers={{ click: (e) => handleEntityClick(obj, e) }}
-                            />
-                            <Marker
-                                position={[obj.lat, obj.lng]}
-                                icon={createObjekMarkerIcon(obj.kategori_objek, obj.hasUnpaid, isSelected)}
-                                eventHandlers={{ click: (e) => handleEntityClick(obj, e) }}
-                            >
-                                <Tooltip direction="top" offset={[0, -42]} opacity={0.95}>
-                                    <div className="font-sans text-left text-xs font-bold leading-tight">
-                                        <div className="text-slate-800 uppercase">{obj.nama_objek}</div>
-                                        <div className="text-[10px] text-slate-500 font-semibold">{obj.kategori_objek} • {obj.npor_objek || '-'}</div>
-                                        {obj.hasUnpaid && (
-                                            <div className="text-[10px] text-rose-600 font-bold mt-0.5">⚠️ Ada Tagihan SKRD Belum Lunas</div>
-                                        )}
-                                    </div>
-                                </Tooltip>
-                            </Marker>
-                        </React.Fragment>
-                    );
-                })
-            ) : (
-                <MarkerClusterGroup
-                    chunkedLoading
-                    iconCreateFunction={createClusterCustomIcon}
-                    maxClusterRadius={55}
-                    spiderfyOnMaxZoom={true}
-                    showCoverageOnHover={false}
-                >
-                    {processedObjects.map((obj) => {
-                        const isSelected = selectedObjectId === obj.id_objek;
-
-                        return (
-                            <Marker
-                                key={`marker-${obj.id_objek}`}
-                                position={[obj.lat, obj.lng]}
-                                icon={createObjekMarkerIcon(obj.kategori_objek, obj.hasUnpaid, isSelected)}
-                                eventHandlers={{ click: (e) => handleEntityClick(obj, e) }}
-                            >
-                                <Tooltip direction="top" offset={[0, -42]} opacity={0.95}>
-                                    <div className="font-sans text-left text-xs font-bold leading-tight">
-                                        <div className="text-slate-800 uppercase">{obj.nama_objek}</div>
-                                        <div className="text-[10px] text-slate-500 font-semibold">{obj.kategori_objek} • {obj.npor_objek || '-'}</div>
-                                        {obj.hasUnpaid && (
-                                            <div className="text-[10px] text-rose-600 font-bold mt-0.5">⚠️ Ada Tagihan SKRD Belum Lunas</div>
-                                        )}
-                                    </div>
-                                </Tooltip>
-                            </Marker>
-                        );
-                    })}
-                </MarkerClusterGroup>
-            )}
-        </React.Fragment>
+                return (
+                    <Marker
+                        key={`marker-${obj.id_objek}`}
+                        position={[obj.lat, obj.lng]}
+                        icon={createObjekMarkerIcon(obj.kategori_objek, obj.hasUnpaid, isSelected)}
+                        eventHandlers={{ click: (e) => handleEntityClick(obj, e) }}
+                    >
+                        <Tooltip direction="top" offset={[0, -42]} opacity={0.95}>
+                            <div className="font-sans text-left text-xs font-bold leading-tight">
+                                <div className="text-slate-800 uppercase">{obj.nama_objek}</div>
+                                <div className="text-[10px] text-slate-500 font-semibold">{obj.kategori_objek} • {obj.npor_objek || '-'}</div>
+                                {obj.hasUnpaid && (
+                                    <div className="text-[10px] text-rose-600 font-bold mt-0.5">⚠️ Ada Tagihan SKRD Belum Lunas</div>
+                                )}
+                            </div>
+                        </Tooltip>
+                    </Marker>
+                );
+            })}
+        </MarkerClusterGroup>
     );
 }

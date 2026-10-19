@@ -12,8 +12,10 @@ import {
     Radio,
     Calendar,
     Layers,
+    Eye,
 } from 'lucide-react';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
+import { openSmartStreetView, openGoogleMapsPin } from '../../../../../lib/streetViewHelper';
 
 export default function DetailPanel({ data }) {
     const { showImpactRadius, setShowImpactRadius } = useGisUIStore();
@@ -214,6 +216,27 @@ export default function DetailPanel({ data }) {
 
             {/* ACTION BUTTONS (BOTTOM) */}
             <div className="mt-auto p-4 border-t border-slate-200 bg-white space-y-2">
+                {data.lat && data.lng && (
+                    <div className="grid grid-cols-2 gap-2">
+                        <button
+                            onClick={() => openSmartStreetView(data.lat, data.lng)}
+                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition-colors shadow-xs cursor-pointer"
+                            title="Buka Google Street View 360° (Otomatis snap ke jalan terdekat)"
+                        >
+                            <Eye size={13} />
+                            <span>Google Street</span>
+                        </button>
+                        <button
+                            onClick={() => openGoogleMapsPin(data.lat, data.lng)}
+                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                            title="Buka Google Maps (Dijamin 100% selalu menampilkan pin merah pada titik asli)"
+                        >
+                            <MapPin size={13} className="text-rose-600" />
+                            <span>Peta & Pin Asli</span>
+                        </button>
+                    </div>
+                )}
+
                 <button
                     onClick={() => window.open(`/dlh/list-objek?npor=${data.npor_objek}`, '_blank')}
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer rounded-none"
