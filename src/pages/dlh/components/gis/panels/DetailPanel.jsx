@@ -15,7 +15,6 @@ import {
     Eye,
 } from 'lucide-react';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
-import { openSmartStreetView, openGoogleMapsPin } from '../../../../../lib/streetViewHelper';
 
 export default function DetailPanel({ data }) {
     const { showImpactRadius, setShowImpactRadius } = useGisUIStore();
@@ -218,22 +217,26 @@ export default function DetailPanel({ data }) {
             <div className="mt-auto p-4 border-t border-slate-200 bg-white space-y-2">
                 {data.lat && data.lng && (
                     <div className="grid grid-cols-2 gap-2">
-                        <button
-                            onClick={() => openSmartStreetView(data.lat, data.lng)}
-                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition-colors shadow-xs cursor-pointer"
-                            title="Buka Google Street View 360° (Otomatis snap ke jalan terdekat)"
+                        <a
+                            href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${data.lat},${data.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition-colors shadow-xs"
+                            title="Buka Panorama 360° Google Street View"
                         >
                             <Eye size={13} />
                             <span>Google Street</span>
-                        </button>
-                        <button
-                            onClick={() => openGoogleMapsPin(data.lat, data.lng)}
-                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
-                            title="Buka Google Maps (Dijamin 100% selalu menampilkan pin merah pada titik asli)"
+                        </a>
+                        <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center justify-center gap-1.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors"
+                            title="Buka Peta Google Maps"
                         >
-                            <MapPin size={13} className="text-rose-600" />
-                            <span>Peta & Pin Asli</span>
-                        </button>
+                            <ExternalLink size={13} />
+                            <span>Google Maps</span>
+                        </a>
                     </div>
                 )}
 

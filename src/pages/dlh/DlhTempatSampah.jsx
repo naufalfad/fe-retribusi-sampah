@@ -34,7 +34,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import api from '../../api/axios';
 import { useGisUIStore } from '../../store/useGisUIStore';
-import { openSmartStreetView, openGoogleMapsPin } from '../../lib/streetViewHelper';
 
 // Custom Marker untuk Mini Map Picker
 const pickerIcon = L.divIcon({
@@ -828,13 +827,15 @@ export default function DlhTempatSampah() {
                                                             <MapIcon size={14} />
                                                         </button>
                                                         {item.latitude && item.longitude && (
-                                                            <button
-                                                                onClick={() => openSmartStreetView(item.latitude, item.longitude)}
-                                                                title="Buka Google Street View 360° (Otomatis snap ke jalan terdekat)"
-                                                                className="p-1.5 text-sky-600 hover:bg-sky-50 rounded transition-colors inline-flex items-center justify-center cursor-pointer"
+                                                            <a
+                                                                href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${item.latitude},${item.longitude}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                title="Buka Google Street View 360°"
+                                                                className="p-1.5 text-sky-600 hover:bg-sky-50 rounded transition-colors inline-flex items-center justify-center"
                                                             >
                                                                 <Eye size={14} />
-                                                            </button>
+                                                            </a>
                                                         )}
                                                         <button
                                                             onClick={() => handleOpenEdit(item)}

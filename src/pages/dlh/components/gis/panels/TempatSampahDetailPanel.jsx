@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     MapPin,
     Recycle,
@@ -17,18 +17,11 @@ import {
     Sparkles,
     ShieldCheck,
     Eye,
-    Loader2,
 } from 'lucide-react';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
-import {
-    openSmartStreetView,
-    openGoogleMapsPin,
-    openGoogleMapsDirections,
-} from '../../../../../lib/streetViewHelper';
 
 export default function TempatSampahDetailPanel({ data }) {
     const { setMapCenter, setMapZoom } = useGisUIStore();
-    const [isSnapping, setIsSnapping] = useState(false);
 
     if (!data) {
         return (
@@ -134,19 +127,13 @@ export default function TempatSampahDetailPanel({ data }) {
         }
     };
 
-    const handleOpenStreet = async () => {
-        setIsSnapping(true);
-        await openSmartStreetView(lat, lng);
-        setIsSnapping(false);
-    };
+    const googleMapsUrl = !isNaN(lat) && !isNaN(lng)
+        ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+        : null;
 
-    const handleOpenMaps = () => {
-        openGoogleMapsPin(lat, lng);
-    };
-
-    const handleOpenDirections = () => {
-        openGoogleMapsDirections(lat, lng);
-    };
+    const googleStreetViewUrl = !isNaN(lat) && !isNaN(lng)
+        ? `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`
+        : null;
 
     // Bersihkan nomor kontak untuk direct WA link
     const cleanPhone = kontak ? kontak.replace(/[^0-9]/g, '') : null;
@@ -357,46 +344,32 @@ export default function TempatSampahDetailPanel({ data }) {
                         </button>
 
                         <div className="grid grid-cols-2 gap-2">
-                            <button
-                                onClick={handleOpenStreet}
-                                disabled={isSnapping || isNaN(lat) || isNaN(lng)}
-                                className="w-full py-2 bg-sky-600 hover:bg-sky-700 disabled:bg-sky-400 text-white border border-sky-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors text-center shadow-xs cursor-pointer"
-                                title="Buka Street View 360° (Otomatis mencari foto di badan jalan terdekat)"
-                            >
-                                {isSnapping ? (
-                                    <>
-                                        <Loader2 size={13} className="animate-spin" />
-                                        <span>Cari Jalan...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Eye size={13} />
-                                        <span>Google Street</span>
-                                    </>
-                                )}
-                            </button>
+                            {googleStreetViewUrl && (
+                                <a
+                                    href={googleStreetViewUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2 bg-sky-600 hover:bg-sky-700 text-white border border-sky-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors text-center shadow-xs"
+                                    title="Buka Panorama 360° Google Street View"
+                                >
+                                    <Eye size={13} />
+                                    Google Street
+                                </a>
+                            )}
 
-                            <button
-                                onClick={handleOpenMaps}
-                                disabled={isNaN(lat) || isNaN(lng)}
-                                className="w-full py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors text-center cursor-pointer shadow-xs"
-                                title="Buka Google Maps (Dijamin 100% selalu menampilkan PIN merah di titik asli)"
-                            >
-                                <MapPin size={12} className="text-rose-600" />
-                                <span>Peta & Pin Asli</span>
-                            </button>
+                            {googleMapsUrl && (
+                                <a
+                                    href={googleMapsUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors text-center"
+                                    title="Buka Peta Standar Google Maps"
+                                >
+                                    <ExternalLink size={12} />
+                                    Google Maps
+                                </a>
+                            )}
                         </div>
-
-                        {/* Opsi Petunjuk Arah / Navigasi Armada */}
-                        <button
-                            onClick={handleOpenDirections}
-                            disabled={isNaN(lat) || isNaN(lng)}
-                            className="w-full py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 text-[11px] font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                            title="Buka petunjuk arah mengemudi armada ke titik fasilitas ini"
-                        >
-                            <ExternalLink size={11} className="text-slate-500" />
-                            <span>Rute Navigasi Armada (Directions)</span>
-                        </button>
                     </div>
                 </div>
             </div>
