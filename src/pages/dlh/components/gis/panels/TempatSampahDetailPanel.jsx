@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     MapPin,
     Recycle,
@@ -18,6 +18,11 @@ import {
     ShieldCheck,
     Eye,
     Loader2,
+    ChevronLeft,
+    ChevronRight,
+    Camera,
+    Maximize2,
+    X,
 } from 'lucide-react';
 import { useGisUIStore } from '../../../../../store/useGisUIStore';
 import {
@@ -29,6 +34,8 @@ import {
 export default function TempatSampahDetailPanel({ data }) {
     const { setMapCenter, setMapZoom } = useGisUIStore();
     const [isSnapping, setIsSnapping] = useState(false);
+    const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
     if (!data) {
         return (
@@ -56,8 +63,67 @@ export default function TempatSampahDetailPanel({ data }) {
         pengelola,
         kontak,
         keterangan,
+        foto,
         foto_url,
     } = data;
+
+    // Normalisasi daftar foto (maksimal 4 foto)
+    const photoList = useMemo(() => {
+        if (!data) return [];
+        let list = [];
+        if (Array.isArray(foto)) {
+            list = foto;
+        } else if (typeof foto === 'string' && foto.trim() !== '') {
+            try {
+                const parsed = JSON.parse(foto);
+                if (Array.isArray(parsed)) list = parsed;
+                else list = [foto.trim()];
+            } catch {
+                list = [foto.trim()];
+            }
+        }
+        if (list.length === 0 && foto_url) {
+            if (typeof foto_url === 'string' && foto_url.trim() !== '') {
+                try {
+                    const parsed = JSON.parse(foto_url);
+                    if (Array.isArray(parsed)) list = parsed;
+                    else list = [foto_url.trim()];
+                } catch {
+                    list = [foto_url.trim()];
+                }
+            } else if (Array.isArray(foto_url)) {
+                list = foto_url;
+            }
+        }
+        return list.filter(Boolean).slice(0, 4);
+    }, [data, foto, foto_url]);
+
+    // Reset slide foto saat fasilitas tempat sampah berubah
+    useEffect(() => {
+        setActivePhotoIdx(0);
+    }, [id_tempat_sampah]);
+
+    const handlePrevPhoto = (e) => {
+        if (e) e.stopPropagation();
+        if (photoList.length <= 1) return;
+        setActivePhotoIdx((prev) => (prev > 0 ? prev - 1 : photoList.length - 1));
+    };
+
+    const handleNextPhoto = (e) => {
+        if (e) e.stopPropagation();
+        if (photoList.length <= 1) return;
+        setActivePhotoIdx((prev) => (prev < photoList.length - 1 ? prev + 1 : 0));
+    };
+
+    const getPhotoSrc = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+            return url;
+        }
+        const clean = url.startsWith('/') ? url : `/${url}`;
+        const baseUrl = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:3000';
+        return `${baseUrl}${clean}`;
+    };
 
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
@@ -162,8 +228,101 @@ export default function TempatSampahDetailPanel({ data }) {
 
     return (
         <div className="flex flex-col h-full bg-white font-sans text-left pb-12 select-none overflow-y-auto custom-scrollbar">
-            {/* HERO BANNER */}
-            <div className="p-5 bg-slate-900 text-white flex flex-col gap-2 relative">
+            {/* GOOGLE MAPS STYLE PHOTO CAROUSEL (MAKSIMAL 4 FOTO) */}
+            <div className="relative w-full h-48 sm:h-52 bg-slate-950 overflow-hidden group select-none shrink-0 border-b border-slate-800">
+                {photoList.length > 0 ? (
+                    <>
+                        {/* Gambar Fasilitas dengan Efek Transisi */}
+                        <img
+                            key={photoList[activePhotoIdx]}
+                            src={getPhotoSrc(photoList[activePhotoIdx])}
+                            alt={`${nama_tempat} - Foto ${activePhotoIdx + 1}`}
+                            onClick={() => setIsLightboxOpen(true)}
+                            className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                            title="Klik untuk memperbesar foto"
+                        />
+
+                        {/* Shadow Gradient Atas & Bawah agar tombol & teks tetap kontras */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/60 pointer-events-none" />
+
+                        {/* Arrow Navigasi Kiri */}
+                        {photoList.length > 1 && (
+                            <button
+                                type="button"
+                                onClick={handlePrevPhoto}
+                                aria-label="Foto Sebelumnya"
+                                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all shadow-md backdrop-blur-xs border border-white/20 active:scale-90 cursor-pointer z-20"
+                            >
+                                <ChevronLeft size={18} strokeWidth={2.5} />
+                            </button>
+                        )}
+
+                        {/* Arrow Navigasi Kanan */}
+                        {photoList.length > 1 && (
+                            <button
+                                type="button"
+                                onClick={handleNextPhoto}
+                                aria-label="Foto Selanjutnya"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all shadow-md backdrop-blur-xs border border-white/20 active:scale-90 cursor-pointer z-20"
+                            >
+                                <ChevronRight size={18} strokeWidth={2.5} />
+                            </button>
+                        )}
+
+                        {/* Counter Foto Google Maps Style (Contoh: "1 / 4") & Tombol Zoom */}
+                        <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold font-mono tracking-wider bg-slate-950/80 text-white px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-xs flex items-center gap-1 shadow-sm">
+                                <Camera size={11} className="text-emerald-400" />
+                                {activePhotoIdx + 1} / {photoList.length}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => setIsLightboxOpen(true)}
+                                title="Perbesar Foto"
+                                className="w-6 h-6 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-xs border border-white/10 transition-colors cursor-pointer"
+                            >
+                                <Maximize2 size={11} />
+                            </button>
+                        </div>
+
+                        {/* Indikator Titik (Dots) Slide di Bagian Bawah */}
+                        {photoList.length > 1 && (
+                            <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-slate-950/60 px-2 py-1 rounded-full backdrop-blur-xs border border-white/10">
+                                {photoList.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setActivePhotoIdx(idx);
+                                        }}
+                                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                                            idx === activePhotoIdx
+                                                ? 'w-4 bg-emerald-400 shadow-xs'
+                                                : 'w-1.5 bg-white/50 hover:bg-white/80'
+                                        }`}
+                                        aria-label={`Slide ke foto ${idx + 1}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    /* Fallback Apabila Belum Ada Foto Fasilitas Diunggah */
+                    <div className="w-full h-full flex flex-col items-center justify-center text-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-400 relative">
+                        <div className="w-12 h-12 rounded-full bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-slate-400 mb-2 shadow-inner">
+                            <Camera size={22} className="text-slate-400" />
+                        </div>
+                        <p className="text-xs font-semibold text-slate-200">Foto Fasilitas Belum Tersedia</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5 max-w-[240px] leading-tight">
+                            Unggah foto fisik tempat sampah melalui menu Manajemen Fasilitas Tempat Sampah.
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* HERO BANNER INFO FASILITAS */}
+            <div className="p-4 bg-slate-900 text-white flex flex-col gap-2 relative">
                 <div className="flex items-center justify-between">
                     <span
                         className={`text-[9px] font-bold px-2 py-0.5 uppercase tracking-wider flex items-center gap-1.5 ${catConfig.badge}`}
@@ -174,12 +333,12 @@ export default function TempatSampahDetailPanel({ data }) {
 
                     <span
                         className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 ${
-                            status_operasional === 'AKTIF'
+                            status_operasional === 'AKTIF' || status_operasional === 'Aktif'
                                 ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
                                 : 'bg-slate-800 text-slate-300 border border-slate-700'
                         }`}
                     >
-                        {status_operasional === 'AKTIF' ? (
+                        {status_operasional === 'AKTIF' || status_operasional === 'Aktif' ? (
                             <CheckCircle2 size={10} />
                         ) : (
                             <AlertTriangle size={10} />
@@ -195,7 +354,7 @@ export default function TempatSampahDetailPanel({ data }) {
                 <p className="text-[11px] text-slate-300 leading-relaxed flex items-start gap-1.5">
                     <MapPin size={12} className="text-emerald-400 shrink-0 mt-0.5" />
                     <span>
-                        {alamat}, Kec. {kecamatan}
+                        {alamat || 'Alamat belum diisi'}, Kec. {kecamatan}
                         {kelurahan_desa ? `, Desa/Kel. ${kelurahan_desa}` : ''}
                     </span>
                 </p>
@@ -400,6 +559,84 @@ export default function TempatSampahDetailPanel({ data }) {
                     </div>
                 </div>
             </div>
+
+            {/* FULLSCREEN LIGHTBOX MODAL */}
+            {isLightboxOpen && photoList.length > 0 && (
+                <div
+                    className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex flex-col items-center justify-between p-4 animate-in fade-in duration-200 select-none"
+                    onClick={() => setIsLightboxOpen(false)}
+                >
+                    {/* Header Lightbox */}
+                    <div className="w-full max-w-4xl flex items-center justify-between text-white py-2 z-10" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2">
+                            <Camera size={16} className="text-emerald-400" />
+                            <span className="text-xs font-bold">{nama_tempat}</span>
+                            <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono ml-2">
+                                {activePhotoIdx + 1} dari {photoList.length}
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setIsLightboxOpen(false)}
+                            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                        >
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    {/* Kontainer Gambar Utama & Arrow Navigasi */}
+                    <div className="relative flex-1 w-full max-w-4xl flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={getPhotoSrc(photoList[activePhotoIdx])}
+                            alt={`${nama_tempat} - Foto ${activePhotoIdx + 1}`}
+                            className="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl transition-all duration-300"
+                        />
+
+                        {photoList.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={handlePrevPhoto}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all border border-white/20 active:scale-95 cursor-pointer shadow-xl"
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleNextPhoto}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all border border-white/20 active:scale-95 cursor-pointer shadow-xl"
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Footer Thumbnails Lightbox */}
+                    {photoList.length > 1 && (
+                        <div className="flex items-center gap-2 py-2 overflow-x-auto max-w-full z-10" onClick={(e) => e.stopPropagation()}>
+                            {photoList.map((photo, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={() => setActivePhotoIdx(idx)}
+                                    className={`w-14 h-14 rounded-md overflow-hidden border-2 transition-all cursor-pointer ${
+                                        idx === activePhotoIdx
+                                            ? 'border-emerald-500 scale-105 shadow-lg shadow-emerald-500/20'
+                                            : 'border-white/20 opacity-60 hover:opacity-100'
+                                    }`}
+                                >
+                                    <img
+                                        src={getPhotoSrc(photo)}
+                                        alt={`Thumbnail ${idx + 1}`}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

@@ -28,6 +28,9 @@ import {
     ChevronDown,
     Map as MapIcon,
     Eye,
+    Camera,
+    UploadCloud,
+    Image as ImageIcon,
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -168,6 +171,66 @@ export default function DlhTempatSampah() {
     });
 
     const [customTagInput, setCustomTagInput] = useState('');
+
+    // State Foto Fasilitas (Maksimal 4 Foto)
+    const [photoList, setPhotoList] = useState([]);
+    const fileInputRef = React.useRef(null);
+
+    const getPhotoPreviewSrc = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+            return url;
+        }
+        const clean = url.startsWith('/') ? url : `/${url}`;
+        const baseUrl = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:3000';
+        return `${baseUrl}${clean}`;
+    };
+
+    const handlePhotoSelect = (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+
+        const remainingSlots = 4 - photoList.length;
+        if (remainingSlots <= 0) {
+            alert('Maksimal 4 foto untuk setiap tempat penampungan sampah.');
+            e.target.value = '';
+            return;
+        }
+
+        const validFiles = [];
+        for (const file of files) {
+            if (!file.type.match(/^image\/(jpeg|jpg|png|webp)$/i)) {
+                alert(`File ${file.name} tidak didukung. Harap pilih gambar JPG, PNG, atau WEBP.`);
+                continue;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`Ukuran file ${file.name} melebihi batas 5MB.`);
+                continue;
+            }
+            validFiles.push(file);
+        }
+
+        const filesToAdd = validFiles.slice(0, remainingSlots);
+        const newItems = filesToAdd.map((file) => ({
+            id: `new-${Date.now()}-${Math.random()}`,
+            type: 'new',
+            url: URL.createObjectURL(file),
+            file,
+        }));
+
+        setPhotoList((prev) => [...prev, ...newItems].slice(0, 4));
+        e.target.value = '';
+    };
+
+    const handleRemovePhoto = (indexToRemove) => {
+        setPhotoList((prev) => {
+            const item = prev[indexToRemove];
+            if (item?.type === 'new' && item.url.startsWith('blob:')) {
+                URL.revokeObjectURL(item.url);
+            }
+            return prev.filter((_, idx) => idx !== indexToRemove);
+        });
+    };
 
     // State untuk Smart Select Kelurahan / Desa (Auto-Fill Kecamatan & Koordinat)
     const [allKelurahan, setAllKelurahan] = useState([]);
@@ -318,6 +381,7 @@ export default function DlhTempatSampah() {
         });
         setKelurahanSearchLabel('Tengah (Kec. Cibinong)');
         setCustomTagInput('');
+        setPhotoList([]);
         setIsKelurahanDropdownOpen(false);
         setIsModalOpen(true);
     };
@@ -361,6 +425,24 @@ export default function DlhTempatSampah() {
                     : ''
         );
         setCustomTagInput('');
+
+        // Muat daftar foto yang sudah tersimpan (maks 4)
+        const rawPhotos = Array.isArray(item.foto) && item.foto.length > 0
+            ? item.foto
+            : typeof item.foto === 'string' && item.foto.trim() !== ''
+                ? (() => { try { return JSON.parse(item.foto); } catch { return [item.foto.trim()]; } })()
+                : item.foto_url
+                    ? [item.foto_url]
+                    : [];
+
+        setPhotoList(
+            rawPhotos.filter(Boolean).slice(0, 4).map((url, idx) => ({
+                id: `existing-${idx}-${url}`,
+                type: 'existing',
+                url,
+            }))
+        );
+
         setIsKelurahanDropdownOpen(false);
         setIsModalOpen(true);
     };
@@ -391,7 +473,7 @@ export default function DlhTempatSampah() {
         }
     };
 
-    // Simpan Form (Create / Edit)
+    // Simpan Form (Create / Edit) dengan Upload Multi-Foto (Maks 4 Foto)
     const handleSubmitForm = async (e) => {
         e.preventDefault();
         if (!formData.nama_tempat || !formData.kategori || !formData.kecamatan) {
@@ -401,23 +483,46 @@ export default function DlhTempatSampah() {
 
         setSubmitting(true);
         try {
-            const payload = {
-                ...formData,
-                latitude: parseFloat(formData.latitude),
-                longitude: parseFloat(formData.longitude),
-                kapasitas_total: parseFloat(formData.kapasitas_total) || 0,
-                volume_saat_ini: parseFloat(formData.volume_saat_ini) || 0,
-            };
+            const fd = new FormData();
+            fd.append('nama_tempat', formData.nama_tempat.trim());
+            fd.append('kategori', formData.kategori);
+            if (formData.alamat) fd.append('alamat', formData.alamat.trim());
+            fd.append('kecamatan', formData.kecamatan.trim());
+            if (formData.kelurahan_desa) fd.append('kelurahan_desa', formData.kelurahan_desa.trim());
+            fd.append('latitude', String(parseFloat(formData.latitude)));
+            fd.append('longitude', String(parseFloat(formData.longitude)));
+            fd.append('kapasitas_total', String(parseFloat(formData.kapasitas_total) || 0));
+            fd.append('satuan_kapasitas', formData.satuan_kapasitas || 'Ton/Hari');
+            fd.append('volume_saat_ini', String(parseFloat(formData.volume_saat_ini) || 0));
+            fd.append('status_operasional', formData.status_operasional);
+            fd.append('jenis_sampah', JSON.stringify(formData.jenis_sampah || []));
+            if (formData.jam_operasional) fd.append('jam_operasional', formData.jam_operasional.trim());
+            if (formData.pengelola) fd.append('pengelola', formData.pengelola.trim());
+            if (formData.kontak) fd.append('kontak', formData.kontak.trim());
+            if (formData.keterangan) fd.append('keterangan', formData.keterangan.trim());
+
+            // Kirim daftar foto lama yang dipertahankan
+            const existingUrls = photoList.filter((p) => p.type === 'existing').map((p) => p.url);
+            fd.append('existing_foto', JSON.stringify(existingUrls));
+
+            // Kirim file-file baru yang diunggah
+            photoList.filter((p) => p.type === 'new' && p.file).forEach((p) => {
+                fd.append('foto', p.file);
+            });
 
             if (modalMode === 'create') {
-                const res = await api.post('/tempat-sampah', payload);
+                const res = await api.post('/tempat-sampah', fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
                 if (res.data?.success || res.data?.status === 'success') {
                     setIsModalOpen(false);
                     fetchData();
                     fetchStats();
                 }
             } else {
-                const res = await api.put(`/tempat-sampah/${selectedItem.id_tempat_sampah}`, payload);
+                const res = await api.put(`/tempat-sampah/${selectedItem.id_tempat_sampah}`, fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
                 if (res.data?.success || res.data?.status === 'success') {
                     setIsModalOpen(false);
                     fetchData();
@@ -729,12 +834,34 @@ export default function DlhTempatSampah() {
                                             <tr key={item.id_tempat_sampah} className="hover:bg-slate-50/70 transition-colors">
                                                 {/* Nama & Pengelola */}
                                                 <td className="py-3 px-4">
-                                                    <div className="font-bold text-slate-900 leading-snug">
-                                                        {item.nama_tempat}
-                                                    </div>
-                                                    <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                                                        <User size={10} />
-                                                        {item.pengelola || 'DLH Kab. Bogor'}
+                                                    <div className="flex items-center gap-2.5">
+                                                        {item.foto_url ? (
+                                                            <div className="w-10 h-10 rounded overflow-hidden shrink-0 border border-slate-200 bg-slate-900 shadow-2xs">
+                                                                <img
+                                                                    src={getPhotoPreviewSrc(item.foto_url)}
+                                                                    alt=""
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-10 h-10 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                                                                <Camera size={16} />
+                                                            </div>
+                                                        )}
+                                                        <div>
+                                                            <div className="font-bold text-slate-900 leading-snug flex items-center gap-1.5">
+                                                                <span>{item.nama_tempat}</span>
+                                                                {Array.isArray(item.foto) && item.foto.length > 0 && (
+                                                                    <span className="text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                                                                        {item.foto.length} foto
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                                                <User size={10} />
+                                                                {item.pengelola || 'DLH Kab. Bogor'}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
 
@@ -1328,6 +1455,79 @@ export default function DlhTempatSampah() {
                                     onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
                                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600"
                                 />
+                            </div>
+
+                            {/* DOKUMENTASI FOTO TEMPAT PENAMPUNGAN SAMPAH (MAKSIMAL 4 FOTO) */}
+                            <div className="space-y-2 border border-slate-200 rounded p-3.5 bg-slate-50/70">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                            <Camera size={14} className="text-emerald-700" />
+                                            Foto Tempat Penampungan Sampah
+                                        </label>
+                                        <p className="text-[10px] text-slate-500 mt-0.5">
+                                            Maksimal 4 foto (tampak fisik/area penampungan). Foto dapat di-slide dengan tombol panah kiri-kanan pada sidebar peta GIS.
+                                        </p>
+                                    </div>
+                                    <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                        {photoList.length} / 4 Foto
+                                    </span>
+                                </div>
+
+                                {/* Hidden File Input */}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    multiple
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handlePhotoSelect}
+                                    className="hidden"
+                                />
+
+                                {/* Grid Preview Foto (Maksimal 4) */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                                    {photoList.map((photo, idx) => (
+                                        <div
+                                            key={photo.id || idx}
+                                            className="relative aspect-4/3 rounded border border-slate-300 bg-slate-900 overflow-hidden group shadow-xs"
+                                        >
+                                            <img
+                                                src={getPhotoPreviewSrc(photo.url)}
+                                                alt={`Preview Foto ${idx + 1}`}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            />
+                                            {/* Badge Urutan Foto */}
+                                            <span className="absolute top-1.5 left-1.5 bg-slate-950/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-xs border border-white/10">
+                                                {idx === 0 ? 'Utama' : `#${idx + 1}`}
+                                            </span>
+
+                                            {/* Tombol Hapus Foto */}
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemovePhoto(idx)}
+                                                title="Hapus Foto Ini"
+                                                className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center transition-all opacity-90 hover:opacity-100 shadow cursor-pointer"
+                                            >
+                                                <X size={12} strokeWidth={2.5} />
+                                            </button>
+                                        </div>
+                                    ))}
+
+                                    {/* Tombol Tambah Foto (Jika masih di bawah 4) */}
+                                    {photoList.length < 4 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="aspect-4/3 rounded border-2 border-dashed border-emerald-300 hover:border-emerald-600 bg-white hover:bg-emerald-50/50 flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-emerald-800 transition-all cursor-pointer p-2 text-center"
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                                <Plus size={16} />
+                                            </div>
+                                            <span className="text-[11px] font-bold">Upload Foto</span>
+                                            <span className="text-[9px] text-slate-400">JPG/PNG/WEBP</span>
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Modal Footer */}
